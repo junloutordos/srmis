@@ -44,12 +44,20 @@ Route::get('/_status', [\App\Http\Controllers\HealthController::class, 'check'])
     ->name('system.health');
 
 // ── Document / signature verification — public QR landing pages ──────────────
+// The request/itjr pages use SIGNED URLs: the signature both prevents tampering
+// and lets ResolveTenant trust the ?tenant= parameter on anonymous QR scans.
+Route::get('/verify/request/{type}/{id}', [\App\Http\Controllers\DocumentVerificationController::class, 'showRequest'])
+    ->name('request.verify')
+    ->middleware('signed')
+    ->where('type', 'vehicle|facility|work|service')
+    ->whereNumber('id');
+Route::get('/verify/itjr/{itjrNo}', [\App\Http\Controllers\DocumentVerificationController::class, 'showItjr'])
+    ->name('itjr.verify')
+    ->middleware('signed')
+    ->where('itjrNo', '[0-9\-]+');
 Route::get('/verify/{token}', [\App\Http\Controllers\DocumentVerificationController::class, 'show'])
     ->name('document.verify')
     ->where('token', '[0-9a-f\-]{36}');
-Route::get('/verify/itjr/{itjrNo}', [\App\Http\Controllers\DocumentVerificationController::class, 'showItjr'])
-    ->name('itjr.verify')
-    ->where('itjrNo', '[0-9\-]+');
 
 // ── IT Job Requests — signed email-link approvals (no session required) ──────
 Route::prefix('it-job-requests')->group(function () {

@@ -602,11 +602,20 @@ class VehicleRequestController extends Controller
 
         $sigs = $this->loadSigsForPrint(VehicleRequest::class, $vehicleRequest->id);
 
+        // Document-level verification QR — signed URL carries the campus so
+        // anonymous scans resolve the right tenant (like the ITJR PDF).
+        $verifyUrl  = \Illuminate\Support\Facades\URL::signedRoute('request.verify', ['type' => 'vehicle', 'id' => $vehicleRequest->id]);
+        $documentQr = ! empty($sigs)
+            ? base64_encode(\SimpleSoftwareIO\QrCode\Facades\QrCode::format('svg')->size(120)->margin(1)->generate($verifyUrl))
+            : null;
+
         return view('vehicle_requests.print_ticket', [
             'request'     => $vehicleRequest,
             'director'    => $director,
             'directorSig' => $directorSig,
             'sigs'        => $sigs,
+            'documentQr'  => $documentQr,
+            'verifyUrl'   => $verifyUrl,
         ]);
     }
 

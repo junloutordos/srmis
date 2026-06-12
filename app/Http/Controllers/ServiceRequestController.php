@@ -637,9 +637,19 @@ class ServiceRequestController extends Controller
         }
 
         $sigs = $this->loadSigsForPrint(ServiceRequest::class, $serviceRequest->id);
+
+        // Document-level verification QR — signed URL carries the campus so
+        // anonymous scans resolve the right tenant (like the ITJR PDF).
+        $verifyUrl  = \Illuminate\Support\Facades\URL::signedRoute('request.verify', ['type' => 'service', 'id' => $serviceRequest->id]);
+        $documentQr = ! empty($sigs)
+            ? base64_encode(\SimpleSoftwareIO\QrCode\Facades\QrCode::format('svg')->size(120)->margin(1)->generate($verifyUrl))
+            : null;
+
         return view('service_requests.print_ticket', [
-            'request' => $serviceRequest,
-            'sigs'    => $sigs,
+            'request'    => $serviceRequest,
+            'sigs'       => $sigs,
+            'documentQr' => $documentQr,
+            'verifyUrl'  => $verifyUrl,
         ]);
     }
 

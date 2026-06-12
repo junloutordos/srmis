@@ -184,7 +184,7 @@ class ITJobRequestPdfService
             }
 
             // One document-level QR linking to the ITJR verification page
-            $verifyUrl  = route('itjr.verify', $jobRequest->itjr_no);
+            $verifyUrl  = \Illuminate\Support\Facades\URL::signedRoute('itjr.verify', ['itjrNo' => $jobRequest->itjr_no]);
             $documentQr = base64_encode(QrCode::format('svg')->size(120)->margin(1)->generate($verifyUrl));
         }
 
