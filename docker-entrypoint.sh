@@ -40,7 +40,8 @@ php /var/www/artisan cache:clear
 # Central schema first (tenants/domains/settings), then every tenant schema.
 php /var/www/artisan migrate --force
 php /var/www/artisan tenants:migrate || true
-php /var/www/artisan app:version-sync
+# app_versions is a TENANT table — sync per tenant, never fatally
+php /var/www/artisan tenants:run app:version-sync || true
 php /var/www/artisan config:cache
 php /var/www/artisan route:cache
 php /var/www/artisan view:cache
