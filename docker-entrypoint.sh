@@ -30,7 +30,7 @@ chown -R www-data:www-data \
 
 # ── Ensure the central database exists (fresh RDS has none) ──────────────────
 if [ -n "$DB_HOST" ] && [ -n "$DB_DATABASE" ]; then
-    mysql -h "$DB_HOST" -u "$DB_USERNAME" -p"$DB_PASSWORD" \
+    mysql --skip-ssl -h "$DB_HOST" -u "$DB_USERNAME" -p"$DB_PASSWORD" \
         -e "CREATE DATABASE IF NOT EXISTS \`$DB_DATABASE\` CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;" \
         || echo "WARN: could not ensure central database exists"
 fi
