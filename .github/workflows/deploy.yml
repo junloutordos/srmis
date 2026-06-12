@@ -1,0 +1,116 @@
+name: SRMIS Deploy
+
+on:
+  push:
+    branches: [main]
+
+env:
+  AWS_REGION: ap-southeast-1
+  ECR: 971422671747.dkr.ecr.ap-southeast-1.amazonaws.com
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4.2.2
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4.0.2
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Login to ECR
+        uses: aws-actions/amazon-ecr-login@v2.0.1
+
+      - name: Set up PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.4'
+          extensions: pdo_mysql, mbstring, exif, pcntl, bcmath, gd, zip
+          coverage: none
+
+      - name: Install Composer dependencies
+        run: composer install --no-dev --optimize-autoloader --no-interaction --no-progress
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3.10.0
+
+      - name: Build and push app
+        run: |
+          SOKETI_KEY=$(aws ssm get-parameter \
+            --name /srmis/prod/SOKETI_DEFAULT_APP_KEY \
+            --with-decryption \
+            --query Parameter.Value \
+            --output text)
+          docker buildx build --platform linux/amd64 \
+            --progress=plain \
+            --build-arg VITE_STORAGE_BASE_URL=/media \
+            --build-arg VITE_PUSHER_PORT=443 \
+            --build-arg VITE_PUSHER_SCHEME=https \
+            --build-arg VITE_PUSHER_APP_KEY=$SOKETI_KEY \
+            --build-arg VITE_PUSHER_APP_CLUSTER=mt1 \
+            --build-arg VITE_ALLOWED_EMAIL_DOMAIN=pshs.edu.ph \
+            --build-arg VITE_VAPID_PUBLIC_KEY=${{ vars.VITE_VAPID_PUBLIC_KEY }} \
+            -t $ECR/srmis/app:${{ github.sha }} \
+            --push .
+
+      - name: Update ECS task definition and deploy
+        run: |
+          # Get the current task definition used by the service
+          CURRENT_TASK_DEF=$(aws ecs describe-services \
+            --cluster srmis-prod \
+            --services srmis-prod-service \
+            --query 'services[0].taskDefinition' \
+            --output text)
+
+          echo "Current task definition: $CURRENT_TASK_DEF"
+
+          # Fetch its full JSON, then replace the app image URI
+          NEW_TASK_DEF=$(aws ecs describe-task-definition \
+            --task-definition "$CURRENT_TASK_DEF" \
+            --query 'taskDefinition' \
+            --output json | \
+            jq --arg app "$ECR/srmis/app:${{ github.sha }}" \
+            '.containerDefinitions |= map(
+              if (.image | contains("srmis/app")) then .image = $app
+              else . end
+            ) | del(
+              .taskDefinitionArn, .revision, .status,
+              .requiresAttributes, .compatibilities,
+              .registeredAt, .registeredBy
+            )')
+
+          # Register the new revision and capture its ARN
+          NEW_TASK_ARN=$(aws ecs register-task-definition \
+            --cli-input-json "$NEW_TASK_DEF" \
+            --query 'taskDefinition.taskDefinitionArn' \
+            --output text)
+
+          echo "New task definition: $NEW_TASK_ARN"
+
+          # Update the service to use the new revision
+          aws ecs update-service \
+            --cluster srmis-prod \
+            --service srmis-prod-service \
+            --task-definition "$NEW_TASK_ARN" \
+            --force-new-deployment
+
+      - name: Wait for stable deployment
+        run: |
+          for i in $(seq 1 40); do
+            STATUS=$(aws ecs describe-services --cluster srmis-prod --services srmis-prod-service \
+              --query 'services[0].deployments[0].{status:status,running:runningCount,desired:desiredCount}' \
+              --output json)
+            RUNNING=$(echo $STATUS | python3 -c "import sys,json; d=json.load(sys.stdin); print(d['running'])")
+            DESIRED=$(echo $STATUS | python3 -c "import sys,json; d=json.load(sys.stdin); print(d['desired'])")
+            echo "[$i/40] running=$RUNNING desired=$DESIRED"
+            if [ "$RUNNING" = "$DESIRED" ] && [ "$DESIRED" != "0" ]; then
+              echo "Deployment stable."
+              exit 0
+            fi
+            sleep 30
+          done
+          echo "Timeout — service may still be stabilizing." && exit 0

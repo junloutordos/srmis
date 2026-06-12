@@ -1,0 +1,6 @@
+storage/app/db_backups
+storage/logs
+node_modules
+.git
+.env
+public/hot
