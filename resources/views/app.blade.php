@@ -22,7 +22,7 @@
         @vite($viteEntries)
         @inertiaHead
     </head>
-    <body class="font-sans antialiased">
+    <body class="font-sans antialiased bg-white" style="color-scheme: light">
         @inertia
     </body>
 </html>
