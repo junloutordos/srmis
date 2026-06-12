@@ -31,7 +31,6 @@
                 <th class="px-4 py-3 text-left text-xs font-semibold text-slate-500 uppercase tracking-wide whitespace-nowrap">Code</th>
                 <th class="px-4 py-3 text-left text-xs font-semibold text-slate-500 uppercase tracking-wide whitespace-nowrap">Building</th>
                 <th class="px-4 py-3 text-left text-xs font-semibold text-slate-500 uppercase tracking-wide whitespace-nowrap">Floor</th>
-                <th class="px-4 py-3 text-left text-xs font-semibold text-slate-500 uppercase tracking-wide whitespace-nowrap">Section</th>
                 <th class="px-4 py-3 text-left text-xs font-semibold text-slate-500 uppercase tracking-wide whitespace-nowrap">Occupant</th>
                 <th class="px-4 py-3 text-left text-xs font-semibold text-slate-500 uppercase tracking-wide whitespace-nowrap">Capacity</th>
                 <th class="px-4 py-3 text-left text-xs font-semibold text-slate-500 uppercase tracking-wide whitespace-nowrap">Type</th>
@@ -47,7 +46,6 @@
                 <td class="px-4 py-3 text-sm text-slate-700">{{ r.code ?? '—' }}</td>
                 <td class="px-4 py-3 text-sm text-slate-700">{{ r.building?.name ?? '—' }}</td>
                 <td class="px-4 py-3 text-sm text-slate-700">{{ r.floor ?? '—' }}</td>
-                <td class="px-4 py-3 text-sm text-slate-700">{{ r.section_name ?? '—' }}</td>
                 <td class="px-4 py-3 text-sm text-slate-700">{{ r.office?.name ?? '—' }}</td>
                 <td class="px-4 py-3 text-sm text-slate-700">{{ r.capacity ?? '—' }}</td>
                 <td class="px-4 py-3 text-sm text-slate-700">{{ r.room_type ?? '—' }}</td>
@@ -81,7 +79,7 @@
                 <div class="text-xs text-slate-400">ID: {{ r.id }}</div>
                 <div class="text-sm font-semibold text-slate-800">{{ r.name }}</div>
                 <div class="text-xs text-slate-500 mt-1">Code: {{ r.code ?? '—' }} · Building: {{ r.building?.name ?? '—' }}</div>
-                <div class="text-xs text-slate-500">Floor: {{ r.floor ?? '—' }} · Section: {{ r.section_name ?? '—' }}</div>
+                <div class="text-xs text-slate-500">Floor: {{ r.floor ?? '—' }}</div>
                 <div class="text-xs text-slate-500">Occupant: {{ r.office?.name ?? '—' }} · Capacity: {{ r.capacity ?? '—' }}</div>
                 <div class="text-xs text-slate-500">Type: {{ r.room_type ?? '—' }}</div>
               </div>
@@ -174,15 +172,6 @@
               </select>
             </div>
 
-            <div v-if="form.room_type === 'Classroom'">
-              <label class="block text-xs font-medium text-slate-600 mb-1">Section</label>
-              <select v-model="form.section_id"
-                class="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-400">
-                <option value="">Select section</option>
-                <option v-for="s in sectionsList" :key="s.id" :value="s.id">{{ s.name }}</option>
-              </select>
-            </div>
-
             <div>
               <label class="block text-xs font-medium text-slate-600 mb-1">Capacity</label>
               <input v-model.number="form.capacity" type="number" min="0"
@@ -259,7 +248,7 @@ watch(searchQuery, () => { currentPage.value = 1 })
 const showModal = ref(false)
 const editingId = ref(null)
 
-const form = useForm({ name: '', code: '', building_id: '', floor: '', office_id: '', capacity: '', remarks: '', room_type: '', comfort_gender: '', section_id: '' })
+const form = useForm({ name: '', code: '', building_id: '', floor: '', office_id: '', capacity: '', remarks: '', room_type: '', comfort_gender: '' })
 
 const selectedBuilding = computed(() => {
   if (!form.building_id) return null
@@ -284,22 +273,8 @@ function ordinal(n) {
   return n + (s[(v-20)%10] || s[v] || s[0])
 }
 
-const sectionsList = ref([])
-
-async function loadSections() {
-  try {
-    const res = await fetch('/sections?syid=12')
-    if (!res.ok) return
-    sectionsList.value = await res.json()
-  } catch (e) {
-    console.error('Failed to load sections', e)
-  }
-}
-
 watch(() => form.room_type, (val) => {
-  if (val === 'Classroom') loadSections()
   if (val !== 'Admin') form.office_id = ''
-  if (val !== 'Classroom') form.section_id = ''
 })
 
 const openModal = (r = null) => {
@@ -315,11 +290,6 @@ const openModal = (r = null) => {
     form.remarks = r.remarks
     form.room_type = r.room_type ?? ''
     form.comfort_gender = r.comfort_gender ?? ''
-    form.section_id = r.section_id ?? ''
-    if ((r.room_type || '') === 'Classroom') {
-      loadSections()
-      console.log('Opening edit modal for Classroom — loading sections')
-    }
   } else {
     form.reset()
   }

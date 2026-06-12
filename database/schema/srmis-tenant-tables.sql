@@ -268,57 +268,6 @@ CREATE TABLE `rooms` (
   CONSTRAINT `rooms_office_id_foreign` FOREIGN KEY (`office_id`) REFERENCES `offices` (`id`) ON DELETE SET NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
-CREATE TABLE `committees` (
-  `id` bigint unsigned NOT NULL AUTO_INCREMENT,
-  `name` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `code` varchar(30) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT 'Acronym, e.g., ACAD, RDEV, DISC',
-  `committee_type` varchar(40) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'other' COMMENT 'academic|research|student_affairs|administrative|co_curricular|discipline|finance|health_and_safety|other',
-  `head_id` bigint unsigned DEFAULT NULL,
-  `description` text COLLATE utf8mb4_unicode_ci,
-  `max_members` tinyint unsigned DEFAULT NULL COMMENT 'Soft cap on membership (null = unlimited)',
-  `chairperson_title` varchar(80) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'Chairperson',
-  `chairperson_load_units` decimal(4,2) NOT NULL DEFAULT '1.00' COMMENT 'Load units credited for chairperson/co-chair role',
-  `member_load_units` decimal(4,2) NOT NULL DEFAULT '0.50' COMMENT 'Load units credited for regular member role',
-  `is_active` tinyint(1) NOT NULL DEFAULT '1',
-  `created_at` timestamp NULL DEFAULT NULL,
-  `updated_at` timestamp NULL DEFAULT NULL,
-  PRIMARY KEY (`id`),
-  KEY `committees_head_id_foreign` (`head_id`),
-  CONSTRAINT `committees_head_id_foreign` FOREIGN KEY (`head_id`) REFERENCES `users` (`id`) ON DELETE SET NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
-CREATE TABLE `committee_user` (
-  `committee_id` bigint unsigned NOT NULL,
-  `user_id` bigint unsigned NOT NULL,
-  `task` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  PRIMARY KEY (`committee_id`,`user_id`),
-  KEY `committee_user_user_id_foreign` (`user_id`),
-  CONSTRAINT `committee_user_committee_id_foreign` FOREIGN KEY (`committee_id`) REFERENCES `committees` (`id`) ON DELETE CASCADE,
-  CONSTRAINT `committee_user_user_id_foreign` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
-CREATE TABLE `special_assignments` (
-  `id` bigint unsigned NOT NULL AUTO_INCREMENT,
-  `name` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `coordinator_id` bigint unsigned DEFAULT NULL,
-  `description` text COLLATE utf8mb4_unicode_ci,
-  `created_at` timestamp NULL DEFAULT NULL,
-  `updated_at` timestamp NULL DEFAULT NULL,
-  PRIMARY KEY (`id`),
-  KEY `special_assignments_coordinator_id_foreign` (`coordinator_id`),
-  CONSTRAINT `special_assignments_coordinator_id_foreign` FOREIGN KEY (`coordinator_id`) REFERENCES `users` (`id`) ON DELETE SET NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
-CREATE TABLE `special_assignment_user` (
-  `special_assignment_id` bigint unsigned NOT NULL,
-  `user_id` bigint unsigned NOT NULL,
-  `task` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  PRIMARY KEY (`special_assignment_id`,`user_id`),
-  KEY `special_assignment_user_user_id_foreign` (`user_id`),
-  CONSTRAINT `special_assignment_user_special_assignment_id_foreign` FOREIGN KEY (`special_assignment_id`) REFERENCES `special_assignments` (`id`) ON DELETE CASCADE,
-  CONSTRAINT `special_assignment_user_user_id_foreign` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
 CREATE TABLE `units` (
   `id` bigint unsigned NOT NULL AUTO_INCREMENT,
   `name` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,

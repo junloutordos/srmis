@@ -389,13 +389,6 @@ const menuItems = [
         permissions: ["users.manage"],
       },
       {
-        label: "User Roles",
-        routeName: "roles.index",
-        href: route("roles.index"),
-        icon: CursorArrowRippleIcon,
-        permissions: ["roles.assign"],
-      },
-      {
         label: "Roles & Permissions",
         routeName: "admin.roles",
         href: "/admin/roles",
@@ -456,20 +449,6 @@ const menuItems = [
         routeName: "rooms.index",
         href: route("rooms.index"),
         icon: HomeIcon,
-        permissions: ["roles.assign"],
-      },
-      {
-        label: "Committees",
-        routeName: "committees.index",
-        href: route("committees.index"),
-        icon: UserGroupIcon,
-        permissions: ["roles.assign"],
-      },
-      {
-        label: "Special Assignments",
-        routeName: "special-assignments.index",
-        href: route("special-assignments.index"),
-        icon: ClipboardDocumentListIcon,
         permissions: ["roles.assign"],
       },
       {

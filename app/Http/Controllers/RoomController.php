@@ -14,9 +14,7 @@ class RoomController extends Controller
 {
     public function index(Request $request)
     {
-        $q = Room::leftJoin('sections', 'rooms.section_id', '=', 'sections.id')
-            ->select('rooms.*', 'sections.sectionname as section_name')
-            ->with(['building','office'])
+        $q = Room::with(['building', 'office'])
             ->orderBy('rooms.name');
 
         if ($request->has('building_id') && $request->query('building_id')) {
@@ -51,14 +49,13 @@ class RoomController extends Controller
             'building_id' => 'nullable|exists:buildings,id',
             'floor' => 'nullable|integer|min:1',
             'office_id' => 'nullable|exists:offices,id',
-            'section_id' => 'nullable|exists:sections,id',
             'capacity' => 'nullable|integer|min:0',
             'remarks' => 'nullable|string',
             'room_type' => 'nullable|in:Classroom,Admin,Laboratory,Sports/Recreation,Assembly,Comfort Room',
             'comfort_gender' => 'nullable|in:Female,Male,All Gender',
         ]);
 
-        Room::create($request->only(['name','code','building_id','floor','office_id','capacity','remarks','room_type','comfort_gender','section_id']));
+        Room::create($request->only(['name','code','building_id','floor','office_id','capacity','remarks','room_type','comfort_gender']));
 
         return redirect()->route('rooms.index')->with('success', 'Room created');
     }
@@ -71,14 +68,13 @@ class RoomController extends Controller
             'building_id' => 'nullable|exists:buildings,id',
             'floor' => 'nullable|integer|min:1',
             'office_id' => 'nullable|exists:offices,id',
-            'section_id' => 'nullable|exists:sections,id',
             'capacity' => 'nullable|integer|min:0',
             'remarks' => 'nullable|string',
             'room_type' => 'nullable|in:Classroom,Admin,Laboratory,Sports/Recreation,Assembly,Comfort Room',
             'comfort_gender' => 'nullable|in:Female,Male,All Gender',
         ]);
 
-        $room->update($request->only(['name','code','building_id','floor','office_id','capacity','remarks','room_type','comfort_gender','section_id']));
+        $room->update($request->only(['name','code','building_id','floor','office_id','capacity','remarks','room_type','comfort_gender']));
 
         return redirect()->route('rooms.index')->with('success', 'Room updated');
     }

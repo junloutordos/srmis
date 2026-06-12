@@ -112,16 +112,6 @@ Route::middleware(['auth', 'permission:roles.assign'])->group(function () {
     Route::post('/data-management/rooms', [App\Http\Controllers\RoomController::class, 'store'])->name('rooms.store');
     Route::put('/data-management/rooms/{room}', [App\Http\Controllers\RoomController::class, 'update'])->name('rooms.update');
     Route::delete('/data-management/rooms/{room}', [App\Http\Controllers\RoomController::class, 'destroy'])->name('rooms.destroy');
-    // Committees
-    Route::get('/data-management/committees', [App\Http\Controllers\CommitteeController::class, 'index'])->name('committees.index');
-    Route::post('/data-management/committees', [App\Http\Controllers\CommitteeController::class, 'store'])->name('committees.store');
-    Route::put('/data-management/committees/{committee}', [App\Http\Controllers\CommitteeController::class, 'update'])->name('committees.update');
-    Route::delete('/data-management/committees/{committee}', [App\Http\Controllers\CommitteeController::class, 'destroy'])->name('committees.destroy');
-    // Special Assignments
-    Route::get('/data-management/special-assignments', [App\Http\Controllers\SpecialAssignmentController::class, 'index'])->name('special-assignments.index');
-    Route::post('/data-management/special-assignments', [App\Http\Controllers\SpecialAssignmentController::class, 'store'])->name('special-assignments.store');
-    Route::put('/data-management/special-assignments/{specialAssignment}', [App\Http\Controllers\SpecialAssignmentController::class, 'update'])->name('special-assignments.update');
-    Route::delete('/data-management/special-assignments/{specialAssignment}', [App\Http\Controllers\SpecialAssignmentController::class, 'destroy'])->name('special-assignments.destroy');
     // Campuses
     Route::get('/data-management/campuses', [App\Http\Controllers\DataManagement\CampusController::class, 'index'])->name('campuses.index');
     Route::post('/data-management/campuses', [App\Http\Controllers\DataManagement\CampusController::class, 'store'])->name('campuses.store');
@@ -458,11 +448,6 @@ Route::middleware(['auth', 'allowed.domain'])->group(function () {
         Route::post('users/{user}/upload-signature', [UserController::class, 'uploadSignature'])->name('users.upload_signature')->middleware('permission:users.manage');
         Route::get('/users/inactive', [UserController::class, 'inactiveIndex'])->name('users.inactive')->middleware('permission:users.manage');
         Route::post('/users/{id}/activate', [UserController::class, 'activate'])->name('users.activate')->middleware('permission:users.manage');
-
-        Route::get('/users-roles', [RolesController::class, 'index'])->name('roles.index');
-        Route::post('users-roles', [RolesController::class, 'store'])->name('roles.store')->middleware('permission:roles.assign');
-        Route::put('users-roles/{id}', [RolesController::class, 'update'])->name('roles.update')->middleware('permission:roles.assign');
-        Route::delete('users-roles/{id}', [RolesController::class, 'destroy'])->name('roles.destroy')->middleware('permission:roles.assign');
 
         Route::get('/users-division', [RolesController::class, 'showDivisions'])->name('roles.divisions');
         Route::post('users-divisions', [RolesController::class, 'storeDivision'])->name('roles.divisions_store')->middleware('permission:roles.assign');
