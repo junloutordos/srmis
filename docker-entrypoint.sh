@@ -28,6 +28,13 @@ chown -R www-data:www-data \
     /var/www/storage \
     /var/www/bootstrap/cache
 
+# ── Ensure the central database exists (fresh RDS has none) ──────────────────
+if [ -n "$DB_HOST" ] && [ -n "$DB_DATABASE" ]; then
+    mysql -h "$DB_HOST" -u "$DB_USERNAME" -p"$DB_PASSWORD" \
+        -e "CREATE DATABASE IF NOT EXISTS \`$DB_DATABASE\` CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;" \
+        || echo "WARN: could not ensure central database exists"
+fi
+
 # ── Laravel bootstrap ─────────────────────────────────────────────────────────
 php /var/www/artisan cache:clear
 # Central schema first (tenants/domains/settings), then every tenant schema.
