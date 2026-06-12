@@ -99,3 +99,18 @@ from the login email). Isolation re-verified under the new model:
   their own schemas; `@pshssystem.edu.ph` → OED special-case works;
   unrecognised domains get a 422 at login; the Staff 403 matrix and per-tenant
   module toggles behave identically to the subdomain build.
+
+
+## Addendum — module trims (2026-06-12, post-conversion)
+
+Removed at the owner's direction, with RBAC cleaned up in lockstep:
+
+- **User Roles** legacy page (duplicate of Roles & Permissions), **Committees**
+  and **Special Assignments** (fed the unextracted PM module) — routes,
+  controllers, models, pages and their 4 tables dropped.
+- **Messengerial** and **Assets** — routes, controllers, models, mails,
+  pages, 3 tables dropped. The `messengerial.*` and `documents.*` permissions
+  were deleted from the catalog and from live schemas, and the **Records role
+  was removed** (it existed solely for messengerial proof-of-delivery).
+  Approval Inbox, Dashboard, CSM feedback and the sidebar badge map were
+  excised of the messengerial type; remaining request types verified intact.

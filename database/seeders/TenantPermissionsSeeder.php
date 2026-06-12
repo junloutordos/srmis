@@ -38,15 +38,8 @@ class TenantPermissionsSeeder extends Seeder
             ['module' => 'GeneralServices', 'name' => 'facilities.manage',      'description' => 'Manage facilities, assets and request lifecycle'],
             ['module' => 'GeneralServices', 'name' => 'facilities.dc-approve',  'description' => 'Approve facility/work/service requests as Division Chief'],
             ['module' => 'GeneralServices', 'name' => 'facilities.fad-approve', 'description' => 'Approve facility/work/service requests as FAD Chief'],
-            ['module' => 'GeneralServices', 'name' => 'facilities.ocd-approve', 'description' => 'Approve facility requests and messengerial as OCD'],
+            ['module' => 'GeneralServices', 'name' => 'facilities.ocd-approve', 'description' => 'Approve facility requests as OCD'],
 
-            // ── General Services — Messengerial ──────────────────────────────
-            ['module' => 'GeneralServices', 'name' => 'messengerial.view',        'description' => 'View own messengerial requests'],
-            ['module' => 'GeneralServices', 'name' => 'messengerial.manage',      'description' => 'Manage all messengerial requests'],
-            ['module' => 'GeneralServices', 'name' => 'messengerial.dc-approve',  'description' => 'Approve messengerial requests as Division Chief'],
-            ['module' => 'GeneralServices', 'name' => 'messengerial.ocd-approve', 'description' => 'Approve messengerial requests as OCD'],
-            ['module' => 'GeneralServices', 'name' => 'documents.view',           'description' => 'View routed documents (messengerial)'],
-            ['module' => 'GeneralServices', 'name' => 'documents.approve',        'description' => 'Upload proof of delivery for messengerial requests'],
 
             // ── Reports ──────────────────────────────────────────────────────
             ['module' => 'Reports', 'name' => 'reports.view',   'description' => 'Access the Reports module'],

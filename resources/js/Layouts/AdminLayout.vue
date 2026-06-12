@@ -203,8 +203,6 @@ const getBadge = (child) => {
       return toBadgeInt(page.props.vehicleRequestsNotificationCount);
     case 'gatepass.index':
       return toBadgeInt(page.props.gatepassNotificationCount);
-    case 'messengerial.index':
-      return toBadgeInt(page.props.messengerialRequestsNotificationCount);
     case 'facility-requests.index':
       return toBadgeInt(page.props.facilityRequestsNotificationCount);
     case 'service-requests.index':
@@ -512,7 +510,7 @@ const menuItems = [
   {
     label: "General Services",
     icon: WrenchScrewdriverIcon,
-    permissions: ["vehicles.view", "facilities.view", "messengerial.view"],
+    permissions: ["vehicles.view", "facilities.view"],
     children: [
       {
         label: "Vehicle Request",
@@ -541,20 +539,6 @@ const menuItems = [
         href: route("work-requests.index"),
         icon: ClipboardDocumentListIcon,
         permissions: ["facilities.view"],
-      },
-      {
-        label: "Messengerial",
-        routeName: "messengerial.index",
-        href: route("messengerial.index"),
-        icon: ClipboardDocumentListIcon,
-        permissions: ["messengerial.view"],
-      },
-      {
-        label: "Assets",
-        routeName: "assets.index",
-        href: route("assets.index"),
-        icon: ArchiveBoxIcon,
-        permissions: ["facilities.manage"],
       },
     ],
   },

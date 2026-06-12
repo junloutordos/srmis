@@ -7,7 +7,6 @@ use App\Models\VehicleRequest;
 use App\Models\FacilityRequest;
 use App\Models\WorkRequest;
 use App\Models\ServiceRequest;
-use App\Models\MessengerialRequest;
 use App\Models\Division;
 use App\Models\User;
 use Illuminate\Support\Facades\DB;
@@ -133,15 +132,6 @@ class ApprovalInboxService
                 ->values()->all();
             $this->addTab($tabs, 'service_requests', 'Service Requests', $srItems);
 
-            // Messengerial Requests
-            $mrQuery = MessengerialRequest::where('status', 'Pending Division Chief Approval');
-            if (! $isAdmin) {
-                $mrQuery->where('division_chief_id', $user->id);
-            }
-            $mrItems = $mrQuery->latest()->get()
-                ->map(fn($r) => $this->normaliseMessengerialRequest($r))
-                ->values()->all();
-            $this->addTab($tabs, 'messengerial_requests', 'Messengerial Requests', $mrItems);
 
             // Gate Passes (raw DB — no Eloquent model)
         }
@@ -199,9 +189,6 @@ class ApprovalInboxService
                 ->map(fn($r) => $this->normaliseFacilityRequest($r))->values()->all();
             $this->mergeOrAddTab($tabs, 'facility_requests', 'Facility Requests', $frOCD);
 
-            // Messengerial: OCD acts as Division Chief for OCD-division requestors only.
-            // Those requests are already covered by the DC block (division_chief_id = $user->id).
-            // No separate OCD messengerial queue here.
 
         }
 
@@ -441,43 +428,6 @@ class ApprovalInboxService
         ];
     }
 
-    private function normaliseMessengerialRequest(MessengerialRequest $r): array
-    {
-        $deliveryMethods = is_array($r->delivery_methods) ? implode(', ', $r->delivery_methods) : ($r->delivery_methods ?? '—');
-        $kinds = is_array($r->messengerial_kinds) ? implode(', ', $r->messengerial_kinds) : ($r->messengerial_kinds ?? '—');
-
-        return [
-            'id'             => $r->id,
-            'type'           => 'messengerial_requests',
-            'reference_no'   => $r->reference_no ?? "#{$r->id}",
-            'requester_name' => $r->requestor ?? '—',
-            'filed_at'       => $r->created_at?->toISOString(),
-            'status'         => $r->status,
-            'summary'        => $r->purpose ?? '—',
-            'sections'       => [
-                [
-                    'title'  => 'Request Details',
-                    'fields' => [
-                        ['label' => 'Reference No.',    'value' => $r->reference_no ?? '—'],
-                        ['label' => 'Purpose',          'value' => $r->purpose ?? '—', 'full' => true],
-                        ['label' => 'Destination',      'value' => $r->destination ?? '—', 'full' => true],
-                        ['label' => 'Delivery Method',  'value' => $deliveryMethods],
-                        ['label' => 'Item Kind',        'value' => $kinds],
-                        ['label' => 'Status',           'value' => $r->status],
-                        ['label' => 'Filed At',         'value' => $r->created_at?->format('M d, Y h:i A')],
-                    ],
-                ],
-                [
-                    'title'  => 'Consignee',
-                    'fields' => [
-                        ['label' => 'Name',    'value' => $r->consignee_name ?? '—'],
-                        ['label' => 'Contact', 'value' => $r->consignee_contact ?? '—'],
-                        ['label' => 'Email',   'value' => $r->consignee_email ?? '—'],
-                    ],
-                ],
-            ],
-        ];
-    }
 
 
 }

@@ -50,7 +50,7 @@ class ApprovalStep
     const DV_CASHIER          = 'dv_cashier';           // seq 5
     const DV_OCD_PAYMENT      = 'dv_ocd_payment';       // seq 6
 
-    // ── Service Requests (Vehicle, Work, Service, Messengerial) ───────────────
+    // ── Service Requests (Vehicle, Work, Service) ─────────────────────────────
     const REQ_DIVISION_CHIEF = 'division_chief';   // seq 1
     const REQ_GSU            = 'gsu_head';         // seq 2
     const REQ_FAD            = 'fad';              // seq 3

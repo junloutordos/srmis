@@ -38,11 +38,6 @@ class CsmResponseController extends Controller
             'requester_fk' => 'requestor_id',
             'post_status'  => 'Completed',
         ],
-        'messengerial-request' => [
-            'class'        => \App\Models\MessengerialRequest::class,
-            'requester_fk' => 'user_id',
-            'post_status'  => 'Rated',
-        ],
     ];
 
     public function store(Request $request)

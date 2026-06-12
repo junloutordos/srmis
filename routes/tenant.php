@@ -250,8 +250,6 @@ Route::middleware(['auth', 'allowed.domain'])->group(function () {
     Route::middleware('permission:facilities.ocd-approve')->group(function () {
         Route::get('/facility-requests/ocd-approval', [\App\Http\Controllers\FacilityRequestController::class, 'ocdApproval'])->name('facility-requests.ocd-approval');
         Route::post('/facility-requests/{facilityRequest}/ocd-action', [\App\Http\Controllers\FacilityRequestController::class, 'ocdAction'])->name('facility-requests.ocd-action');
-        Route::get('/messengerial/ocd-approval', [\App\Http\Controllers\MessengerialController::class, 'ocdApproval'])->name('messengerial.ocd-approval');
-        Route::post('/messengerial/{messengerialRequest}/ocd-action', [\App\Http\Controllers\MessengerialController::class, 'ocdAction'])->name('messengerial.ocd-action');
     });
 
     // ── Vehicle Requests ──────────────────────────────────────────────────────
@@ -386,40 +384,7 @@ Route::middleware(['auth', 'allowed.domain'])->group(function () {
     Route::get('/service-requests/{serviceRequest}/print', [\App\Http\Controllers\ServiceRequestController::class, 'printTicket'])
         ->name('service-requests.print')->middleware('permission:facilities.manage');
 
-    // ── Messengerial Requests ─────────────────────────────────────────────────
-    Route::get('/messengerial', [\App\Http\Controllers\MessengerialController::class, 'index'])->name('messengerial.index');
-    Route::post('/messengerial', [\App\Http\Controllers\MessengerialController::class, 'store'])->name('messengerial.store');
-    Route::put('/messengerial/{messengerialRequest}', [\App\Http\Controllers\MessengerialController::class, 'update'])->name('messengerial.update');
-    Route::delete('/messengerial/{messengerialRequest}', [\App\Http\Controllers\MessengerialController::class, 'destroy'])->name('messengerial.destroy');
 
-    Route::middleware('permission:messengerial.dc-approve')->group(function () {
-        Route::get('/messengerial/for-approval', [\App\Http\Controllers\MessengerialController::class, 'forApproval'])
-            ->name('messengerial.for-approval');
-        Route::post('/messengerial/{messengerialRequest}/division-chief-action', [\App\Http\Controllers\MessengerialController::class, 'divisionChiefAction'])
-            ->name('messengerial.division-chief-action');
-    });
-
-    Route::get('/messengerial/{messengerialRequest}/approve/{chief}', [\App\Http\Controllers\MessengerialController::class, 'approveByDivisionChief'])
-        ->name('messengerial.approve')->middleware(['signed']);
-    Route::get('/messengerial/{messengerialRequest}/decline/{chief}', [\App\Http\Controllers\MessengerialController::class, 'showDeclineForm'])
-        ->name('messengerial.decline')->middleware(['signed']);
-    Route::post('/messengerial/{messengerialRequest}/decline/{chief}', [\App\Http\Controllers\MessengerialController::class, 'submitDecline'])
-        ->name('messengerial.decline.submit')->middleware(['signed']);
-
-    Route::get('/messengerial/{messengerialRequest}/print', [\App\Http\Controllers\MessengerialController::class, 'printTicket'])
-        ->name('messengerial.print');
-    Route::post('/messengerial/{messengerialRequest}/upload-proof', [\App\Http\Controllers\MessengerialController::class, 'uploadProof'])
-        ->name('messengerial.upload_proof')->middleware('permission:documents.approve');
-    Route::get('/messengerial/{messengerialRequest}/proof', [\App\Http\Controllers\MessengerialController::class, 'viewProof'])
-        ->name('messengerial.proof');
-
-    // ── Assets ────────────────────────────────────────────────────────────────
-    Route::middleware('permission:facilities.manage')->group(function () {
-        Route::get('/assets', [\App\Http\Controllers\AssetController::class, 'index'])->name('assets.index');
-        Route::post('/assets', [\App\Http\Controllers\AssetController::class, 'store'])->name('assets.store');
-        Route::put('/assets/{asset}', [\App\Http\Controllers\AssetController::class, 'update'])->name('assets.update');
-        Route::delete('/assets/{asset}', [\App\Http\Controllers\AssetController::class, 'destroy'])->name('assets.destroy');
-    });
 
     // ── Vehicles & Facilities masters ─────────────────────────────────────────
     Route::middleware('permission:vehicles.manage')->group(function () {

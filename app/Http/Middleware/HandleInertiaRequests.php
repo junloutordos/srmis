@@ -8,7 +8,6 @@ use Illuminate\Support\Facades\Storage;
 use Inertia\Middleware;
 use App\Models\ITJobRequest;
 use App\Models\VehicleRequest;
-use App\Models\MessengerialRequest;
 use App\Models\FacilityRequest;
 use App\Models\ServiceRequest;
 use App\Models\WorkRequest;
@@ -114,20 +113,6 @@ class HandleInertiaRequests extends Middleware
                     $cacheKey = 'badge.vehicles.u' . $user->id;
                     return Cache::remember($cacheKey, 60, function () use ($user) {
                         return VehicleRequest::where('status', 'Pending')->where('requestor_id', $user->id)->count();
-                    });
-                } catch (\Throwable $e) { return 0; }
-            },
-            'messengerialRequestsNotificationCount' => function () use ($request) {
-                try {
-                    $user = $request->user();
-                    if (!$user) return 0;
-                    $cacheKey = 'badge.messengerial.u' . $user->id;
-                    return Cache::remember($cacheKey, 60, function () use ($user) {
-                        if ($user->hasPermission('messengerial.manage')) {
-                            return MessengerialRequest::whereNotIn('status', ['Completed', 'Declined'])->count();
-                        }
-                        return MessengerialRequest::where('email', $user->email)
-                            ->whereNotIn('status', ['Completed', 'Declined'])->count();
                     });
                 } catch (\Throwable $e) { return 0; }
             },

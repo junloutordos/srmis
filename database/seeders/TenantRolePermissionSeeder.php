@@ -38,11 +38,10 @@ class TenantRolePermissionSeeder extends Seeder
             'vehicles.view',        // file/track own vehicle requests
             'facilities.view',      // view facility/work/service requests
             'facilities.create',    // file facility/work/service requests
-            'messengerial.view',    // file/track own messengerial requests
             'chat.access',
             'org.view',
         ];
-        foreach (['MIS', 'DivisionChief', 'FAD Chief', 'GSU Head', 'OCD', 'Records', 'Faculty', 'Staff', 'Driver'] as $role) {
+        foreach (['MIS', 'DivisionChief', 'FAD Chief', 'GSU Head', 'OCD', 'Faculty', 'Staff', 'Driver'] as $role) {
             $assign($role, $baseline);
         }
 
@@ -58,7 +57,6 @@ class TenantRolePermissionSeeder extends Seeder
         $assign('DivisionChief', [
             'vehicles.dc-approve',
             'facilities.dc-approve',
-            'messengerial.dc-approve',
             'org.view_all', 'org.export', 'org.reports', 'org.versions.view',
         ]);
 
@@ -78,15 +76,9 @@ class TenantRolePermissionSeeder extends Seeder
         $assign('OCD', [
             'vehicles.ocd-approve',
             'facilities.ocd-approve',
-            'messengerial.ocd-approve',
             'org.view_all', 'org.export', 'org.reports', 'org.versions.view',
         ]);
 
-        // ── Records — messengerial processing & proof of delivery ────────────
-        $assign('Records', [
-            'messengerial.manage',
-            'documents.view', 'documents.approve',
-        ]);
 
         $this->command?->info('Role permissions mapped.');
     }

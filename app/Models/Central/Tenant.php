@@ -39,7 +39,7 @@ class Tenant extends BaseTenant implements TenantWithDatabase
     /** The modules SRMIS ships with — used by the wizard / central admin UI. */
     public const MODULES = [
         'mis'               => 'MIS (IT Job Requests, ICT Equipment, PMS, CSM Feedback)',
-        'general-services'  => 'General Services (Vehicle, Facility, Work, Service, Messengerial, Assets)',
+        'general-services'  => 'General Services (Vehicle, Facility, Work, Service requests)',
         'data-management'   => 'Data Management (Users, Roles, Org Structure, Offices, Buildings, Rooms)',
         'approval-inbox'    => 'Unified Approval Inbox',
         'reports'           => 'Reports & Audit Logs',

@@ -12,7 +12,6 @@ use App\Models\VehicleRequest;
 use App\Models\FacilityRequest;
 use App\Models\ServiceRequest;
 use App\Models\WorkRequest;
-use App\Models\MessengerialRequest;
 use Carbon\Carbon;
 
 class DashboardController extends Controller
@@ -132,12 +131,6 @@ class DashboardController extends Controller
                     'pending'   => WorkRequest::whereIn('status', ['Pending', 'GSU Approved', 'FAD Approved'])->count(),
                     'completed' => WorkRequest::where('status', 'Completed')->count(),
                     'total'     => WorkRequest::count(),
-                ],
-                [
-                    'label'     => 'Messengerial',
-                    'pending'   => MessengerialRequest::where('status', 'Pending')->count(),
-                    'completed' => MessengerialRequest::where('status', 'Completed')->count(),
-                    'total'     => MessengerialRequest::count(),
                 ],
             ];
             $totalPendingRequests = (int) collect($requestOverview)->sum('pending');

@@ -9,7 +9,6 @@ use App\Models\VehicleRequest;
 use App\Models\FacilityRequest;
 use App\Models\WorkRequest;
 use App\Models\ServiceRequest;
-use App\Models\MessengerialRequest;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
@@ -22,7 +21,6 @@ class ApprovalInboxController extends Controller
         'facility_requests',
         'work_requests',
         'service_requests',
-        'messengerial_requests',
     ];
 
     /**
@@ -161,10 +159,6 @@ class ApprovalInboxController extends Controller
                 if (! $record) abort(404);
                 return [ServiceRequest::class, $record];
 
-            case 'messengerial_requests':
-                $record = MessengerialRequest::find($id);
-                if (! $record) abort(404);
-                return [MessengerialRequest::class, $record];
 
         }
 
@@ -237,10 +231,6 @@ class ApprovalInboxController extends Controller
                 if ($isFAD) break;
                 abort(403);
 
-            case 'messengerial_requests':
-                if (($isDC || $isOCD) && (int) ($record->division_chief_id ?? 0) === (int) $user->id) break;
-                if ($user->hasRole('Administrator')) break;
-                abort(403);
 
         }
     }
@@ -256,7 +246,6 @@ class ApprovalInboxController extends Controller
             'facility_requests'    => ['Pending', 'Pending FAD Approval', 'Pending OCD Approval'],
             'work_requests'        => ['Pending', 'GSU Approved', 'Pending FAD Approval'],
             'service_requests'     => ['Pending', 'Approved'],
-            'messengerial_requests'=> ['Pending Division Chief Approval'],
         ];
 
         $allowed = $pendingStatuses[$type] ?? [];
@@ -326,11 +315,6 @@ class ApprovalInboxController extends Controller
                 return app(\App\Http\Controllers\ServiceRequestController::class)
                     ->fadAction($request, $record);
 
-            case 'messengerial_requests':
-                $request->merge(['action' => 'approve']);
-                // OCD acts as Division Chief for OCD-division requestors — always use divisionChiefAction
-                return app(\App\Http\Controllers\MessengerialController::class)
-                    ->divisionChiefAction($request, $record);
 
         }
 
@@ -393,11 +377,6 @@ class ApprovalInboxController extends Controller
                 return app(\App\Http\Controllers\ServiceRequestController::class)
                     ->fadAction($request, $record);
 
-            case 'messengerial_requests':
-                $request->merge(['action' => 'reject']);
-                // OCD acts as Division Chief for OCD-division requestors — always use divisionChiefAction
-                return app(\App\Http\Controllers\MessengerialController::class)
-                    ->divisionChiefAction($request, $record);
 
         }
 

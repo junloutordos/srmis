@@ -3,7 +3,7 @@
 ## Project Overview
 SRMIS is a standalone, multi-tenant Laravel application extracted from the CRCMIS/BugSayMis monolith. It serves the Office of the Executive Director (OED) and all 16 PSHS campuses on ONE shared domain — the campus is detected from the user's email at login — with each campus isolated in its own database schema.
 
-**Modules:** MIS (IT Job Requests, ICT Equipment, ICT PMS, CSM Feedback), General Services (Vehicle / Facility / Work / Service / Messengerial requests, Assets), Data Management (Users, Roles & Permissions, Divisions, Offices, Org Structure, Buildings, Campuses, Rooms), Approval Inbox, Reports (Audit Logs), Chat, Digital Signature.
+**Modules:** MIS (IT Job Requests, ICT Equipment, ICT PMS, CSM Feedback), General Services (Vehicle / Facility / Work / Service requests), Data Management (Users, Roles & Permissions, Divisions, Offices, Org Structure, Buildings, Campuses, Rooms), Approval Inbox, Reports (Audit Logs), Chat, Digital Signature.
 
 ## Tech Stack
 | Layer | Technology |
@@ -25,7 +25,7 @@ SRMIS is a standalone, multi-tenant Laravel application extracted from the CRCMI
 - **Central plane**: `/setup` wizard (404s after install) + `/system/*` superadmin panel (guard `central` → `central_users` → `App\Models\Central\CentralUser`). Tenant RBAC pages keep `/admin/*`. `HandleInertiaRequests` shares central users as guest (they have no roles relations) and shares `campus` ({id,name,code}) for the sidebar badge.
 - **Tenant model**: `App\Models\Central\Tenant` — id = campus slug = schema suffix (`srmis_crc`) = email subdomain. Module toggles live in the `data` JSON (virtual `modules` attribute; domains table unused).
 - **Provisioning**: `Tenant::create()` fires CreateDatabase → MigrateDatabase (`database/migrations/tenant/`) → SeedDatabase (`TenantDatabaseSeeder`).
-- **Tenant baseline schema**: `database/schema/srmis-tenant-tables.sql` (50 tables, extracted from the monolith), executed by the first tenant migration. **Never rename this file to `tenant-schema.sql`** — Laravel would treat it as a squashed schema dump for the `tenant` connection and try to load it with the `mysql` CLI.
+- **Tenant baseline schema**: `database/schema/srmis-tenant-tables.sql` (47 tables, extracted from the monolith), executed by the first tenant migration. **Never rename this file to `tenant-schema.sql`** — Laravel would treat it as a squashed schema dump for the `tenant` connection and try to load it with the `mysql` CLI.
 - **Per-tenant isolation**: DB (schema), cache (custom `PrefixCacheTenancyBootstrapper` — prefix-based so the database store works), S3 (root override `tenants/%tenant%`), queue (stancl QueueTenancyBootstrapper).
 - **Wizard-saved settings** (S3/WebSocket creds, encrypted at rest in `instance_settings`) are applied to runtime config by `InstanceConfigServiceProvider`.
 - **ALLOWED_EMAIL_DOMAIN is a comma list**: `pshs.edu.ph,pshssystem.edu.ph` (subdomains of each accepted). The Firebase `hd` account-chooser hint is skipped when the list has multiple domains.
@@ -61,7 +61,7 @@ ECS Fargate (`srmis-prod` / `srmis-prod-service`, ap-southeast-1), single contai
 ## RBAC
 - Tenant-scoped tables: `roles`, `permissions`, `role_user`, `permission_role`.
 - Catalog: `TenantPermissionsSeeder` (+ `OrgStructurePermissionsSeeder`); grants: `TenantRolePermissionSeeder`; roles: `TenantRolesSeeder`.
-- Roles: Administrator (superadmin bypass), MIS, DivisionChief, FAD Chief, GSU Head, OCD, Records, Faculty, Staff, Driver.
+- Roles: Administrator (superadmin bypass), MIS, DivisionChief, FAD Chief, GSU Head, OCD, Faculty, Staff, Driver.
 - Audit record of all gaps found/closed during extraction: `docs/RBAC-AUDIT.md`.
 - Module gating: `EnsureModuleEnabled` infers module from path on every tenant request; explicit form `->middleware('module:chat')` also available.
 

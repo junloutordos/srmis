@@ -21,7 +21,6 @@ class TenantRolesSeeder extends Seeder
             ['name' => 'FAD Chief',     'description' => 'Finance and Administrative Division Chief. Approves facility, work, and service requests.'],
             ['name' => 'GSU Head',      'description' => 'General Services Unit Head. Assigns drivers and completes work requests.'],
             ['name' => 'OCD',           'description' => 'Office of the Campus Director. Final-stage approver.'],
-            ['name' => 'Records',       'description' => 'Records officer. Handles messengerial requests and proof of delivery.'],
             ['name' => 'Faculty',       'description' => 'Teaching staff. Files service requests and uses chat.'],
             ['name' => 'Staff',         'description' => 'Non-teaching staff. Files service requests and uses chat.'],
             ['name' => 'Driver',        'description' => 'Campus driver assigned to approved vehicle requests.'],

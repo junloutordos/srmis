@@ -42,8 +42,6 @@ class EnsureModuleEnabled
         'facilities'         => 'general-services',
         'work-requests'      => 'general-services',
         'service-requests'   => 'general-services',
-        'messengerial'       => 'general-services',
-        'assets'             => 'general-services',
 
         // Data Management
         'data-management'    => 'data-management',
