@@ -337,7 +337,6 @@ const modules = [
         </form>
 
         <p class="mt-5 text-center text-xs leading-relaxed text-slate-400">
-          Your campus is detected automatically from your email address.<br />
           Need access? Contact your campus administrator.
         </p>
       </div>
