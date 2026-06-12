@@ -47,7 +47,8 @@ function provisionAllPresets() {
 const savingModules = ref(null)
 
 function isEnabled(tenant, moduleKey) {
-  return !(moduleKey in tenant.modules) || !!tenant.modules[moduleKey]
+  const mods = tenant.modules || {}
+  return !(moduleKey in mods) || !!mods[moduleKey]
 }
 
 function toggleModule(tenant, moduleKey) {

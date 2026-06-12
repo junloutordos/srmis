@@ -155,7 +155,7 @@ class TenantController extends Controller
                 ? config('app.oed_email_domain')
                 : $t->id . '.' . config('app.campus_email_base_domain'),
             'schema'       => config('tenancy.database.prefix') . $t->id,
-            'modules'      => $t->modules,
+            'modules'      => (array) ($t->modules ?? []),
             'created_at'   => $t->created_at?->toDateTimeString(),
         ])->all();
     }
