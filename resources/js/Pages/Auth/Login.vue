@@ -342,9 +342,17 @@ const modules = [
         </p>
       </div>
 
-      <p class="mt-6 text-[11px] text-slate-300">
-        SRMIS v{{ appVersion }} · Philippine Science High School System
-      </p>
+      <div class="mt-6 text-center">
+        <p class="text-[11px] text-slate-300">
+          SRMIS v{{ appVersion }} · Philippine Science High School System
+        </p>
+        <p class="mt-1 text-[11px] text-slate-400">
+          Developed by the PSHS-CRC MIS Team
+        </p>
+        <a href="/developer" class="mt-0.5 inline-block text-[11px] font-medium text-indigo-400 hover:text-indigo-600">
+          Meet the developers →
+        </a>
+      </div>
     </div>
   </div>
 </template>

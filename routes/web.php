@@ -25,6 +25,9 @@ Route::get('/health', fn () => response()->json(['status' => 'ok']))->name('heal
 // Root — wizard when not installed, otherwise the campus login page
 Route::get('/', [\App\Http\Controllers\Central\LandingController::class, 'index'])->name('central.landing');
 
+// Development team page — public, no auth, no tenant context needed
+Route::get('/developer', fn () => inertia('Developer'))->name('developer');
+
 /*
 |--------------------------------------------------------------------------
 | First-run Setup Wizard
