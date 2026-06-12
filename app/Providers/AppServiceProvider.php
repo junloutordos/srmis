@@ -19,7 +19,24 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        //
+        // Swap the URL generator for one that embeds the current tenant in
+        // signed URLs (single-domain tenancy — see TenantAwareUrlGenerator).
+        $this->app->extend('url', function ($url, $app) {
+            $generator = new \App\Tenancy\TenantAwareUrlGenerator(
+                $app['router']->getRoutes(),
+                $app->rebinding('request', fn ($app, $request) => $app['url']->setRequest($request)),
+                $app['config']['app.asset_url'],
+            );
+
+            $generator->setSessionResolver(fn () => $app['session'] ?? null);
+            $generator->setKeyResolver(function () use ($app) {
+                $config = $app->make('config');
+
+                return [$config->get('app.key'), ...($config->get('app.previous_keys') ?? [])];
+            });
+
+            return $generator;
+        });
     }
 
     /**

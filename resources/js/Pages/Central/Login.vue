@@ -67,7 +67,7 @@ function submit() {
       </form>
 
       <p class="mt-6 text-center text-xs text-indigo-300/60">
-        Campus users sign in on their campus subdomain, not here.
+        Campus users sign in at the main login page — this page is for the system superadmin only.
       </p>
     </div>
   </div>

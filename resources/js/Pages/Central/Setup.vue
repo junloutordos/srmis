@@ -157,11 +157,12 @@ function skipStep() {
         <div v-else-if="steps[current].key === 'domain'">
           <h2 class="text-lg font-bold text-slate-800">Instance Domain</h2>
           <p class="mt-1 text-sm text-slate-500">
-            The central domain of this SRMIS instance. Each campus is served on a subdomain
-            (e.g. <span class="font-mono">oed.srmis.pshs.edu.ph</span>, <span class="font-mono">crc.srmis.pshs.edu.ph</span>),
-            so the Cloudflare SSL certificate must cover <span class="font-mono">*.{{ domain || 'your-domain' }}</span>.
+            The single domain every campus and the OED will use (a standard SSL certificate
+            is enough — no wildcard needed). At sign-in, each user's campus is detected from
+            their email address: <span class="font-mono">@crc.pshs.edu.ph</span> → CRC,
+            <span class="font-mono">@pshssystem.edu.ph</span> → OED.
           </p>
-          <label class="block text-sm font-medium text-slate-700 mt-4 mb-1">Central domain</label>
+          <label class="block text-sm font-medium text-slate-700 mt-4 mb-1">Domain</label>
           <input v-model="domain" type="text" placeholder="srmis.pshs.edu.ph"
             class="rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 w-full" />
         </div>
@@ -264,9 +265,10 @@ function skipStep() {
         <div v-else-if="steps[current].key === 'tenants'">
           <h2 class="text-lg font-bold text-slate-800">Campus Tenants</h2>
           <p class="mt-1 text-sm text-slate-500">
-            Each selected campus gets its own database schema
-            (<span class="font-mono">srmis_&lt;slug&gt;</span>) and subdomain. Untick modules a
-            campus should not see — you can change this anytime from the admin panel.
+            Each selected campus gets its own isolated database schema
+            (<span class="font-mono">srmis_&lt;slug&gt;</span>); users reach it through the
+            shared domain and are routed by their campus email. Untick modules a campus
+            should not see — you can change this anytime from the admin panel.
           </p>
 
           <div class="mt-4 max-h-96 overflow-y-auto rounded-lg border border-slate-200 divide-y divide-slate-100">
@@ -275,7 +277,7 @@ function skipStep() {
                 <input v-model="t.selected" type="checkbox" class="rounded border-slate-300 text-indigo-600 focus:ring-indigo-500" />
                 <span class="flex-1">
                   <span class="block text-sm font-medium text-slate-800">{{ t.name }}</span>
-                  <span class="block text-xs text-slate-400 font-mono">{{ t.code }} · {{ t.slug }}.&lt;domain&gt; · srmis_{{ t.slug }}</span>
+                  <span class="block text-xs text-slate-400 font-mono">{{ t.code }} · @{{ t.slug === 'oed' ? 'pshssystem.edu.ph' : t.slug + '.pshs.edu.ph' }} · srmis_{{ t.slug }}</span>
                 </span>
               </label>
               <div v-if="t.selected" class="mt-2 ml-7 flex flex-wrap gap-x-4 gap-y-1">

@@ -40,12 +40,24 @@ class HandleInertiaRequests extends Middleware
     public function share(Request $request): array
     {
         $authUser = $request->user();
+
+        // Central (system superadmin) sessions resolve a CentralUser — it has
+        // no roles/permissions relations. The central pages don't consume the
+        // tenant-shaped auth payload, so share it as a guest.
+        if ($authUser && ! $authUser instanceof \App\Models\User) {
+            $authUser = null;
+        }
+
         if ($authUser) {
             $authUser->loadMissing(['roles', 'primaryUnitAssignment.unit:id,name,code,type']);
         }
         $userRoles = $authUser ? $authUser->roles : collect();
 
         return array_merge(parent::share($request), [
+            // Current campus (single-domain tenancy) — null on guest pages
+            'campus' => fn () => tenant()
+                ? ['id' => tenant('id'), 'name' => tenant('name'), 'code' => tenant('campus_code')]
+                : null,
             'auth' => [
                 'user' => $authUser
                     ? [

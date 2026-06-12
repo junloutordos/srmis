@@ -185,8 +185,6 @@ class SetupWizardController extends Controller
                     'modules'     => $this->moduleMap($row['modules'] ?? []),
                 ]);
 
-                $tenant->domains()->create(['domain' => $row['slug']]);
-
                 $provisioned[] = $row['slug'];
             } catch (\Throwable $e) {
                 report($e);

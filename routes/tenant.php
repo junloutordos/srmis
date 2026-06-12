@@ -31,9 +31,7 @@ use Inertia\Inertia;
 |
 */
 
-// ── Public (per-tenant) ───────────────────────────────────────────────────────
-
-Route::get('/', fn () => redirect()->route('login'));
+// ── Public ────────────────────────────────────────────────────────────────────
 
 // Google login (Firebase popup) + Socialite OAuth (server-side)
 Route::post('/google/login', [GoogleAuthController::class, 'login'])->name('google.login');

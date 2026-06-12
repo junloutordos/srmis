@@ -17,6 +17,8 @@ class LandingController extends Controller
             return redirect()->route('central.admin');
         }
 
-        return redirect()->route('central.login');
+        // Campus users land on the shared login page; the campus is inferred
+        // from their email address at sign-in.
+        return redirect()->route('login');
     }
 }

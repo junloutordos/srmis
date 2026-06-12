@@ -23,7 +23,14 @@ return [
     | the configured domain are accepted, so campus accounts such as
     | @crc.pshs.edu.ph pass when this is set to pshs.edu.ph.
     */
-    'allowed_email_domain' => env('ALLOWED_EMAIL_DOMAIN', 'pshs.edu.ph'),
+    'allowed_email_domain' => env('ALLOWED_EMAIL_DOMAIN', 'pshs.edu.ph,pshssystem.edu.ph'),
+
+    /*
+    | Email → campus mapping (single-domain tenancy).
+    | Campuses use <slug>.pshs.edu.ph addresses; the OED uses its own domain.
+    */
+    'campus_email_base_domain' => env('CAMPUS_EMAIL_BASE_DOMAIN', 'pshs.edu.ph'),
+    'oed_email_domain'         => env('OED_EMAIL_DOMAIN', 'pshssystem.edu.ph'),
 
     /*
     |--------------------------------------------------------------------------

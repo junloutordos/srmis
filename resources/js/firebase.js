@@ -18,7 +18,12 @@ const provider = new GoogleAuthProvider();
 
 // Restrict Google account chooser to the configured domain
 provider.setCustomParameters({
-  hd: import.meta.env.VITE_ALLOWED_EMAIL_DOMAIN || "pshs.edu.ph"
+  // hd narrows Google's account chooser to ONE domain; with multiple
+  // allowed domains (campuses + OED) we leave the chooser open and rely on
+  // the server-side domain check instead.
+  ...(String(import.meta.env.VITE_ALLOWED_EMAIL_DOMAIN || '').includes(',')
+    ? {}
+    : { hd: import.meta.env.VITE_ALLOWED_EMAIL_DOMAIN || 'pshs.edu.ph' })
 });
 
 export { auth, provider, signInWithPopup };

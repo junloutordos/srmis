@@ -4,31 +4,26 @@ use Illuminate\Support\Facades\Route;
 
 /*
 |--------------------------------------------------------------------------
-| SRMIS Central Routes
+| SRMIS Central Routes (single domain)
 |--------------------------------------------------------------------------
 |
-| Routes here run on the central (non-tenant) domain only — e.g.
-| srmis.pshs.edu.ph. Campus subdomains (oed.*, crc.*, src.*) are handled
-| by routes/tenant.php inside an initialized tenant context.
+| All 17 campuses and the OED share ONE domain. Campus (tenant) routes live
+| in routes/tenant.php; the tenant is resolved per request from the session
+| binding set at login (see App\Tenancy\ResolveTenant).
 |
-| The central domain hosts:
-|   - the ECS/ALB health check
-|   - the first-run setup wizard (system superadmin)
-|   - tenant (campus) provisioning + per-tenant module activation
+| This file holds the instance-level plane, namespaced under paths tenant
+| routes never use:
+|   /health    — ECS/ALB health check
+|   /setup     — first-run setup wizard (404s once installed)
+|   /system/*  — system superadmin: tenant provisioning + module toggles
 |
 */
 
-// ECS container health check — no auth, no session, any host
+// ECS container health check — no auth, no session
 Route::get('/health', fn () => response()->json(['status' => 'ok']))->name('health');
 
-/*
- * Everything below is explicitly bound to the central domain(s) so these
- * paths never shadow tenant routes on campus subdomains.
- */
-foreach (config('tenancy.central_domains') as $centralDomainIndex => $centralDomain) {
-    Route::domain($centralDomain)->name($centralDomainIndex ? "c{$centralDomainIndex}." : '')->group(function () {
-
-    Route::get('/', [\App\Http\Controllers\Central\LandingController::class, 'index'])->name('central.landing');
+// Root — wizard when not installed, otherwise the campus login page
+Route::get('/', [\App\Http\Controllers\Central\LandingController::class, 'index'])->name('central.landing');
 
 /*
 |--------------------------------------------------------------------------
@@ -51,36 +46,37 @@ Route::prefix('setup')->name('setup.')->middleware('setup.not-installed')->group
 
 /*
 |--------------------------------------------------------------------------
-| Central Administration (system superadmin)
+| System Administration (system superadmin) — /system/*
 |--------------------------------------------------------------------------
 | Tenant provisioning and per-tenant module activation. Auth is against the
-| central users table (system superadmins only).
+| central_users table (system superadmins only) — completely separate from
+| campus accounts. Lives under /system so it never collides with the tenant
+| RBAC pages at /admin/*.
 */
-Route::middleware('guest:central')->group(function () {
-    Route::get('/login',  [\App\Http\Controllers\Central\AuthController::class, 'create'])->name('central.login');
-    Route::post('/login', [\App\Http\Controllers\Central\AuthController::class, 'store'])
-        ->middleware('throttle:5,1')->name('central.login.store');
+Route::prefix('system')->group(function () {
+    Route::middleware('guest:central')->group(function () {
+        Route::get('/login',  [\App\Http\Controllers\Central\AuthController::class, 'create'])->name('central.login');
+        Route::post('/login', [\App\Http\Controllers\Central\AuthController::class, 'store'])
+            ->middleware('throttle:5,1')->name('central.login.store');
+    });
+
+    Route::middleware('auth:central')->group(function () {
+        Route::post('/logout', [\App\Http\Controllers\Central\AuthController::class, 'destroy'])->name('central.logout');
+
+        Route::get('/', [\App\Http\Controllers\Central\TenantController::class, 'index'])->name('central.admin');
+
+        // Tenant (campus) provisioning
+        Route::get('/tenants',                    [\App\Http\Controllers\Central\TenantController::class, 'list'])->name('central.tenants.index');
+        Route::post('/tenants',                   [\App\Http\Controllers\Central\TenantController::class, 'store'])->name('central.tenants.store');
+        Route::post('/tenants/provision-presets', [\App\Http\Controllers\Central\TenantController::class, 'provisionPresets'])->name('central.tenants.presets');
+        Route::put('/tenants/{tenant}',           [\App\Http\Controllers\Central\TenantController::class, 'update'])->name('central.tenants.update');
+        Route::delete('/tenants/{tenant}',        [\App\Http\Controllers\Central\TenantController::class, 'destroy'])->name('central.tenants.destroy');
+
+        // Per-tenant module activation toggles
+        Route::put('/tenants/{tenant}/modules',   [\App\Http\Controllers\Central\TenantModuleController::class, 'update'])->name('central.tenants.modules');
+
+        // Per-tenant seeding / migration triggers
+        Route::post('/tenants/{tenant}/migrate',  [\App\Http\Controllers\Central\TenantController::class, 'migrate'])->name('central.tenants.migrate');
+        Route::post('/tenants/{tenant}/seed-admin', [\App\Http\Controllers\Central\TenantController::class, 'seedAdmin'])->name('central.tenants.seed-admin');
+    });
 });
-
-Route::middleware('auth:central')->group(function () {
-    Route::post('/logout', [\App\Http\Controllers\Central\AuthController::class, 'destroy'])->name('central.logout');
-
-    Route::get('/admin', [\App\Http\Controllers\Central\TenantController::class, 'index'])->name('central.admin');
-
-    // Tenant (campus) provisioning
-    Route::get('/admin/tenants',                    [\App\Http\Controllers\Central\TenantController::class, 'list'])->name('central.tenants.index');
-    Route::post('/admin/tenants',                   [\App\Http\Controllers\Central\TenantController::class, 'store'])->name('central.tenants.store');
-    Route::post('/admin/tenants/provision-presets', [\App\Http\Controllers\Central\TenantController::class, 'provisionPresets'])->name('central.tenants.presets');
-    Route::put('/admin/tenants/{tenant}',           [\App\Http\Controllers\Central\TenantController::class, 'update'])->name('central.tenants.update');
-    Route::delete('/admin/tenants/{tenant}',        [\App\Http\Controllers\Central\TenantController::class, 'destroy'])->name('central.tenants.destroy');
-
-    // Per-tenant module activation toggles
-    Route::put('/admin/tenants/{tenant}/modules',   [\App\Http\Controllers\Central\TenantModuleController::class, 'update'])->name('central.tenants.modules');
-
-    // Per-tenant seeding / migration triggers
-    Route::post('/admin/tenants/{tenant}/migrate',  [\App\Http\Controllers\Central\TenantController::class, 'migrate'])->name('central.tenants.migrate');
-    Route::post('/admin/tenants/{tenant}/seed-admin', [\App\Http\Controllers\Central\TenantController::class, 'seedAdmin'])->name('central.tenants.seed-admin');
-});
-
-    }); // end Route::domain($centralDomain)
-}

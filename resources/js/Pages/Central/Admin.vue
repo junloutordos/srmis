@@ -146,7 +146,7 @@ function logout() {
 
         <div class="grid grid-cols-1 gap-3 sm:grid-cols-3">
           <div>
-            <label class="block text-sm font-medium text-slate-700 mb-1">Subdomain slug</label>
+            <label class="block text-sm font-medium text-slate-700 mb-1">Campus slug (schema + email prefix)</label>
             <input v-model="createForm.slug" type="text" placeholder="crc"
               class="rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 w-full" />
             <p v-if="createForm.errors.slug" class="mt-1 text-xs text-red-600">{{ createForm.errors.slug }}</p>
@@ -186,7 +186,7 @@ function logout() {
             <div>
               <h3 class="text-sm font-bold text-slate-800">{{ t.name }} <span class="ml-1 text-xs font-medium text-slate-400">{{ t.campus_code }}</span></h3>
               <p class="mt-0.5 text-xs text-slate-400 font-mono">
-                {{ t.subdomain }}.{{ domain }} · schema {{ t.schema }} · since {{ t.created_at }}
+                @{{ t.email_domain }} · schema {{ t.schema }} · since {{ t.created_at }}
               </p>
             </div>
             <div class="flex gap-2">

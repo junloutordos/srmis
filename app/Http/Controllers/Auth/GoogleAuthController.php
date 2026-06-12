@@ -19,7 +19,6 @@ class GoogleAuthController extends Controller
     public function redirect()
     {
         return Socialite::driver('google')
-            ->with(['hd' => config('app.allowed_email_domain')])
             ->redirect();
     }
 
@@ -47,6 +46,20 @@ class GoogleAuthController extends Controller
                 ->with('error', 'Only official ' . config('app.agency_code') . ' accounts (@' . config('app.allowed_email_domain') . ') are allowed.');
         }
 
+        // Single-domain tenancy: the OAuth callback carries no tenant context,
+        // so resolve the campus from the Google account's email here.
+        if (! tenant()) {
+            $tenant = \App\Tenancy\CampusEmailMapper::tenantForEmail($email);
+
+            if ($tenant === null) {
+                $this->securityLog('warning', 'Socialite login rejected: no campus for email', ['email' => $email, 'ip' => $ip]);
+                return redirect()->route('login')
+                    ->with('error', 'Your campus is not yet provisioned on SRMIS. Contact the system administrator.');
+            }
+
+            tenancy()->initialize($tenant);
+        }
+
         // Find or create user
         $user = User::where('email', $email)->first();
 
@@ -66,6 +79,8 @@ class GoogleAuthController extends Controller
         }
 
         Auth::login($user, true);
+        request()->session()->regenerate();
+        request()->session()->put('tenant_id', tenant('id'));
         $this->securityLog('info', 'Socialite login success', ['email' => $email, 'ip' => $ip, 'role' => $user->role ?? 'staff']);
 
         $role = $user->role ?? 'staff';
@@ -96,6 +111,13 @@ class GoogleAuthController extends Controller
             return response()->json(['success' => false, 'message' => 'Only official ' . config('app.agency_code') . ' accounts are allowed.'], 403);
         }
 
+        // Single-domain tenancy: ResolveTenant inferred the campus from the
+        // posted email; null means the address maps to no provisioned campus.
+        if (! tenant()) {
+            $this->securityLog('warning', 'Google login rejected: no campus for email', ['email' => $email, 'ip' => $ip]);
+            return response()->json(['success' => false, 'message' => 'Your campus is not yet provisioned on SRMIS. Contact the system administrator.'], 403);
+        }
+
         // User must already exist — no auto-creation via this endpoint
         $user = User::where('email', $email)->first();
 
@@ -110,6 +132,8 @@ class GoogleAuthController extends Controller
         }
 
         Auth::login($user, true);
+        $request->session()->regenerate();
+        $request->session()->put('tenant_id', tenant('id'));
         $this->securityLog('info', 'Google login success', ['email' => $email, 'ip' => $ip, 'role' => $user->role ?? 'staff']);
 
         $role         = $user->role ?? 'staff';
@@ -154,14 +178,21 @@ class GoogleAuthController extends Controller
      */
     private function emailDomainAllowed(string $email): bool
     {
-        $domain = strtolower((string) config('app.allowed_email_domain'));
+        $domains = array_filter(array_map('trim', explode(',', (string) config('app.allowed_email_domain'))));
 
-        if ($domain === '') {
+        if ($domains === []) {
             return true;
         }
 
         $email = strtolower($email);
 
-        return str_ends_with($email, '@' . $domain) || str_ends_with($email, '.' . $domain);
+        foreach ($domains as $domain) {
+            $domain = strtolower($domain);
+            if (str_ends_with($email, '@' . $domain) || str_ends_with($email, '.' . $domain)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 }

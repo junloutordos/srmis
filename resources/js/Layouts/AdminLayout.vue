@@ -658,7 +658,7 @@ filteredMenu.value.forEach((item) => {
         <img src="/images/pshslogo.png" alt="PSHS Logo" class="h-8 w-8 shrink-0 rounded-lg object-contain" style="filter: drop-shadow(0 0 8px rgba(0,200,232,0.45));" />
         <div v-if="!collapsed" class="min-w-0">
           <p class="text-sm font-bold text-white leading-tight truncate tracking-wide">SRMIS</p>
-          <p class="text-[10px] text-blue-200/50 truncate">Service Requests MIS</p>
+          <p class="text-[10px] text-blue-200/50 truncate">{{ page.props.campus?.name || 'Service Requests MIS' }}</p>
         </div>
         <!-- Close button (mobile only) -->
         <button

@@ -26,11 +26,13 @@ import {
   ArrowRightIcon,
 } from '@heroicons/vue/24/outline'
 
-const OFFICIAL_DOMAIN = '@crc.pshs.edu.ph'
+// Campus accounts use @<campus>.pshs.edu.ph; the OED uses @pshssystem.edu.ph.
+// The campus is detected server-side from the email — this is a UX pre-check only.
+const OFFICIAL_DOMAINS = ['.pshs.edu.ph', '@pshssystem.edu.ph']
 const isLoading = ref(false)
 
 const showAlert = (options) => Swal.fire({ confirmButtonColor: '#1447c0', ...options })
-const isAuthorizedEmail = (email) => email?.toLowerCase().endsWith(OFFICIAL_DOMAIN)
+const isAuthorizedEmail = (email) => OFFICIAL_DOMAINS.some((d) => email?.toLowerCase().endsWith(d))
 
 const page = usePage()
 const appVersion = computed(() => page.props.appVersion?.current ?? '1.0.0')
@@ -53,7 +55,7 @@ const googleLogin = async () => {
     isLoading.value = true
     const { user } = await signInWithPopup(auth, provider)
     if (!isAuthorizedEmail(user.email)) {
-      showAlert({ icon: 'error', title: 'Unauthorized Email', text: 'Only official PSHS-CRC accounts are allowed.' })
+      showAlert({ icon: 'error', title: 'Unauthorized Email', text: 'Only official PSHS campus or OED accounts are allowed.' })
       return
     }
     const { data } = await axios.post('/google/login', { email: user.email, name: user.displayName, uid: user.uid })
@@ -88,7 +90,7 @@ const pillars = [
     icon: ShieldCheckIcon,
     bg: 'linear-gradient(135deg,#1447c0,#00c8e8)',
     title: 'Secure & Role-Based',
-    desc: 'Google SSO restricts access to official PSHS-CRC accounts only. Every user has a fine-grained role — administrators, HR officers, faculty, staff, and students each see exactly what they need.',
+    desc: 'Google SSO restricts access to official PSHS accounts only; each user is routed to their own campus automatically. Every user has a fine-grained role — administrators, HR officers, faculty, staff, and students each see exactly what they need.',
   },
   {
     icon: BoltIcon,
@@ -123,7 +125,7 @@ const stats = [
     <header class="navbar">
       <div class="nav-inner">
         <div class="nav-brand">
-          <img src="/images/pshslogo.png" alt="PSHS-CRC" class="nav-logo" />
+          <img src="/images/pshslogo.png" alt="PSHS" class="nav-logo" />
           <div>
             <span class="nav-name">SRMIS</span>
             <span class="nav-sub">PSHS – Caraga Region Campus in Butuan City</span>
@@ -188,7 +190,7 @@ const stats = [
               </div>
               <div>
                 <p class="lc-title">Access the System</p>
-                <p class="lc-sub">Sign in with your official PSHS-CRC Google account.</p>
+                <p class="lc-sub">Sign in with your official PSHS campus or OED Google account.</p>
               </div>
             </div>
 
@@ -196,7 +198,7 @@ const stats = [
               <span class="g-icon-wrap">
                 <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" class="g-icon" alt="Google" />
               </span>
-              <span class="g-label">{{ isLoading ? 'Signing in…' : 'Continue with your PSHS-CRC Google Account' }}</span>
+              <span class="g-label">{{ isLoading ? 'Signing in…' : 'Continue with your PSHS Google Account' }}</span>
               <svg v-if="isLoading" class="g-spin" fill="none" viewBox="0 0 24 24">
                 <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/>
                 <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4l3-3-3-3v4a8 8 0 00-8 8h4z"/>
@@ -205,7 +207,7 @@ const stats = [
 
             <p class="lc-notice">
               <LockClosedIcon class="notice-icon" />
-              <span>Only <strong>@crc.pshs.edu.ph</strong> accounts are authorized to sign in.</span>
+              <span>Campus accounts (<strong>@&lt;campus&gt;.pshs.edu.ph</strong>) and OED accounts (<strong>@pshssystem.edu.ph</strong>) are authorized. Your campus is detected automatically.</span>
             </p>
           </div>
         </div>
@@ -224,7 +226,7 @@ const stats = [
       <div class="section-inner">
         <div class="section-hd">
           <p class="eyebrow">About SRMIS</p>
-          <h2 class="section-h2">Built for PSHS-CRC.<br>Designed for everyone in it.</h2>
+          <h2 class="section-h2">Built for the PSHS System.<br>Designed for every campus in it.</h2>
           <p class="section-lead">
             From the mancom to faculty, staff and students, SRMIS gives each stakeholder
             the exact tools and data they need — nothing more, nothing less.
@@ -299,7 +301,7 @@ const stats = [
           <ShieldCheckIcon class="cta-icon" />
         </div>
         <h2 class="cta-h2">Ready to get started?</h2>
-        <p class="cta-p">Sign in with your official PSHS-CRC Google account to access the system.</p>
+        <p class="cta-p">Sign in with your official PSHS Google account to access your campus.</p>
         <button @click="googleLogin" :disabled="isLoading" class="cta-btn">
           <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" style="width:22px;height:22px;" alt="Google" />
           {{ isLoading ? 'Signing in…' : 'Sign in with Google' }}
@@ -318,7 +320,7 @@ const stats = [
     <footer class="site-footer">
       <div class="footer-inner">
         <div class="footer-brand">
-          <img src="/images/pshslogo.png" alt="PSHS-CRC" class="footer-logo" />
+          <img src="/images/pshslogo.png" alt="PSHS" class="footer-logo" />
           <div>
             <p class="footer-name">SRMIS</p>
             <p class="footer-sub">Campus Management Information System</p>
@@ -326,7 +328,7 @@ const stats = [
           </div>
         </div>
         <div class="footer-right">
-          <p class="footer-copy">© 2026 PSHS-CRC. All rights reserved.</p>
+          <p class="footer-copy">© 2026 Philippine Science High School System. All rights reserved.</p>
           <p class="footer-ver">v{{ appVersion }}</p>
           <p class="footer-ver"><a href="/developer" class="dev-link">Developers' Information</a></p>
         </div>

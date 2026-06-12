@@ -74,3 +74,28 @@ exist anywhere.
   and never shadow tenant subdomains.
 - Module toggle (`chat` off for crc) returns 403 on `/chat` and
   `/api/chat/*`, restored on re-enable.
+
+
+## Addendum — single-domain conversion (2026-06-12)
+
+The subdomain scheme was replaced by single-domain tenancy (campus detected
+from the login email). Isolation re-verified under the new model:
+
+- **Tenant binding lives server-side**: the campus is stored in the session
+  (`tenant_id`) at login; sessions are central and the binding cannot be
+  altered from the client. Cookies are Laravel-encrypted.
+- **Signed email links** carry `?tenant=<slug>` inside the signed portion
+  (TenantAwareUrlGenerator). ResolveTenant only honors the parameter when the
+  signature validates; a tampered campus value → 403 before any DB query
+  (ValidateSignature is prioritized ahead of route-model binding).
+- **Middleware order enforced** via explicit `$middleware->priority([...])`:
+  StartSession → ResolveTenant → Authenticate → ValidateSignature →
+  SubstituteBindings. This guarantees the user lookup and route binding always
+  run inside the right tenant schema.
+- **Central users** (`CentralUser`, guard `central`) are shared to Inertia as
+  guests — they can never satisfy tenant permission checks or appear as a
+  campus user.
+- Re-verified live: CRC and OED sessions in parallel on one domain resolve to
+  their own schemas; `@pshssystem.edu.ph` → OED special-case works;
+  unrecognised domains get a 422 at login; the Staff 403 matrix and per-tenant
+  module toggles behave identically to the subdomain build.

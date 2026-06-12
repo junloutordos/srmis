@@ -15,15 +15,21 @@ class EnsureAllowedEmailDomain
 {
     public function handle(Request $request, Closure $next): Response
     {
-        $domain = config('app.allowed_email_domain');
+        $domains = array_filter(array_map('trim', explode(',', (string) config('app.allowed_email_domain'))));
 
-        if ($domain && $request->user()) {
+        if ($domains !== [] && $request->user()) {
             $email = strtolower($request->user()->email ?? '');
 
-            // Accept the domain itself and any subdomain of it
+            // Accept each domain itself and any subdomain of it
             // (e.g. crc.pshs.edu.ph under pshs.edu.ph).
-            $allowed = str_ends_with($email, '@' . strtolower($domain))
-                || str_ends_with($email, '.' . strtolower($domain));
+            $allowed = false;
+            foreach ($domains as $domain) {
+                $domain = strtolower($domain);
+                if (str_ends_with($email, '@' . $domain) || str_ends_with($email, '.' . $domain)) {
+                    $allowed = true;
+                    break;
+                }
+            }
 
             if (! $allowed) {
                 auth()->logout();
@@ -31,7 +37,7 @@ class EnsureAllowedEmailDomain
                 $request->session()->regenerateToken();
 
                 return redirect()->route('login')->withErrors([
-                    'email' => "Only {$domain} accounts may sign in to this system.",
+                    'email' => 'Only official PSHS campus accounts may sign in to this system.',
                 ]);
             }
         }

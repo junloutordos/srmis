@@ -73,7 +73,12 @@ return [
     |
     */
 
-    'connection' => env('SESSION_CONNECTION'),
+    /*
+    | Sessions are stored CENTRALLY (one table in srmis_central) regardless of
+    | tenant. With single-domain tenancy the session is read before the tenant
+    | is known — the session itself carries the tenant binding (tenant_id).
+    */
+    'connection' => env('SESSION_CONNECTION', 'central'),
 
     /*
     |--------------------------------------------------------------------------

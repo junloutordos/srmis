@@ -46,8 +46,6 @@ class TenantController extends Controller
             'modules'     => $this->moduleMap($data['modules'] ?? []),
         ]);
 
-        $tenant->domains()->create(['domain' => $data['slug']]);
-
         return back()->with('success', "Campus '{$data['name']}' provisioned — schema " . config('tenancy.database.prefix') . $data['slug'] . ' created and migrated.');
     }
 
@@ -67,8 +65,6 @@ class TenantController extends Controller
                 'campus_code' => $campus['code'],
                 'modules'     => $this->moduleMap([]),
             ]);
-
-            $tenant->domains()->create(['domain' => $campus['slug']]);
 
             $created[] = $campus['slug'];
         }
@@ -151,14 +147,16 @@ class TenantController extends Controller
 
     protected function tenantList(): array
     {
-        return Tenant::with('domains')->orderBy('id')->get()->map(fn (Tenant $t) => [
-            'id'          => $t->id,
-            'name'        => $t->name,
-            'campus_code' => $t->campus_code,
-            'subdomain'   => $t->domains->first()?->domain,
-            'schema'      => config('tenancy.database.prefix') . $t->id,
-            'modules'     => $t->modules,
-            'created_at'  => $t->created_at?->toDateTimeString(),
+        return Tenant::orderBy('id')->get()->map(fn (Tenant $t) => [
+            'id'           => $t->id,
+            'name'         => $t->name,
+            'campus_code'  => $t->campus_code,
+            'email_domain' => $t->id === 'oed'
+                ? config('app.oed_email_domain')
+                : $t->id . '.' . config('app.campus_email_base_domain'),
+            'schema'       => config('tenancy.database.prefix') . $t->id,
+            'modules'      => $t->modules,
+            'created_at'   => $t->created_at?->toDateTimeString(),
         ])->all();
     }
 

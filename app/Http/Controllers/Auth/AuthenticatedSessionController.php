@@ -29,9 +29,20 @@ class AuthenticatedSessionController extends Controller
      */
     public function store(LoginRequest $request): RedirectResponse
     {
+        // Single-domain tenancy: the campus was inferred from the email by the
+        // ResolveTenant middleware. No tenant = unrecognised campus address.
+        if (! tenant()) {
+            throw \Illuminate\Validation\ValidationException::withMessages([
+                'email' => 'Unrecognised campus email. Use your official campus address (e.g. name@crc.pshs.edu.ph) or name@pshssystem.edu.ph for OED.',
+            ]);
+        }
+
         $request->authenticate();
 
         $request->session()->regenerate();
+
+        // Bind the campus to the session — authoritative for every later request.
+        $request->session()->put('tenant_id', tenant('id'));
 
         return redirect()->intended(route('dashboard', absolute: false));
     }
