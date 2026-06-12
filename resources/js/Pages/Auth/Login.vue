@@ -342,7 +342,7 @@ const modules = [
       </div>
 
       <div class="mt-6 text-center">
-        <p class="text-[11px] text-slate-300">
+        <p class="text-[11px] text-slate-400">
           SRMIS v{{ appVersion }} · Philippine Science High School System
         </p>
         <p class="mt-1 text-[11px] text-slate-400">
