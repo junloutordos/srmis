@@ -243,7 +243,7 @@ const modules = [
           One portal for every campus service request.
         </h2>
         <p class="mt-1.5 max-w-md text-sm text-blue-200/70">
-          File it, track it, approve it — from any of the 16 campuses and the OED.
+          A unified service request platform for the PSHS System.
         </p>
         <div class="mt-5 flex flex-wrap gap-x-5 gap-y-2">
           <span v-for="m in modules" :key="m.label" class="inline-flex items-center gap-1.5 text-[11px] font-medium text-blue-200/60">
