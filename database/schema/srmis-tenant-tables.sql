@@ -1,6 +1,6 @@
 CREATE TABLE `users` (
   `id` bigint unsigned NOT NULL AUTO_INCREMENT,
-  `role_id` bigint unsigned DEFAULT NULL,
+  `role_id` text COLLATE utf8mb4_unicode_ci,
   `position` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `specialization` varchar(150) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `on_study_leave` tinyint(1) NOT NULL DEFAULT '0',
@@ -32,7 +32,6 @@ CREATE TABLE `users` (
   UNIQUE KEY `users_badge_id_unique` (`badge_id`),
   UNIQUE KEY `users_biometric_id_unique` (`biometric_id`),
   UNIQUE KEY `users_employee_no_unique` (`employee_no`),
-  KEY `users_role_id_foreign` (`role_id`),
   KEY `users_division_id_foreign` (`division_id`),
   KEY `users_office_id_foreign` (`office_id`),
   KEY `users_status_index` (`status`),
