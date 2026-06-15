@@ -8,7 +8,9 @@ use App\Models\Division;
 use App\Models\Office;
 use App\Services\DigitalSignatureService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 use Inertia\Inertia;
 
 class UserController extends Controller
@@ -120,6 +122,8 @@ class UserController extends Controller
             'division_id'    => 'nullable|exists:divisions,id',
             'office_id'      => 'nullable|exists:offices,id',
         ]);
+
+        $data['password'] = Hash::make(Str::random(16));
 
         $user = User::create($data);
         if (empty($user->employee_no)) {

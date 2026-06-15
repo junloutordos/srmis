@@ -6,7 +6,7 @@ on:
 
 env:
   AWS_REGION: ap-southeast-1
-  ECR: 971422671747.dkr.ecr.ap-southeast-1.amazonaws.com
+  ECR: 211125705727.dkr.ecr.ap-southeast-1.amazonaws.com
   FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
 
 jobs:
