@@ -52,8 +52,15 @@ jobs:
             --build-arg VITE_PUSHER_SCHEME=https \
             --build-arg VITE_PUSHER_APP_KEY=$SOKETI_KEY \
             --build-arg VITE_PUSHER_APP_CLUSTER=mt1 \
-            --build-arg VITE_ALLOWED_EMAIL_DOMAIN=pshs.edu.ph \
+            --build-arg VITE_ALLOWED_EMAIL_DOMAIN=pshs.edu.ph,pshssystem.edu.ph \
             --build-arg VITE_VAPID_PUBLIC_KEY=${{ vars.VITE_VAPID_PUBLIC_KEY }} \
+            --build-arg VITE_FIREBASE_API_KEY=${{ vars.VITE_FIREBASE_API_KEY }} \
+            --build-arg VITE_FIREBASE_AUTH_DOMAIN=${{ vars.VITE_FIREBASE_AUTH_DOMAIN }} \
+            --build-arg VITE_FIREBASE_PROJECT_ID=${{ vars.VITE_FIREBASE_PROJECT_ID }} \
+            --build-arg VITE_FIREBASE_STORAGE_BUCKET=${{ vars.VITE_FIREBASE_STORAGE_BUCKET }} \
+            --build-arg VITE_FIREBASE_MESSAGING_SENDER_ID=${{ vars.VITE_FIREBASE_MESSAGING_SENDER_ID }} \
+            --build-arg VITE_FIREBASE_APP_ID=${{ vars.VITE_FIREBASE_APP_ID }} \
+            --build-arg VITE_FIREBASE_MEASUREMENT_ID=${{ vars.VITE_FIREBASE_MEASUREMENT_ID }} \
             -t $ECR/srmis/app:${{ github.sha }} \
             --push .
 
