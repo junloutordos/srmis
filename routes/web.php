@@ -83,7 +83,9 @@ Route::prefix('system')->group(function () {
         Route::post('/tenants/{tenant}/seed-admin', [\App\Http\Controllers\Central\TenantController::class, 'seedAdmin'])->name('central.tenants.seed-admin');
 
         // System-wide cross-campus overview
-        Route::get('/overview',         [\App\Http\Controllers\Central\SystemOverviewController::class, 'index'])->name('central.overview');
-        Route::post('/overview/refresh', [\App\Http\Controllers\Central\SystemOverviewController::class, 'refresh'])->name('central.overview.refresh');
+        Route::get('/overview',                       [\App\Http\Controllers\Central\SystemOverviewController::class, 'index'])->name('central.overview');
+        Route::post('/overview/refresh',              [\App\Http\Controllers\Central\SystemOverviewController::class, 'refresh'])->name('central.overview.refresh');
+        Route::get('/overview/{campus}',              [\App\Http\Controllers\Central\SystemOverviewController::class, 'show'])->name('central.overview.campus');
+        Route::post('/overview/{campus}/refresh',     [\App\Http\Controllers\Central\SystemOverviewController::class, 'campusRefresh'])->name('central.overview.campus.refresh');
     });
 });
