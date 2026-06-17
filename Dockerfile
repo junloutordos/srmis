@@ -61,6 +61,17 @@ RUN npm ci --prefer-offline 2>/dev/null || npm install \
     && rm -f /var/www/public/hot \
     && rm -rf /var/www/node_modules
 
+# Write Firebase service-account credentials into the image.
+# The JSON is injected via BuildKit --secret (never appears in image history).
+# Falls back silently when the secret is absent (local dev builds).
+RUN --mount=type=secret,id=firebase_sa \
+    if [ -f /run/secrets/firebase_sa ]; then \
+      cp /run/secrets/firebase_sa /var/www/storage/app/firebase-service-account.json && \
+      chmod 600 /var/www/storage/app/firebase-service-account.json; \
+    fi
+
+ENV FIREBASE_CREDENTIALS=/var/www/storage/app/firebase-service-account.json
+
 # Ensure all storage/bootstrap directories exist and are writable at runtime
 RUN mkdir -p \
         /var/www/storage/logs \

@@ -16,20 +16,6 @@ if [ -n "$GOOGLE_JSON" ]; then
     chown www-data:www-data /var/www/google-credentials.json
 fi
 
-# ── Secrets Manager: fetch Firebase service account ───────────────────────────
-FIREBASE_JSON=$(aws secretsmanager get-secret-value \
-  --secret-id srmis/firebase-service-account \
-  --region ap-southeast-1 \
-  --query SecretString \
-  --output text 2>/dev/null || echo "")
-
-if [ -n "$FIREBASE_JSON" ]; then
-    FIREBASE_CREDS_PATH=/var/www/storage/app/firebase-service-account.json
-    echo "$FIREBASE_JSON" > "$FIREBASE_CREDS_PATH"
-    chmod 600 "$FIREBASE_CREDS_PATH"
-    chown www-data:www-data "$FIREBASE_CREDS_PATH"
-    export FIREBASE_CREDENTIALS="$FIREBASE_CREDS_PATH"
-fi
 
 # ── Export env vars for cron (restricted to non-secret vars) ──────────────────
 # Exclude secrets — DB_PASSWORD, APP_KEY, SOKETI secret are injected by ECS

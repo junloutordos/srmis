@@ -39,14 +39,18 @@ jobs:
         uses: docker/setup-buildx-action@v3.10.0
 
       - name: Build and push app
+        env:
+          FIREBASE_SA_JSON: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_JSON }}
         run: |
           SOKETI_KEY=$(aws ssm get-parameter \
             --name /srmis/prod/SOKETI_DEFAULT_APP_KEY \
             --with-decryption \
             --query Parameter.Value \
             --output text)
+          echo "$FIREBASE_SA_JSON" > /tmp/firebase-sa.json
           docker buildx build --platform linux/amd64 \
             --progress=plain \
+            --secret id=firebase_sa,src=/tmp/firebase-sa.json \
             --build-arg VITE_STORAGE_BASE_URL=/media \
             --build-arg VITE_PUSHER_PORT=443 \
             --build-arg VITE_PUSHER_SCHEME=https \
