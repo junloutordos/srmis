@@ -105,9 +105,14 @@ class GoogleAuthController extends Controller
         $email = strtolower(trim($request->email));
 
         // Verify the Firebase ID token server-side so the email cannot be spoofed.
+        // Use the Factory directly with the config path — PHP-FPM strips env vars
+        // (clear_env = yes by default), so we cannot rely on FIREBASE_CREDENTIALS.
         try {
-            $firebaseAuth = app(\Kreait\Firebase\Contract\Auth::class);
-            $verified     = $firebaseAuth->verifyIdToken($request->idToken);
+            $credentialsPath = config('services.firebase.credentials');
+            $firebaseAuth    = (new \Kreait\Firebase\Factory)
+                ->withServiceAccount($credentialsPath)
+                ->createAuth();
+            $verified = $firebaseAuth->verifyIdToken($request->idToken);
             if (strtolower($verified->claims()->get('email')) !== $email) {
                 return response()->json(['success' => false, 'message' => 'Token email mismatch.'], 403);
             }
