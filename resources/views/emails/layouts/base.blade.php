@@ -70,8 +70,9 @@
 
     {{-- School identifier --}}
     <div class="logo-bar">
-        <span class="logo-name">PSHS–CRC MIS</span>
-        <span class="logo-sub">Philippine Science High School – Caraga Region Campus</span>
+        <img src="{{ url('pshslogo_sm.png') }}" alt="PSHS Logo" width="48" height="48" style="display:block;margin:0 auto 6px;object-fit:contain" />
+        <span class="logo-name">SRMIS</span>
+        <span class="logo-sub">Philippine Science High School System</span>
     </div>
 
     <div class="card">
@@ -104,7 +105,7 @@
 
         {{-- Footer --}}
         <div class="footer">
-            This is an automated notification from PSHS-CRC MIS. Please do not reply to this email.
+            This is an automated notification from SRMIS. Please do not reply to this email.
             @hasSection('footer-note')
             <br>@yield('footer-note')
             @endif
