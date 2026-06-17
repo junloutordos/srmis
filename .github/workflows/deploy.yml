@@ -54,13 +54,13 @@ jobs:
             --build-arg VITE_PUSHER_APP_CLUSTER=mt1 \
             --build-arg VITE_ALLOWED_EMAIL_DOMAIN=pshs.edu.ph,pshssystem.edu.ph \
             --build-arg VITE_VAPID_PUBLIC_KEY=${{ vars.VITE_VAPID_PUBLIC_KEY }} \
-            --build-arg VITE_FIREBASE_API_KEY=${{ vars.VITE_FIREBASE_API_KEY }} \
-            --build-arg VITE_FIREBASE_AUTH_DOMAIN=${{ vars.VITE_FIREBASE_AUTH_DOMAIN }} \
-            --build-arg VITE_FIREBASE_PROJECT_ID=${{ vars.VITE_FIREBASE_PROJECT_ID }} \
-            --build-arg VITE_FIREBASE_STORAGE_BUCKET=${{ vars.VITE_FIREBASE_STORAGE_BUCKET }} \
-            --build-arg VITE_FIREBASE_MESSAGING_SENDER_ID=${{ vars.VITE_FIREBASE_MESSAGING_SENDER_ID }} \
-            --build-arg VITE_FIREBASE_APP_ID=${{ vars.VITE_FIREBASE_APP_ID }} \
-            --build-arg VITE_FIREBASE_MEASUREMENT_ID=${{ vars.VITE_FIREBASE_MEASUREMENT_ID }} \
+            --build-arg VITE_FIREBASE_API_KEY=AIzaSyBHFNIspXf7y86loK_9xEe0FD1JDuyuUG8 \
+            --build-arg VITE_FIREBASE_AUTH_DOMAIN=srmis-f244c.firebaseapp.com \
+            --build-arg VITE_FIREBASE_PROJECT_ID=srmis-f244c \
+            --build-arg VITE_FIREBASE_STORAGE_BUCKET=srmis-f244c.firebasestorage.app \
+            --build-arg VITE_FIREBASE_MESSAGING_SENDER_ID=1076003110487 \
+            --build-arg VITE_FIREBASE_APP_ID=1:1076003110487:web:05ad94da7d166bd7f76d12 \
+            --build-arg VITE_FIREBASE_MEASUREMENT_ID=G-XTTZ9TC0CC \
             -t $ECR/srmis/app:${{ github.sha }} \
             --push .
 
