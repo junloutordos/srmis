@@ -69,6 +69,20 @@ jobs:
             -t $ECR/srmis/app:${{ github.sha }} \
             --push .
 
+      - name: Ensure ECS task role has SES send permissions
+        run: |
+          aws iam put-role-policy \
+            --role-name srmisECSTaskRole \
+            --policy-name srmis-ses-send \
+            --policy-document '{
+              "Version":"2012-10-17",
+              "Statement":[{
+                "Effect":"Allow",
+                "Action":["ses:SendEmail","ses:SendRawEmail","sesv2:SendEmail"],
+                "Resource":"*"
+              }]
+            }' || echo "WARN: could not attach SES policy (may already exist or lack IAM perms)"
+
       - name: Update ECS task definition and deploy
         run: |
           # Get the current task definition used by the service
@@ -80,20 +94,28 @@ jobs:
 
           echo "Current task definition: $CURRENT_TASK_DEF"
 
-          # Fetch its full JSON, then replace the app image URI
+          # Fetch its full JSON, replace the app image URI, and ensure SES_CONFIGURATION_SET secret exists
           NEW_TASK_DEF=$(aws ecs describe-task-definition \
             --task-definition "$CURRENT_TASK_DEF" \
             --query 'taskDefinition' \
             --output json | \
             jq --arg app "$ECR/srmis/app:${{ github.sha }}" \
-            '.containerDefinitions |= map(
-              if (.image | contains("srmis/app")) then .image = $app
-              else . end
-            ) | del(
-              .taskDefinitionArn, .revision, .status,
-              .requiresAttributes, .compatibilities,
-              .registeredAt, .registeredBy
-            )')
+            '
+              .containerDefinitions |= map(
+                if (.image | contains("srmis/app")) then .image = $app
+                else . end
+              ) |
+              .containerDefinitions[0].secrets |= (
+                if any(.name == "SES_CONFIGURATION_SET") then .
+                else . + [{"name":"SES_CONFIGURATION_SET","valueFrom":"/srmis/prod/SES_CONFIGURATION_SET"}]
+                end
+              ) |
+              del(
+                .taskDefinitionArn, .revision, .status,
+                .requiresAttributes, .compatibilities,
+                .registeredAt, .registeredBy
+              )
+            ')
 
           # Register the new revision and capture its ARN
           NEW_TASK_ARN=$(aws ecs register-task-definition \
