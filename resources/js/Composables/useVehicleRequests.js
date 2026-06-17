@@ -247,9 +247,27 @@ export function useVehicleRequests(initialRequests = [], vehicles = []) {
       case 'date_needed':
         fieldErrors.date_needed = Array.isArray(form.date_needed) && form.date_needed.length ? '' : 'Add at least one date'; break
       case 'time_of_departure':
-        fieldErrors.time_of_departure = form.time_of_departure ? '' : 'Time of departure is required'; break
+        if (!form.time_of_departure) {
+          fieldErrors.time_of_departure = 'Time of departure is required'
+        } else {
+          fieldErrors.time_of_departure = ''
+          // re-validate eta whenever departure changes
+          if (form.eta && form.eta <= form.time_of_departure) {
+            fieldErrors.eta = 'Arrival time must be later than departure time'
+          } else if (form.eta) {
+            fieldErrors.eta = ''
+          }
+        }
+        break
       case 'eta':
-        fieldErrors.eta = form.eta ? '' : 'Estimated time of arrival is required'; break
+        if (!form.eta) {
+          fieldErrors.eta = 'Estimated time of arrival is required'
+        } else if (form.time_of_departure && form.eta <= form.time_of_departure) {
+          fieldErrors.eta = 'Arrival time must be later than departure time'
+        } else {
+          fieldErrors.eta = ''
+        }
+        break
       case 'vehicle_type':
         fieldErrors.vehicle_type = form.vehicle_type ? '' : 'Select a vehicle type'; break
       case 'division_chief_id':

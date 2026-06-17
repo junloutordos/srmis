@@ -102,6 +102,12 @@ class VehicleRequestController extends Controller
                 'division_chief_id' => 'required|exists:users,id',
         ]);
 
+        if ($request->input('time_of_departure') >= $request->input('eta')) {
+            throw \Illuminate\Validation\ValidationException::withMessages([
+                'eta' => 'Arrival time must be later than the departure time.',
+            ]);
+        }
+
         $user = $request->user();
 
         // prepare dates array
@@ -512,6 +518,12 @@ class VehicleRequestController extends Controller
             'status' => 'nullable|string|max:255',
             'division_chief_id' => 'required|exists:users,id',
         ]);
+
+        if ($request->input('time_of_departure') >= $request->input('eta')) {
+            throw \Illuminate\Validation\ValidationException::withMessages([
+                'eta' => 'Arrival time must be later than the departure time.',
+            ]);
+        }
 
         // Update both legacy single date and the new multiple dates json column
         $data = $request->only(['purpose','destination','vehicle_type','passengers','status','division_chief_id']);
