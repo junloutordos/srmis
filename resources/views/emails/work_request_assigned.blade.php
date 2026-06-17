@@ -20,7 +20,7 @@
 
 <div class="callout callout-blue">
     <div class="callout-title">Action Required</div>
-    Log in to CRCMIS, open the work request, and update its status as you work on it. Mark as Completed once resolved.
+    Log in to SRMIS, open the work request, and update its status as you work on it. Mark as Completed once resolved.
 </div>
 @endsection
 

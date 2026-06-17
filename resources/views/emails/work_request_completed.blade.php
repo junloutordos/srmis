@@ -22,6 +22,6 @@
 
 <div class="callout callout-green">
     <div class="callout-title">Issue resolved</div>
-    If the issue has not been fully resolved, please file a follow-up work request in CRCMIS.
+    If the issue has not been fully resolved, please file a follow-up work request in SRMIS.
 </div>
 @endsection

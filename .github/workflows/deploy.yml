@@ -51,6 +51,7 @@ jobs:
           docker buildx build --platform linux/amd64 \
             --progress=plain \
             --secret id=firebase_sa,src=/tmp/firebase-sa.json \
+            --build-arg VITE_APP_NAME=SRMIS \
             --build-arg VITE_STORAGE_BASE_URL=/media \
             --build-arg VITE_PUSHER_PORT=443 \
             --build-arg VITE_PUSHER_SCHEME=https \

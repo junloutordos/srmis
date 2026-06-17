@@ -28,7 +28,7 @@
 @if(!str_contains(strtolower($status ?? ''), 'approved'))
 <div class="callout callout-blue">
     <div class="callout-title">What to do next</div>
-    If you need this service, you may re-file a new service request in CRCMIS with updated details.
+    If you need this service, you may re-file a new service request in SRMIS with updated details.
 </div>
 @endif
 @endsection

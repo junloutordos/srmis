@@ -28,7 +28,7 @@
     @endif
 </table>
 
-<p style="font-size:13px;color:#64748b;margin-top:12px;">Log in to CRCMIS to view the document, scan, and full routing trail.</p>
+<p style="font-size:13px;color:#64748b;margin-top:12px;">Log in to SRMIS to view the document, scan, and full routing trail.</p>
 @endsection
 
 @section('actions')

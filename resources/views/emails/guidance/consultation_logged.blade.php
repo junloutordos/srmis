@@ -6,7 +6,7 @@
 
 @section('content')
 <p class="greeting">Hello,</p>
-<p class="lead">A new guidance consultation was scheduled via the kiosk. Please log in to CRCMIS to review and assign a counsellor.</p>
+<p class="lead">A new guidance consultation was scheduled via the kiosk. Please log in to SRMIS to review and assign a counsellor.</p>
 
 <table class="details" role="presentation">
     <tr><td class="lbl">Request ID</td><td class="val"><strong>#{{ $consult->id }}</strong></td></tr>

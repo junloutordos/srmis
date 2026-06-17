@@ -40,7 +40,7 @@
 </div>
 @endif
 
-<p style="font-size:13px;color:#64748b;margin-top:12px;">Log in to CRCMIS to view the full document, record your action, and forward to the next recipient as needed.</p>
+<p style="font-size:13px;color:#64748b;margin-top:12px;">Log in to SRMIS to view the full document, record your action, and forward to the next recipient as needed.</p>
 @endsection
 
 @section('actions')
