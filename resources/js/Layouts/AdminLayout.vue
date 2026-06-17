@@ -542,6 +542,20 @@ const menuItems = [
       },
     ],
   },
+  {
+    label: "Reports",
+    icon: DocumentChartBarIcon,
+    permissions: ["roles.assign"],
+    children: [
+      {
+        label: "Audit Logs",
+        routeName: "reports.audit_logs",
+        href: route("reports.audit_logs"),
+        icon: TableCellsIcon,
+        permissions: ["roles.assign"],
+      },
+    ],
+  },
 ];
 
 // --- Filter Menu by Role ---
