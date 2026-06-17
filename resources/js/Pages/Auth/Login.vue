@@ -48,7 +48,8 @@ const googleLogin = async () => {
       showAlert({ icon: 'error', title: 'Unauthorized Email', text: 'Only official PSHS campus or OED accounts are allowed.' })
       return
     }
-    const { data } = await axios.post('/google/login', { email: user.email, name: user.displayName, uid: user.uid })
+    const idToken = await user.getIdToken()
+    const { data } = await axios.post('/google/login', { email: user.email, name: user.displayName, uid: user.uid, idToken })
     if (!data?.success) throw new Error('Account verification failed')
     showAlert({ icon: 'success', title: 'Login Successful', text: `Welcome, ${user.displayName}! Redirecting…`, timer: 1500, showConfirmButton: false })
     window.location.href = data.redirect_to

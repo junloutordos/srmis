@@ -96,12 +96,25 @@ class GoogleAuthController extends Controller
     public function login(Request $request)
     {
         $request->validate([
-            'email' => 'required|email',
-            'name'  => 'required|string',
-            'uid'   => 'required|string',
+            'email'   => 'required|email',
+            'name'    => 'required|string',
+            'uid'     => 'required|string',
+            'idToken' => 'required|string',
         ]);
 
         $email = strtolower(trim($request->email));
+
+        // Verify the Firebase ID token server-side so the email cannot be spoofed.
+        try {
+            $firebaseAuth = app(\Kreait\Firebase\Contract\Auth::class);
+            $verified     = $firebaseAuth->verifyIdToken($request->idToken);
+            if (strtolower($verified->claims()->get('email')) !== $email) {
+                return response()->json(['success' => false, 'message' => 'Token email mismatch.'], 403);
+            }
+        } catch (\Throwable $e) {
+            $this->securityLog('warning', 'Google login rejected: invalid ID token', ['ip' => request()->ip(), 'error' => $e->getMessage()]);
+            return response()->json(['success' => false, 'message' => 'Invalid Google token. Please try again.'], 403);
+        }
 
         $ip = request()->ip();
 
