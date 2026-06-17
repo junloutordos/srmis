@@ -36,6 +36,12 @@ if [ -n "$DB_HOST" ] && [ -n "$DB_DATABASE" ]; then
         || echo "WARN: could not ensure central database exists"
 fi
 
+# ── Firebase credentials ──────────────────────────────────────────────────────
+# The file is baked into the image by the Dockerfile BuildKit secret mount.
+# Export the path explicitly so config:cache captures it even if the ECS task
+# definition does not set FIREBASE_CREDENTIALS.
+export FIREBASE_CREDENTIALS=/var/www/storage/app/firebase-service-account.json
+
 # ── Laravel bootstrap ─────────────────────────────────────────────────────────
 php /var/www/artisan cache:clear
 # Central schema first (tenants/domains/settings), then every tenant schema.
