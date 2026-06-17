@@ -9,6 +9,7 @@ import {
   ArrowUpOnSquareIcon,
   BanknotesIcon,
   XMarkIcon,
+  KeyIcon,
 } from "@heroicons/vue/24/outline"
 import { useUsers } from "@/Composables/useUsers.js"
 import { storageUrl } from "@/Composables/useStorage.js"
@@ -42,6 +43,7 @@ const {
   viewUser,
   deleteUser,
   activateUser,
+  sendPasswordReset,
   isEmployeesPage,
   isInactivePage,
 } = useUsers(props)
@@ -398,6 +400,10 @@ function formatSg(user) {
                       </button>
                       <button @click="openModal('edit', user)" class="p-1.5 rounded-lg hover:bg-slate-100 text-slate-500 hover:text-slate-700 transition-colors" title="Edit">
                         <PencilSquareIcon class="w-4 h-4" />
+                      </button>
+                      <!-- Send password reset link -->
+                      <button @click="sendPasswordReset(user)" class="p-1.5 rounded-lg hover:bg-amber-50 text-slate-500 hover:text-amber-600 transition-colors" title="Send password reset link">
+                        <KeyIcon class="w-4 h-4" />
                       </button>
                       <!-- Salary grade (employees page only) -->
                       <button v-if="isEmployeesPage" @click="openSgModal(user)"

@@ -149,6 +149,16 @@ class GoogleAuthController extends Controller
             return response()->json(['success' => false, 'message' => 'Unable to log in. Contact MIS administrator.'], 403);
         }
 
+        // Persist the Google profile photo URL if the user hasn't uploaded a custom one.
+        // The Firebase verified token includes a 'picture' claim with the Google photo URL.
+        // storageUrl() in the frontend passes http URLs through as-is, so storing them
+        // directly in profile_picture is safe and avoids a new migration.
+        $googlePhoto = $verified->claims()->get('picture');
+        if ($googlePhoto && (! $user->profile_picture || str_starts_with($user->profile_picture, 'https://lh'))) {
+            $user->profile_picture = $googlePhoto;
+            $user->save();
+        }
+
         Auth::login($user, true);
         $request->session()->regenerate();
         $request->session()->put('tenant_id', tenant('id'));

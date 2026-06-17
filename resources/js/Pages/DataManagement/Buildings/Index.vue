@@ -32,7 +32,7 @@
             <thead class="bg-slate-50">
               <tr>
                 <th class="px-4 py-3 text-left text-xs font-semibold text-slate-500 uppercase tracking-wide whitespace-nowrap">#</th>
-                <th class="px-4 py-3 text-left text-xs font-semibold text-slate-500 uppercase tracking-wide whitespace-nowrap">Name</th>
+                <th class="px-4 py-3 text-left text-xs font-semibold text-slate-500 uppercase tracking-wide whitespace-nowrap w-56">Name</th>
                 <th class="px-4 py-3 text-left text-xs font-semibold text-slate-500 uppercase tracking-wide whitespace-nowrap">Code</th>
                 <th class="px-4 py-3 text-left text-xs font-semibold text-slate-500 uppercase tracking-wide whitespace-nowrap">No of Rooms</th>
                 <th class="px-4 py-3 text-left text-xs font-semibold text-slate-500 uppercase tracking-wide whitespace-nowrap">No of Floors</th>
@@ -43,7 +43,7 @@
             <tbody class="divide-y divide-slate-100">
               <tr v-for="b in filteredBuildings" :key="b.id" class="hover:bg-slate-50/60">
                 <td class="px-4 py-3 text-sm text-slate-700">{{ b.id }}</td>
-                <td class="px-4 py-3 text-sm text-slate-700 font-medium">{{ b.name }}</td>
+                <td class="px-4 py-3 text-sm text-slate-700 font-medium max-w-[14rem] truncate" :title="b.name">{{ b.name }}</td>
                 <td class="px-4 py-3 text-sm text-slate-700">{{ b.code ?? '—' }}</td>
                 <td class="px-4 py-3 text-sm text-slate-700">{{ b.no_of_rooms ?? '—' }}</td>
                 <td class="px-4 py-3 text-sm text-slate-700">{{ b.number_of_floors ?? '—' }}</td>
@@ -321,6 +321,12 @@ const openModal = (b = null) => {
 const closeModal = () => { showModal.value = false; editingId.value = null; form.reset() }
 
 const submitForm = () => {
+  const yc = parseInt(form.year_constructed)
+  const yd = parseInt(form.year_completed)
+  if (form.year_constructed && form.year_completed && yd < yc) {
+    Swal.fire({ icon: 'error', title: 'Invalid Dates', text: 'Year Completed cannot be earlier than Year Constructed.' })
+    return
+  }
   if (editingId.value) {
     form.put(`/data-management/buildings/${editingId.value}`, {
       onSuccess: () => {

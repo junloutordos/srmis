@@ -15,14 +15,14 @@ import { ShieldCheckIcon } from '@heroicons/vue/24/outline'
           <ShieldCheckIcon class="w-8 h-8 text-emerald-200" />
           <h1 class="text-2xl font-bold">Data Privacy Policy</h1>
         </div>
-        <p class="text-emerald-200 text-sm">Published: 02 March 2022</p>
+        <p class="text-emerald-200 text-sm">Philippine Science High School System</p>
       </div>
 
       <!-- Notice intro -->
       <div class="bg-white rounded-xl border border-slate-100 shadow-sm p-6 space-y-4 text-sm text-slate-700 leading-relaxed">
         <h2 class="text-base font-bold text-slate-800 uppercase tracking-wide">PSHS Data Privacy Notice</h2>
         <p>
-          Philippine Science High School – Caraga Region Campus (PSHS-CRC) is aware of the need to keep the personal data of its stakeholders (e.g., students, alumni, applicants) private and secured for purely legitimate purposes. This legitimate purpose is in accordance with our mandate and duties under Republic Act No. 8496 as amended by Republic Act 9036.
+          Philippine Science High School (PSHS) is aware of the need to keep the personal data of its stakeholders (e.g., students, alumni, applicants) private and secured for purely legitimate purposes. This legitimate purpose is in accordance with our mandate and duties under Republic Act No. 8496 as amended by Republic Act 9036.
         </p>
         <p>
           Our goal is to comply with the Data Privacy Act of 2012 (DPA) and cooperate fully with the National Privacy Commission (NPC). We value your privacy as much as we value ours. Our commitment to providing quality education to our students is as important as our commitment in keeping your personal data safe. We are aware that personal data comprises one's identity and in this modern times, personal and sensitive information's confidentiality is of utmost importance.
@@ -46,7 +46,7 @@ import { ShieldCheckIcon } from '@heroicons/vue/24/outline'
         <div class="space-y-3">
           <h3 class="font-semibold text-slate-800">Information you provide us during your application for NCE</h3>
           <p>
-            Upon application for NCE, we collect information about personal circumstances and contact information such as but not limited to name, home/residence addresses, parent's email addresses, telephone number/mobile numbers and other contact details, family history, previous schools attended, emergency contact information, academic performance, disciplinary record, medical record, etc. This is in order for us to assess you properly as you try to apply for this particular exam.
+            Upon application for NCE, we collect information about personal circumstances and contact information such as but not limited to name, home/residence addresses, parent's email addresses, telephone number/mobile numbers and other contact details, family history, previous schools attended, emergency contact information, academic performance, disciplinary record, medical record, etc. This is in order for us to assess you properly as you try to apply for this particular exams.
           </p>
         </div>
 
@@ -142,7 +142,7 @@ import { ShieldCheckIcon } from '@heroicons/vue/24/outline'
       <div class="bg-white rounded-xl border border-slate-100 shadow-sm p-6 space-y-3 text-sm text-slate-700 leading-relaxed">
         <h2 class="text-base font-bold text-slate-800">Right to Privacy</h2>
         <p>
-          As provided by the Act, you may object to the processing of your personal data, request to access your personal information, and/or have it corrected, erased, or blocked on reasonable grounds. For the details of your rights as data subject, you can get in touch with our Data Privacy Officer at the contact details below or at the National Privacy Commission at
+          As provided by the Act, you may object to the processing of your personal data, request to access your personal information, and/or have it corrected, erased, or blocked on reasonable grounds. For the details of your rights as data subject, you can get in touch with our Data Protection Officer at the contact details below or at the National Privacy Commission at
           <a href="https://privacy.gov.ph" target="_blank" rel="noopener noreferrer" class="text-emerald-600 hover:text-emerald-800 font-medium underline">https://privacy.gov.ph</a>.
           PSHS will take note of your request and shall reserve the right to deal with the matter in accordance with the law.
         </p>
@@ -160,15 +160,21 @@ import { ShieldCheckIcon } from '@heroicons/vue/24/outline'
       <div class="bg-emerald-50 border border-emerald-100 rounded-xl p-6 space-y-3 text-sm text-slate-700 leading-relaxed">
         <h2 class="text-base font-bold text-slate-800">Contact Information</h2>
         <p>
-          For your concerns regarding your privacy rights, or any matter regarding Data Privacy Act of 2012, you may contact our Compliance Officer for Privacy (COP) through the following details:
+          For your concerns regarding your privacy rights, or any matter regarding Data Privacy Act of 2012, you may contact our Data Protection Officer through the following details:
         </p>
         <div class="bg-white rounded-lg border border-emerald-100 p-4 space-y-1">
-          <p class="font-semibold text-slate-800">Compliance Officer for Privacy (COP)</p>
-          <p class="text-slate-700">Engr. Lyndon R. Bermoy, SST V</p>
+          <p class="font-semibold text-slate-800">The Data Protection Officer</p>
+          <p class="text-slate-700">Office of the Executive Director, PSHS System</p>
+          <p>
+            Contact No.:
+            <a href="tel:09190063657" class="text-emerald-600 hover:text-emerald-800 font-medium">
+              0919 006 3657
+            </a>
+          </p>
           <p>
             Email:
-            <a href="mailto:privacy@crc.pshs.edu.ph" class="text-emerald-600 hover:text-emerald-800 font-medium">
-              privacy@crc.pshs.edu.ph
+            <a href="mailto:dpo.oed@pshs.edu.ph" class="text-emerald-600 hover:text-emerald-800 font-medium">
+              dpo.oed@pshs.edu.ph
             </a>
           </p>
         </div>
@@ -176,7 +182,8 @@ import { ShieldCheckIcon } from '@heroicons/vue/24/outline'
 
       <!-- Footer -->
       <div class="text-center text-xs text-slate-400 pb-4">
-        Philippine Science High School – Caraga Region Campus · Data Privacy Policy · Published 02 March 2022
+        Philippine Science High School System · Data Privacy Policy ·
+        <a href="https://pshs.edu.ph/privacy-policy/" target="_blank" rel="noopener noreferrer" class="hover:text-slate-600 underline">pshs.edu.ph/privacy-policy</a>
       </div>
 
     </div>

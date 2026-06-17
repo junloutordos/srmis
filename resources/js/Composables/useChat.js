@@ -1,5 +1,6 @@
 import { ref, computed, nextTick } from 'vue'
 import axios from 'axios'
+import Swal from 'sweetalert2'
 
 export function useChat(authUser) {
   // ── State ──────────────────────────────────────────────────────────────────
@@ -212,6 +213,8 @@ export function useChat(authUser) {
       userSearchQ.value = ''
     } catch (e) {
       console.error('Start DM failed', e)
+      const msg = e.response?.data?.message || 'Unable to start conversation. Please try again.'
+      Swal.fire({ icon: 'error', title: 'Chat Error', text: msg, confirmButtonColor: '#1447c0' })
     }
   }
 

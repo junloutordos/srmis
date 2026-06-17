@@ -12,7 +12,7 @@ class CampusController extends Controller
 {
     public function index()
     {
-        $campus = Campus::first(); // Get the single campus
+        $campus = Campus::first();
         return Inertia::render('DataManagement/Campus/Index', [
             'campus' => $campus,
         ]);
@@ -21,23 +21,24 @@ class CampusController extends Controller
     public function store(Request $request)
     {
         $data = $request->validate([
-            'name' => 'required|string|max:255',
-            'code' => 'nullable|string|max:100',
+            'name'             => 'required|string|max:255',
+            'code'             => 'nullable|string|max:100',
             'year_established' => 'nullable|integer|min:1800|max:' . (date('Y') + 1),
-            'address' => 'nullable|string',
-            'telephone' => 'nullable|string|max:20',
-            'mobile' => 'nullable|string|max:20',
-            'email' => 'nullable|email|max:255',
-            'website' => 'nullable|url|max:255',
-            'facebook' => 'nullable|string|max:255',
-            'logo' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048', // Validate logo upload
+            'address'          => 'nullable|string',
+            'telephone'        => 'nullable|string|max:20',
+            'mobile'           => 'nullable|string|max:20',
+            'email'            => 'nullable|email|max:255',
+            'website'          => 'nullable|url|max:255',
+            'facebook'         => 'nullable|string|max:255',
+            'logo_base64'      => 'nullable|string',
+            'logo_mime'        => 'nullable|string|in:image/jpeg,image/jpg,image/png,image/gif',
         ]);
 
-        // Handle logo upload
-        if ($request->hasFile('logo')) {
-            $logoPath = $request->file('logo')->store('campuses', 'public');
-            $data['logo'] = $logoPath;
+        if (! empty($data['logo_base64'])) {
+            $data['logo'] = $this->storeLogo($data['logo_base64'], $data['logo_mime'] ?? 'image/png');
         }
+
+        unset($data['logo_base64'], $data['logo_mime']);
 
         Campus::create($data);
 
@@ -47,27 +48,28 @@ class CampusController extends Controller
     public function update(Request $request, Campus $campus)
     {
         $data = $request->validate([
-            'name' => 'required|string|max:255',
-            'code' => 'nullable|string|max:100',
+            'name'             => 'required|string|max:255',
+            'code'             => 'nullable|string|max:100',
             'year_established' => 'nullable|integer|min:1800|max:' . (date('Y') + 1),
-            'address' => 'nullable|string',
-            'telephone' => 'nullable|string|max:20',
-            'mobile' => 'nullable|string|max:20',
-            'email' => 'nullable|email|max:255',
-            'website' => 'nullable|url|max:255',
-            'facebook' => 'nullable|string|max:255',
-            'logo' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048', // Validate logo upload
+            'address'          => 'nullable|string',
+            'telephone'        => 'nullable|string|max:20',
+            'mobile'           => 'nullable|string|max:20',
+            'email'            => 'nullable|email|max:255',
+            'website'          => 'nullable|url|max:255',
+            'facebook'         => 'nullable|string|max:255',
+            'logo_base64'      => 'nullable|string',
+            'logo_mime'        => 'nullable|string|in:image/jpeg,image/jpg,image/png,image/gif',
         ]);
 
-        // Handle logo upload
-        if ($request->hasFile('logo')) {
-            // Delete old logo if exists
-            if ($campus->logo && Storage::disk('public')->exists($campus->logo)) {
-                Storage::disk('public')->delete($campus->logo);
+        if (! empty($data['logo_base64'])) {
+            // Delete old logo from S3
+            if ($campus->logo) {
+                Storage::disk('s3')->delete($campus->logo);
             }
-            $logoPath = $request->file('logo')->store('campuses', 'public');
-            $data['logo'] = $logoPath;
+            $data['logo'] = $this->storeLogo($data['logo_base64'], $data['logo_mime'] ?? 'image/png');
         }
+
+        unset($data['logo_base64'], $data['logo_mime']);
 
         $campus->update($data);
 
@@ -76,7 +78,23 @@ class CampusController extends Controller
 
     public function destroy(Campus $campus)
     {
+        if ($campus->logo) {
+            Storage::disk('s3')->delete($campus->logo);
+        }
         $campus->delete();
         return redirect()->route('campuses.index')->with('success', 'Campus deleted.');
+    }
+
+    private function storeLogo(string $base64, string $mime): string
+    {
+        $raw  = base64_decode(preg_replace('/^data:[^;]+;base64,/', '', $base64));
+        $ext  = match (true) {
+            str_contains($mime, 'png')  => 'png',
+            str_contains($mime, 'gif')  => 'gif',
+            default                     => 'jpg',
+        };
+        $path = 'campus_logos/' . uniqid('logo_') . '.' . $ext;
+        Storage::disk('s3')->put($path, $raw);
+        return $path;
     }
 }

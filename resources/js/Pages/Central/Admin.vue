@@ -101,7 +101,10 @@ function logout() {
             <p class="text-xs text-indigo-200">{{ domain }}</p>
           </div>
         </div>
-        <button @click="logout" class="rounded-lg bg-white/10 px-4 py-2 text-sm font-medium hover:bg-white/20">Sign out</button>
+        <div class="flex items-center gap-2">
+          <a :href="route('central.overview')" class="rounded-lg bg-white/10 px-4 py-2 text-sm font-medium hover:bg-white/20">System Overview</a>
+          <button @click="logout" class="rounded-lg bg-white/10 px-4 py-2 text-sm font-medium hover:bg-white/20">Sign out</button>
+        </div>
       </div>
     </header>
 

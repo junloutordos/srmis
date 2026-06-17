@@ -198,7 +198,7 @@
 </style>
 
 <script setup>
-import { Head, usePage, useForm, router as inertiaRouter } from '@inertiajs/vue3'
+import { Head, usePage, useForm } from '@inertiajs/vue3'
 import { ref } from 'vue'
 import AdminLayout from '@/Layouts/AdminLayout.vue'
 import { storageUrl } from "@/Composables/useStorage.js"
@@ -223,7 +223,8 @@ const form = useForm({
   email: '',
   website: '',
   facebook: '',
-  logo: null,
+  logo_base64: null,
+  logo_mime: null,
 })
 
 const openModal = (c = null) => {
@@ -256,46 +257,27 @@ const closeModal = () => {
 
 const handleLogoChange = (event) => {
   const file = event.target.files[0]
-  if (file) {
-    // Validate file type
-    if (!file.type.match('image.*')) {
-      Swal.fire({ icon: 'error', title: 'Invalid file type', text: 'Please select an image file.' })
-      return
-    }
-
-    // Validate file size (2MB)
-    if (file.size > 2 * 1024 * 1024) {
-      Swal.fire({ icon: 'error', title: 'File too large', text: 'Please select an image smaller than 2MB.' })
-      return
-    }
-
-    // Set the file directly to the form
-    form.logo = file
-
-    // Create preview
-    const reader = new FileReader()
-    reader.onload = (e) => {
-      logoPreview.value = e.target.result
-    }
-    reader.readAsDataURL(file)
+  if (!file) return
+  if (!file.type.match('image.*')) {
+    Swal.fire({ icon: 'error', title: 'Invalid file type', text: 'Please select an image file.' })
+    return
   }
+  if (file.size > 2 * 1024 * 1024) {
+    Swal.fire({ icon: 'error', title: 'File too large', text: 'Please select an image smaller than 2MB.' })
+    return
+  }
+  const reader = new FileReader()
+  reader.onload = (e) => {
+    logoPreview.value = e.target.result
+    form.logo_base64 = e.target.result
+    form.logo_mime   = file.type
+  }
+  reader.readAsDataURL(file)
 }
 
 const submitForm = () => {
-  const formData = new FormData()
-
-  // Add all form fields to FormData
-  Object.keys(form.data()).forEach(key => {
-    if (key === 'logo' && form.logo) {
-      formData.append('logo', form.logo)
-    } else if (key !== 'logo') {
-      formData.append(key, form[key] || '')
-    }
-  })
-
   if (editingId.value) {
-    formData.append('_method', 'PUT')
-    inertiaRouter.post(`/data-management/campuses/${editingId.value}`, formData, {
+    form.put(`/data-management/campuses/${editingId.value}`, {
       onSuccess: () => {
         closeModal()
         Swal.fire({ icon: 'success', title: 'Campus updated', timer: 1200, showConfirmButton: false }).then(() => {
@@ -307,7 +289,7 @@ const submitForm = () => {
       }
     })
   } else {
-    inertiaRouter.post('/data-management/campuses', formData, {
+    form.post('/data-management/campuses', {
       onSuccess: () => {
         closeModal()
         Swal.fire({ icon: 'success', title: 'Campus added', timer: 1200, showConfirmButton: false }).then(() => {

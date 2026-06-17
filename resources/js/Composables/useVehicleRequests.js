@@ -181,6 +181,17 @@ export function useVehicleRequests(initialRequests = [], vehicles = []) {
     calendarMonth.value = new Date(d.getFullYear(), d.getMonth() + 1, 1)
   }
 
+  const jumpToMonth = (yyyyMM) => {
+    const [y, m] = yyyyMM.split('-').map(Number)
+    calendarMonth.value = new Date(y, m - 1, 1)
+  }
+
+  const calendarMonthInput = computed(() => {
+    const d = calendarMonth.value
+    const pad = (n) => (n < 10 ? '0' + n : String(n))
+    return `${d.getFullYear()}-${pad(d.getMonth() + 1)}`
+  })
+
   const monthDays = computed(() => {
     const d     = calendarMonth.value
     const year  = d.getFullYear()
@@ -414,8 +425,8 @@ export function useVehicleRequests(initialRequests = [], vehicles = []) {
     selectedDriverId, selectedVehicleId, assignLoading,
     openAssignDriverModal, closeAssignDriverModal, assignDriver,
     // calendar
-    showCalendar, calendarMonth, bookings, monthLabel,
-    fetchBookings, openCalendar, prevMonth, nextMonth,
+    showCalendar, calendarMonth, bookings, monthLabel, calendarMonthInput,
+    fetchBookings, openCalendar, prevMonth, nextMonth, jumpToMonth,
     monthDays, bookingsForDate,
     // form
     form, fieldErrors, dateInput,

@@ -584,7 +584,6 @@ const filterMenuByRole = (items, userRoleNames) =>
 
 const filteredMenu = computed(() => filterMenuByRole(menuItems, roleNames));
 
-
 // --- Expand logic ---
 const toggleExpand = (label) => (expanded.value[label] = !expanded.value[label]);
 
@@ -901,7 +900,7 @@ filteredMenu.value.forEach((item) => {
 
         <!-- Privacy Policy -->
         <a
-          :href="route('privacy.index')"
+          href="/privacy"
           target="_blank"
           rel="noopener noreferrer"
           class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium text-slate-500 hover:text-emerald-600 hover:bg-emerald-50 transition-colors border border-slate-200 hover:border-emerald-200"
@@ -945,10 +944,15 @@ filteredMenu.value.forEach((item) => {
           class="flex items-center gap-2.5 px-2 py-1.5 rounded-lg hover:bg-gray-50 transition-colors"
         >
           <img
-            :src="storageUrl(user.profile_picture) ?? 'https://i.pravatar.cc/40'"
+            v-if="storageUrl(user.profile_picture)"
+            :src="storageUrl(user.profile_picture)"
             alt="User Avatar"
             class="w-7 h-7 rounded-full object-cover ring-2 ring-gray-200"
           />
+          <div
+            v-else
+            class="w-7 h-7 rounded-full ring-2 ring-gray-200 bg-indigo-100 text-indigo-700 flex items-center justify-center text-xs font-bold select-none"
+          >{{ (user.name ?? '?').charAt(0).toUpperCase() }}</div>
           <div class="hidden md:block text-left">
             <p class="text-sm font-medium text-gray-800 leading-none">{{ user.name }}</p>
             <p class="text-[11px] text-gray-500 leading-none mt-0.5">{{ roleName }}</p>
@@ -1089,13 +1093,19 @@ filteredMenu.value.forEach((item) => {
           </svg>
         </div>
         <h2 class="text-lg font-semibold text-slate-800 mb-1">Session Expired</h2>
-        <p class="text-sm text-slate-500 mb-6">Your session has timed out. Please reload the page to continue.</p>
-        <button
-          @click="router.visit(window.location.pathname)"
-          class="w-full bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-medium px-4 py-2.5 rounded-lg transition-colors"
+        <p class="text-sm text-slate-500 mb-6">Your session has timed out. Please sign in again to continue.</p>
+        <a
+          href="/login"
+          class="block w-full bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-medium px-4 py-2.5 rounded-lg transition-colors text-center"
         >
-          Reload Page
-        </button>
+          Sign In Again
+        </a>
+        <a
+          href="/login"
+          class="block w-full mt-3 text-sm text-slate-500 hover:text-slate-700 py-1 transition-colors text-center"
+        >
+          Sign Out
+        </a>
       </div>
     </div>
   </Teleport>

@@ -17,6 +17,7 @@ import {
   ChartBarIcon,
   ClockIcon,
   ArrowsRightLeftIcon,
+  ChevronDownIcon,
 } from '@heroicons/vue/24/outline'
 
 // ── Props ──────────────────────────────────────────────────────────────────────
@@ -62,6 +63,53 @@ const form   = ref(blankForm())
 const errors = ref({})
 const target = ref(null)   // the unit being edited or deleted
 
+// ── Create modal enhancements ──────────────────────────────────────────────
+const showAdvanced   = ref(false)
+const parentSearch   = ref('')
+const showParentList = ref(false)
+const codeManual     = ref(false)
+
+const filteredParentUnits = computed(() => {
+  const q = parentSearch.value.toLowerCase().trim()
+  if (!q) return flatUnits.value.slice(0, 40)
+  return flatUnits.value.filter(u =>
+    u.name.toLowerCase().includes(q) ||
+    u.code.toLowerCase().includes(q) ||
+    (u.short_name ?? '').toLowerCase().includes(q)
+  ).slice(0, 30)
+})
+
+const selectedParentNode = computed(() =>
+  form.value.parent_id !== null
+    ? (flatUnits.value.find(u => u.id === form.value.parent_id) ?? null)
+    : null
+)
+
+const TYPE_HINTS = {
+  division:   'Divisions sit directly under the campus root.',
+  department: 'Departments usually belong to a Division.',
+  section:    'Sections typically belong to a Division or Department.',
+  unit:       'Units belong to a Division, Department, or Section.',
+  office:     'Offices typically belong to a Division.',
+  committee:  'Committees can be placed at any level.',
+}
+
+function selectParent(unit) {
+  form.value.parent_id = unit ? unit.id : null
+  parentSearch.value   = ''
+  showParentList.value = false
+}
+
+watch(() => form.value.name, (name) => {
+  if (showEdit.value || codeManual.value) return
+  form.value.code = name
+    .toUpperCase()
+    .replace(/[^A-Z0-9\s-]/g, '')
+    .trim()
+    .replace(/\s+/g, '-')
+    .slice(0, 20)
+})
+
 // ── Computed — flat searchable list ───────────────────────────────────────────
 function flattenTree(nodes, list = []) {
   for (const n of nodes) {
@@ -103,15 +151,48 @@ const filteredTree = computed(() => {
 })
 
 // ── Open modals ────────────────────────────────────────────────────────────────
+// Separate parent-list state for the edit modal
+const editParentSearch   = ref('')
+const showEditParentList = ref(false)
+
+const filteredEditParentUnits = computed(() => {
+  const q = editParentSearch.value.toLowerCase().trim()
+  const base = flatUnits.value.filter(u => u.id !== target.value?.id)
+  if (!q) return base.slice(0, 40)
+  return base.filter(u =>
+    u.name.toLowerCase().includes(q) ||
+    u.code.toLowerCase().includes(q) ||
+    (u.short_name ?? '').toLowerCase().includes(q)
+  ).slice(0, 30)
+})
+
+const selectedEditParentNode = computed(() =>
+  form.value.parent_id !== null
+    ? (flatUnits.value.find(u => u.id === form.value.parent_id) ?? null)
+    : null
+)
+
+function selectEditParent(unit) {
+  form.value.parent_id   = unit ? unit.id : null
+  editParentSearch.value  = ''
+  showEditParentList.value = false
+}
+
 function openCreate(parentNode = null) {
-  form.value   = blankForm()
+  form.value           = blankForm()
   form.value.parent_id = parentNode?.id ?? null
-  errors.value = {}
-  showCreate.value = true
+  errors.value         = {}
+  showAdvanced.value   = false
+  codeManual.value     = false
+  parentSearch.value   = ''
+  showParentList.value = false
+  showCreate.value     = true
 }
 
 function openEdit(node) {
-  target.value = node
+  target.value             = node
+  editParentSearch.value   = ''
+  showEditParentList.value = false
   form.value   = {
     code:             node.code,
     name:             node.name,
@@ -499,103 +580,153 @@ function toggleInactive() {
     </div>
 
     <!-- ── CREATE MODAL ───────────────────────────────────────────────────────── -->
-    <AppModal :show="showCreate" title="New Organizational Unit" size="2xl" @close="showCreate = false">
-      <form @submit.prevent="submitCreate" class="space-y-4">
-        <div class="grid grid-cols-2 gap-4">
-          <!-- Code -->
-          <div>
-            <label class="block text-xs font-medium text-slate-600 mb-1">Code <span class="text-red-500">*</span></label>
-            <input v-model="form.code" type="text" maxlength="50" placeholder="e.g. ACAD-DIV"
-              class="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-400"
-              :class="{ 'border-red-400': errors.code }"
-            />
-            <p v-if="errors.code" class="text-red-500 text-xs mt-1">{{ errors.code[0] }}</p>
-          </div>
-          <!-- Type -->
-          <div>
-            <label class="block text-xs font-medium text-slate-600 mb-1">Type <span class="text-red-500">*</span></label>
-            <select v-model="form.type"
-              class="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-400"
-              :class="{ 'border-red-400': errors.type }"
-            >
-              <option v-for="t in types" :key="t" :value="t" class="capitalize">{{ t }}</option>
-            </select>
-            <p v-if="errors.type" class="text-red-500 text-xs mt-1">{{ errors.type[0] }}</p>
-          </div>
-        </div>
+    <AppModal :show="showCreate" title="New Organizational Unit" size="xl" @close="showCreate = false">
+      <!-- Backdrop to close parent dropdown -->
+      <div v-if="showParentList" class="fixed inset-0 z-10" @click="showParentList = false" />
 
-        <!-- Name -->
+      <form @submit.prevent="submitCreate" class="space-y-4">
+
+        <!-- 1. Name -->
         <div>
           <label class="block text-xs font-medium text-slate-600 mb-1">Full Name <span class="text-red-500">*</span></label>
-          <input v-model="form.name" type="text" placeholder="Official unit name"
+          <input v-model="form.name" type="text" placeholder="Official name of the unit"
             class="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-400"
             :class="{ 'border-red-400': errors.name }"
           />
           <p v-if="errors.name" class="text-red-500 text-xs mt-1">{{ errors.name[0] }}</p>
         </div>
 
-        <div class="grid grid-cols-2 gap-4">
-          <!-- Short name -->
-          <div>
-            <label class="block text-xs font-medium text-slate-600 mb-1">Abbreviation</label>
-            <input v-model="form.short_name" type="text" maxlength="100" placeholder="e.g. ACAD"
-              class="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-400"
-            />
-          </div>
-          <!-- Parent -->
-          <div>
-            <label class="block text-xs font-medium text-slate-600 mb-1">Parent Unit</label>
-            <select v-model="form.parent_id"
-              class="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-400"
+        <!-- 2. Type -->
+        <div>
+          <label class="block text-xs font-medium text-slate-600 mb-1">Type <span class="text-red-500">*</span></label>
+          <select v-model="form.type"
+            class="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-400 capitalize"
+            :class="{ 'border-red-400': errors.type }"
+          >
+            <option v-for="t in types" :key="t" :value="t" class="capitalize">{{ t }}</option>
+          </select>
+          <p v-if="TYPE_HINTS[form.type]" class="text-xs text-slate-400 mt-1">{{ TYPE_HINTS[form.type] }}</p>
+          <p v-if="errors.type" class="text-red-500 text-xs mt-1">{{ errors.type[0] }}</p>
+        </div>
+
+        <!-- 3. Parent unit (searchable combobox) -->
+        <div>
+          <label class="block text-xs font-medium text-slate-600 mb-1">Parent Unit</label>
+          <div class="relative" style="z-index: 20">
+            <button
+              type="button"
+              @click="showParentList = !showParentList"
+              class="w-full text-left border border-slate-200 rounded-lg px-3 py-2 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-indigo-400 flex items-center justify-between"
               :class="{ 'border-red-400': errors.parent_id }"
             >
-              <option :value="null">— None (root) —</option>
-              <option v-for="u in flatUnits" :key="u.id" :value="u.id">
-                {{ '–'.repeat(u.depth) }} {{ u.name }} ({{ u.code }})
-              </option>
-            </select>
-            <p v-if="errors.parent_id" class="text-red-500 text-xs mt-1">{{ errors.parent_id[0] }}</p>
+              <span :class="selectedParentNode ? 'text-slate-800' : 'text-slate-400'">
+                {{ selectedParentNode ? `${selectedParentNode.name} (${selectedParentNode.code})` : '— None (root unit) —' }}
+              </span>
+              <ChevronDownIcon class="h-4 w-4 text-slate-400 shrink-0 transition-transform" :class="{ 'rotate-180': showParentList }" />
+            </button>
+
+            <div v-if="showParentList" class="absolute top-full left-0 right-0 mt-1 bg-white border border-slate-200 rounded-lg shadow-lg" style="z-index: 20">
+              <div class="p-2 border-b border-slate-100">
+                <input
+                  v-model="parentSearch"
+                  type="text"
+                  placeholder="Search by name or code…"
+                  class="w-full border border-slate-200 rounded px-2 py-1.5 text-xs focus:outline-none focus:ring-2 focus:ring-indigo-400"
+                />
+              </div>
+              <div class="max-h-52 overflow-y-auto py-1">
+                <button type="button" @click="selectParent(null)"
+                  class="w-full text-left px-3 py-2 text-sm text-slate-400 hover:bg-slate-50"
+                >— None (root unit) —</button>
+                <button
+                  type="button"
+                  v-for="u in filteredParentUnits"
+                  :key="u.id"
+                  @click="selectParent(u)"
+                  class="w-full text-left py-2 pr-3 text-sm hover:bg-indigo-50 flex items-center gap-2"
+                  :style="`padding-left: ${12 + u.depth * 14}px`"
+                >
+                  <span class="shrink-0 text-[9px] font-bold text-slate-400 uppercase font-mono w-4">{{ u.type[0] }}</span>
+                  <span class="flex-1 truncate text-slate-700">{{ u.name }}</span>
+                  <span class="shrink-0 text-xs text-slate-400 font-mono">{{ u.code }}</span>
+                </button>
+              </div>
+            </div>
           </div>
+          <p v-if="errors.parent_id" class="text-red-500 text-xs mt-1">{{ errors.parent_id[0] }}</p>
         </div>
 
-        <!-- Description -->
-        <div>
-          <label class="block text-xs font-medium text-slate-600 mb-1">Description</label>
-          <textarea v-model="form.description" rows="2" placeholder="Brief description of the unit's function"
-            class="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-400 resize-none"
-          ></textarea>
+        <!-- Advanced section toggle -->
+        <div class="border-t border-slate-100 pt-2">
+          <button
+            type="button"
+            @click="showAdvanced = !showAdvanced"
+            class="flex items-center gap-1.5 text-xs font-medium text-slate-400 hover:text-slate-600 transition-colors"
+          >
+            <ChevronDownIcon class="h-3.5 w-3.5 transition-transform" :class="{ 'rotate-180': showAdvanced }" />
+            {{ showAdvanced ? 'Hide' : 'Show' }} advanced fields
+          </button>
         </div>
 
-        <div class="grid grid-cols-2 gap-4">
-          <!-- Established date -->
+        <!-- Advanced fields -->
+        <div v-if="showAdvanced" class="space-y-4">
+          <div class="grid grid-cols-2 gap-4">
+            <div>
+              <label class="block text-xs font-medium text-slate-600 mb-1">
+                Code <span class="text-red-500">*</span>
+                <span class="text-slate-400 font-normal ml-1">(auto-generated)</span>
+              </label>
+              <input
+                v-model="form.code"
+                @input="codeManual = true"
+                type="text" maxlength="50" placeholder="e.g. ACAD-DIV"
+                class="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm font-mono focus:outline-none focus:ring-2 focus:ring-indigo-400"
+                :class="{ 'border-red-400': errors.code }"
+              />
+              <p v-if="errors.code" class="text-red-500 text-xs mt-1">{{ errors.code[0] }}</p>
+            </div>
+            <div>
+              <label class="block text-xs font-medium text-slate-600 mb-1">Abbreviation</label>
+              <input v-model="form.short_name" type="text" maxlength="100" placeholder="e.g. ACAD"
+                class="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-400"
+              />
+            </div>
+          </div>
+
           <div>
-            <label class="block text-xs font-medium text-slate-600 mb-1">Established Date</label>
-            <input v-model="form.established_date" type="date"
+            <label class="block text-xs font-medium text-slate-600 mb-1">Description</label>
+            <textarea v-model="form.description" rows="2" placeholder="Brief description of the unit's function"
+              class="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-400 resize-none"
+            ></textarea>
+          </div>
+
+          <div class="grid grid-cols-2 gap-4">
+            <div>
+              <label class="block text-xs font-medium text-slate-600 mb-1">Established Date</label>
+              <input v-model="form.established_date" type="date"
+                class="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-400"
+              />
+            </div>
+            <div>
+              <label class="block text-xs font-medium text-slate-600 mb-1">Sort Order</label>
+              <input v-model.number="form.order_index" type="number" min="0"
+                class="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-400"
+              />
+            </div>
+          </div>
+
+          <div>
+            <label class="block text-xs font-medium text-slate-600 mb-1">Legal Basis</label>
+            <input v-model="form.legal_basis" type="text" placeholder="RA / EO / CSC Resolution"
               class="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-400"
             />
           </div>
-          <!-- Order index -->
-          <div>
-            <label class="block text-xs font-medium text-slate-600 mb-1">Sort Order</label>
-            <input v-model.number="form.order_index" type="number" min="0"
-              class="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-400"
-            />
-          </div>
-        </div>
 
-        <!-- Legal basis -->
-        <div>
-          <label class="block text-xs font-medium text-slate-600 mb-1">Legal Basis</label>
-          <input v-model="form.legal_basis" type="text" placeholder="RA / EO / CSC Resolution"
-            class="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-400"
-          />
+          <label class="flex items-center gap-2 cursor-pointer">
+            <input v-model="form.is_active" type="checkbox" class="rounded border-slate-300 text-indigo-600" />
+            <span class="text-sm text-slate-700">Active unit</span>
+          </label>
         </div>
-
-        <!-- Active toggle -->
-        <label class="flex items-center gap-2 cursor-pointer">
-          <input v-model="form.is_active" type="checkbox" class="rounded border-slate-300 text-indigo-600" />
-          <span class="text-sm text-slate-700">Active unit</span>
-        </label>
       </form>
 
       <template #footer>
@@ -609,25 +740,10 @@ function toggleInactive() {
 
     <!-- ── EDIT MODAL ─────────────────────────────────────────────────────────── -->
     <AppModal :show="showEdit" :title="`Edit — ${target?.name ?? ''}`" size="2xl" @close="showEdit = false">
+      <!-- Backdrop to close parent dropdown -->
+      <div v-if="showEditParentList" class="fixed inset-0 z-10" @click="showEditParentList = false" />
+
       <form @submit.prevent="submitUpdate" class="space-y-4">
-        <div class="grid grid-cols-2 gap-4">
-          <div>
-            <label class="block text-xs font-medium text-slate-600 mb-1">Code <span class="text-red-500">*</span></label>
-            <input v-model="form.code" type="text" maxlength="50"
-              class="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-400"
-              :class="{ 'border-red-400': errors.code }"
-            />
-            <p v-if="errors.code" class="text-red-500 text-xs mt-1">{{ errors.code[0] }}</p>
-          </div>
-          <div>
-            <label class="block text-xs font-medium text-slate-600 mb-1">Type <span class="text-red-500">*</span></label>
-            <select v-model="form.type"
-              class="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-400"
-            >
-              <option v-for="t in types" :key="t" :value="t" class="capitalize">{{ t }}</option>
-            </select>
-          </div>
-        </div>
         <div>
           <label class="block text-xs font-medium text-slate-600 mb-1">Full Name <span class="text-red-500">*</span></label>
           <input v-model="form.name" type="text"
@@ -638,6 +754,24 @@ function toggleInactive() {
         </div>
         <div class="grid grid-cols-2 gap-4">
           <div>
+            <label class="block text-xs font-medium text-slate-600 mb-1">Code <span class="text-red-500">*</span></label>
+            <input v-model="form.code" type="text" maxlength="50"
+              class="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm font-mono focus:outline-none focus:ring-2 focus:ring-indigo-400"
+              :class="{ 'border-red-400': errors.code }"
+            />
+            <p v-if="errors.code" class="text-red-500 text-xs mt-1">{{ errors.code[0] }}</p>
+          </div>
+          <div>
+            <label class="block text-xs font-medium text-slate-600 mb-1">Type <span class="text-red-500">*</span></label>
+            <select v-model="form.type"
+              class="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-400 capitalize"
+            >
+              <option v-for="t in types" :key="t" :value="t" class="capitalize">{{ t }}</option>
+            </select>
+          </div>
+        </div>
+        <div class="grid grid-cols-2 gap-4">
+          <div>
             <label class="block text-xs font-medium text-slate-600 mb-1">Abbreviation</label>
             <input v-model="form.short_name" type="text" maxlength="100"
               class="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-400"
@@ -645,19 +779,42 @@ function toggleInactive() {
           </div>
           <div>
             <label class="block text-xs font-medium text-slate-600 mb-1">Parent Unit</label>
-            <select v-model="form.parent_id"
-              class="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-400"
-              :class="{ 'border-red-400': errors.parent_id }"
-            >
-              <option :value="null">— None (root) —</option>
-              <option
-                v-for="u in flatUnits.filter(u => u.id !== target?.id)"
-                :key="u.id"
-                :value="u.id"
+            <div class="relative" style="z-index: 20">
+              <button
+                type="button"
+                @click="showEditParentList = !showEditParentList"
+                class="w-full text-left border border-slate-200 rounded-lg px-3 py-2 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-indigo-400 flex items-center justify-between"
+                :class="{ 'border-red-400': errors.parent_id }"
               >
-                {{ '–'.repeat(u.depth) }} {{ u.name }} ({{ u.code }})
-              </option>
-            </select>
+                <span :class="selectedEditParentNode ? 'text-slate-800' : 'text-slate-400'" class="truncate">
+                  {{ selectedEditParentNode ? `${selectedEditParentNode.name} (${selectedEditParentNode.code})` : '— None (root) —' }}
+                </span>
+                <ChevronDownIcon class="h-4 w-4 text-slate-400 shrink-0 transition-transform ml-1" :class="{ 'rotate-180': showEditParentList }" />
+              </button>
+              <div v-if="showEditParentList" class="absolute top-full left-0 right-0 mt-1 bg-white border border-slate-200 rounded-lg shadow-lg" style="z-index: 20">
+                <div class="p-2 border-b border-slate-100">
+                  <input v-model="editParentSearch" type="text" placeholder="Search units…"
+                    class="w-full border border-slate-200 rounded px-2 py-1.5 text-xs focus:outline-none focus:ring-2 focus:ring-indigo-400"
+                  />
+                </div>
+                <div class="max-h-48 overflow-y-auto py-1">
+                  <button type="button" @click="selectEditParent(null)"
+                    class="w-full text-left px-3 py-2 text-sm text-slate-400 hover:bg-slate-50"
+                  >— None (root) —</button>
+                  <button type="button"
+                    v-for="u in filteredEditParentUnits"
+                    :key="u.id"
+                    @click="selectEditParent(u)"
+                    class="w-full text-left py-2 pr-3 text-sm hover:bg-indigo-50 flex items-center gap-2"
+                    :style="`padding-left: ${12 + u.depth * 14}px`"
+                  >
+                    <span class="shrink-0 text-[9px] font-bold text-slate-400 uppercase font-mono w-4">{{ u.type[0] }}</span>
+                    <span class="flex-1 truncate text-slate-700">{{ u.name }}</span>
+                    <span class="shrink-0 text-xs text-slate-400 font-mono">{{ u.code }}</span>
+                  </button>
+                </div>
+              </div>
+            </div>
             <p v-if="errors.parent_id" class="text-red-500 text-xs mt-1">{{ errors.parent_id[0] }}</p>
           </div>
         </div>

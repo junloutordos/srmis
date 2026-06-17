@@ -33,6 +33,9 @@ use Inertia\Inertia;
 
 // ── Public ────────────────────────────────────────────────────────────────────
 
+// Public pages (no auth required)
+Route::get('/privacy', fn () => inertia('Privacy/Index'))->name('privacy.public');
+
 // Google login (Firebase popup) + Socialite OAuth (server-side)
 Route::post('/google/login', [GoogleAuthController::class, 'login'])->name('google.login');
 Route::get('/auth/google', [GoogleAuthController::class, 'redirect'])->name('auth.google');
@@ -137,9 +140,6 @@ Route::middleware(['auth', 'allowed.domain'])->group(function () {
     Route::get('/dashboard', [\App\Http\Controllers\DashboardController::class, 'index'])
         ->middleware(['verified'])
         ->name('dashboard');
-
-    // ── Data Privacy Policy ───────────────────────────────────────────────────
-    Route::get('/privacy', fn () => inertia('Privacy/Index'))->name('privacy.index');
 
     // ── Unified Approvals Inbox ───────────────────────────────────────────────
     Route::get('/inbox', [ApprovalInboxController::class, 'index'])->name('approvals.inbox');
@@ -421,6 +421,7 @@ Route::middleware(['auth', 'allowed.domain'])->group(function () {
         Route::post('users/{user}/upload-signature', [UserController::class, 'uploadSignature'])->name('users.upload_signature')->middleware('permission:users.manage');
         Route::get('/users/inactive', [UserController::class, 'inactiveIndex'])->name('users.inactive')->middleware('permission:users.manage');
         Route::post('/users/{id}/activate', [UserController::class, 'activate'])->name('users.activate')->middleware('permission:users.manage');
+        Route::post('/users/{id}/send-password-reset', [UserController::class, 'sendPasswordReset'])->name('users.send_password_reset')->middleware('permission:users.manage');
 
         Route::get('/users-division', [RolesController::class, 'showDivisions'])->name('roles.divisions');
         Route::post('users-divisions', [RolesController::class, 'storeDivision'])->name('roles.divisions_store')->middleware('permission:roles.assign');

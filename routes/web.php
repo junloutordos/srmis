@@ -60,7 +60,7 @@ Route::prefix('system')->group(function () {
     Route::middleware('guest:central')->group(function () {
         Route::get('/login',  [\App\Http\Controllers\Central\AuthController::class, 'create'])->name('central.login');
         Route::post('/login', [\App\Http\Controllers\Central\AuthController::class, 'store'])
-            ->middleware('throttle:5,1')->name('central.login.store');
+            ->middleware('throttle:15,1')->name('central.login.store');
     });
 
     Route::middleware('auth:central')->group(function () {
@@ -81,5 +81,9 @@ Route::prefix('system')->group(function () {
         // Per-tenant seeding / migration triggers
         Route::post('/tenants/{tenant}/migrate',  [\App\Http\Controllers\Central\TenantController::class, 'migrate'])->name('central.tenants.migrate');
         Route::post('/tenants/{tenant}/seed-admin', [\App\Http\Controllers\Central\TenantController::class, 'seedAdmin'])->name('central.tenants.seed-admin');
+
+        // System-wide cross-campus overview
+        Route::get('/overview',         [\App\Http\Controllers\Central\SystemOverviewController::class, 'index'])->name('central.overview');
+        Route::post('/overview/refresh', [\App\Http\Controllers\Central\SystemOverviewController::class, 'refresh'])->name('central.overview.refresh');
     });
 });

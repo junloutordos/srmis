@@ -41,6 +41,25 @@ class LoginRequest extends FormRequest
     {
         $this->ensureIsNotRateLimited();
 
+        // Enforce allowed email domains (same logic as GoogleAuthController)
+        $email = strtolower(trim($this->input('email')));
+        $domains = array_filter(array_map('trim', explode(',', (string) config('app.allowed_email_domain'))));
+        if ($domains) {
+            $allowed = false;
+            foreach ($domains as $domain) {
+                $domain = strtolower($domain);
+                if (str_ends_with($email, '@' . $domain) || str_ends_with($email, '.' . $domain)) {
+                    $allowed = true;
+                    break;
+                }
+            }
+            if (! $allowed) {
+                throw ValidationException::withMessages([
+                    'email' => 'Only official PSHS accounts are allowed to sign in.',
+                ]);
+            }
+        }
+
         // Prevent login for users whose status is not active
         $email = $this->input('email');
         $userModel = '\\App\\Models\\User';
@@ -69,7 +88,7 @@ class LoginRequest extends FormRequest
      */
     public function ensureIsNotRateLimited(): void
     {
-        if (! RateLimiter::tooManyAttempts($this->throttleKey(), 5)) {
+        if (! RateLimiter::tooManyAttempts($this->throttleKey(), 15)) {
             return;
         }
 

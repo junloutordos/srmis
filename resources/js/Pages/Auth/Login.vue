@@ -32,10 +32,15 @@ watch(() => page.props.errors, (errs) => {
   const emailErr = errs.email || (Array.isArray(errs.email) ? errs.email[0] : null)
   const msg = emailErr || (typeof errs === 'string' ? errs : null)
   if (!msg) return
-  if (String(msg).includes('Unable to logged in')) {
-    showAlert({ icon: 'error', title: 'Unable to log in', text: 'Contact MIS administrator.' })
+  const raw = String(msg)
+  if (raw.includes('Unable to logged in') || raw.includes('inactive')) {
+    showAlert({ icon: 'error', title: 'Unable to log in', text: 'Your account is inactive. Please contact your campus administrator.' })
+  } else if (raw.includes('These credentials do not match') || raw.includes('password')) {
+    showAlert({ icon: 'error', title: 'Login Failed', text: 'The email or password you entered is incorrect. Please try again.' })
+  } else if (raw.includes('throttle') || raw.includes('Too many')) {
+    showAlert({ icon: 'error', title: 'Too Many Attempts', text: 'Too many login attempts. Please wait a moment and try again.' })
   } else {
-    showAlert({ icon: 'error', title: 'Login Failed', text: String(msg) })
+    showAlert({ icon: 'error', title: 'Login Failed', text: 'Unable to sign in. Please contact your campus administrator if this persists.' })
   }
 }, { immediate: true })
 
@@ -64,6 +69,10 @@ const googleLogin = async () => {
 const form = useForm({ email: '', password: '', remember: false })
 
 function submit() {
+  if (detectedCampus.value && !detectedCampus.value.known) {
+    showAlert({ icon: 'error', title: 'Unauthorized Email', text: 'Only official PSHS campus or OED accounts are allowed. Use your @<campus>.pshs.edu.ph or @pshssystem.edu.ph address.' })
+    return
+  }
   form.post(route('login'), { onFinish: () => form.reset('password') })
 }
 
@@ -326,6 +335,9 @@ const modules = [
               <input v-model="form.remember" type="checkbox" class="rounded border-slate-300 text-indigo-600 focus:ring-indigo-500" />
               Remember me
             </label>
+            <a :href="route('password.request')" class="text-sm text-indigo-600 hover:text-indigo-700 font-medium">
+              Forgot password?
+            </a>
           </div>
 
           <button
@@ -339,6 +351,9 @@ const modules = [
 
         <p class="mt-5 text-center text-xs leading-relaxed text-slate-400">
           Need access? Contact your campus administrator.
+        </p>
+        <p class="mt-2 text-center text-xs text-slate-400">
+          <a href="/privacy" class="hover:text-slate-600 underline">Data Privacy Policy</a>
         </p>
       </div>
 

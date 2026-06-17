@@ -202,6 +202,28 @@ export function useUsers(props) {
     }
   }
 
+  // Send password reset link to user's email
+  const sendPasswordReset = async (user) => {
+    const result = await Swal.fire({
+      title: `Send password reset to ${user.name}?`,
+      text: `A reset link will be emailed to ${user.email}.`,
+      icon: 'question',
+      showCancelButton: true,
+      confirmButtonText: 'Yes, send link',
+      cancelButtonText: 'Cancel',
+    })
+    if (result.isConfirmed) {
+      router.post(`/users/${user.id}/send-password-reset`, null, {
+        onSuccess: async () => {
+          await Swal.fire('Sent', `Password reset link sent to ${user.email}`, 'success')
+        },
+        onError: async (errors) => {
+          await Swal.fire('Error', Object.values(errors).flat().join(', '), 'error')
+        }
+      })
+    }
+  }
+
   // Activate (reactivate) user
   const activateUser = async (user) => {
     const result = await Swal.fire({
@@ -244,6 +266,7 @@ export function useUsers(props) {
     viewUser,
     deleteUser,
     activateUser,
+    sendPasswordReset,
     isEmployeesPage,
     isInactivePage,
   }

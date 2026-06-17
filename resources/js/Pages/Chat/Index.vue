@@ -624,7 +624,7 @@ onUnmounted(() => {
 
               <ul v-else-if="userSearchResults.length" class="divide-y divide-slate-50 py-1">
                 <li v-for="u in userSearchResults" :key="u.id">
-                  <button @click="newChatMode === 'dm' ? (startDM(u.id), showNewChat = false, showSidebar = false) : toggleGroupUser(u)"
+                  <button @click="newChatMode === 'dm' ? (async () => { showNewChat = false; showSidebar = false; await startDM(u.id) })() : toggleGroupUser(u)"
                           :class="['flex items-center gap-3 w-full px-4 py-3 text-left transition-colors', isGroupSelected(u.id) ? 'bg-indigo-50' : 'hover:bg-indigo-50']">
                     <div class="relative shrink-0">
                       <img v-if="u.avatar" :src="u.avatar" class="h-10 w-10 rounded-full object-cover" />

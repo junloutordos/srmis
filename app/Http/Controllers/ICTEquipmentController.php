@@ -8,7 +8,6 @@ use App\Models\Room;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use SimpleSoftwareIO\QrCode\Facades\QrCode;
-use Illuminate\Support\Facades\Storage;
 use Mpdf\Mpdf;
 
 class ICTEquipmentController extends Controller
@@ -76,17 +75,7 @@ class ICTEquipmentController extends Controller
             'remarks' => 'nullable|string',
         ]);
 
-        $equipment = ICTEquipment::create($data);
-
-        // QR Code (unchanged)
-        $url = url('/equipment/' . $equipment->id);
-        $fileName = 'qrcodes/equipment_' . $equipment->id . '.svg';
-
-        $qrSvg = QrCode::size(200)->generate($url);
-        Storage::disk('public')->put($fileName, $qrSvg);
-
-        $equipment->qr_code_path = $fileName;
-        $equipment->save();
+        ICTEquipment::create($data);
 
         return redirect()->back()->with('success', 'Equipment added successfully.');
     }
@@ -106,40 +95,13 @@ class ICTEquipmentController extends Controller
         'remarks' => 'nullable|string',
     ]);
 
-    // Update equipment data
     $ictEquipment->update($data);
 
-    /**
-     * 🔁 REGENERATE QR CODE
-     */
-    // Delete old QR if exists
-    if ($ictEquipment->qr_code_path) {
-        $oldPath = ltrim(str_replace('storage/', '', $ictEquipment->qr_code_path), '/');
-        Storage::disk('public')->delete($oldPath);
-    }
-
-    // Generate new QR
-    $url = url('/equipment/' . $ictEquipment->id);
-    $fileName = 'qrcodes/equipment_' . $ictEquipment->id . '.svg';
-
-    $qrSvg = QrCode::size(200)->generate($url);
-    Storage::disk('public')->put($fileName, $qrSvg);
-
-    // Save new QR path (no storage/ prefix — storageUrl() handles the base)
-    $ictEquipment->update([
-        'qr_code_path' => $fileName,
-    ]);
-
-    return redirect()->back()->with('success', 'Equipment updated and QR code regenerated.');
+    return redirect()->back()->with('success', 'Equipment updated successfully.');
 }
 
     public function destroy(ICTEquipment $ictEquipment)
     {
-        if ($ictEquipment->qr_code_path) {
-            $path = ltrim(str_replace('storage/', '', $ictEquipment->qr_code_path), '/');
-            Storage::disk('public')->delete($path);
-        }
-
         $ictEquipment->delete();
 
         return redirect()->back()->with('success', 'Equipment deleted successfully.');

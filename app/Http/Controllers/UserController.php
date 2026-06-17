@@ -11,6 +11,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Password;
 use Inertia\Inertia;
 
 class UserController extends Controller
@@ -176,6 +177,19 @@ class UserController extends Controller
         $user->save();
 
         return back()->with('success', 'User reactivated.');
+    }
+
+    public function sendPasswordReset($id)
+    {
+        $user = User::findOrFail($id);
+
+        $status = Password::sendResetLink(['email' => $user->email]);
+
+        if ($status === Password::RESET_LINK_SENT) {
+            return back()->with('success', "Password reset link sent to {$user->email}.");
+        }
+
+        return back()->withErrors(['email' => __($status)]);
     }
 
     public function uploadSignature(Request $request, User $user)

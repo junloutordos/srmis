@@ -121,7 +121,15 @@ return [
             // Disks whose roots should be overridden after storage_path() is suffixed.
             'local' => '%storage_path%/app/',
             'public' => '%storage_path%/app/public/',
-            // S3: every key is prefixed per tenant inside the shared bucket.
+            // S3: every key is prefixed per-campus inside the shared bucket.
+            // Final paths: tenants/<campus-slug>/<module>/<file>
+            // Directory layout within each campus folder:
+            //   campus/           → campus logo (campus_logos/)
+            //   it-job-requests/  → generated PDFs
+            //   profile-pictures/ → user profile photos
+            //   signatures/users/ → user digital signatures
+            //   signatures/divisions/ → division-head signatures
+            //   chat/attachments/ → chat file uploads
             's3' => 'tenants/%tenant%',
         ],
 

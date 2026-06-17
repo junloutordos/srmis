@@ -110,12 +110,6 @@ const moduleOptions = Object.entries(props.moduleLabels).map(([value, label]) =>
           <input v-model="dateTo" type="date" placeholder="To" @change="applyFilters"
             class="rounded-lg border border-slate-200 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-400" />
         </div>
-        <div class="mt-2 flex justify-end">
-          <button @click="applyFilters"
-            class="px-4 py-1.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg text-sm font-medium transition-colors">
-            Apply
-          </button>
-        </div>
       </div>
 
       <!-- Table -->
