@@ -1,6 +1,6 @@
 @extends('emails.layouts.base')
 
-@section('email-title', 'Reset Your Password — SRMIS')
+@section('email-title', 'Reset Your Password — STRIDE')
 @section('header-title', 'Password Reset Request')
 @section('header-subtitle', 'PSHS Service Requests Management Information System')
 @section('header-gradient', 'linear-gradient(90deg,#4f46e5,#6366f1)')

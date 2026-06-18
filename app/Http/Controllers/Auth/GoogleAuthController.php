@@ -54,7 +54,7 @@ class GoogleAuthController extends Controller
             if ($tenant === null) {
                 $this->securityLog('warning', 'Socialite login rejected: no campus for email', ['email' => $email, 'ip' => $ip]);
                 return redirect()->route('login')
-                    ->with('error', 'Your campus is not yet provisioned on SRMIS. Contact the system administrator.');
+                    ->with('error', 'Your campus is not yet provisioned on STRIDE. Contact the system administrator.');
             }
 
             tenancy()->initialize($tenant);
@@ -133,7 +133,7 @@ class GoogleAuthController extends Controller
         // posted email; null means the address maps to no provisioned campus.
         if (! tenant()) {
             $this->securityLog('warning', 'Google login rejected: no campus for email', ['email' => $email, 'ip' => $ip]);
-            return response()->json(['success' => false, 'message' => 'Your campus is not yet provisioned on SRMIS. Contact the system administrator.'], 403);
+            return response()->json(['success' => false, 'message' => 'Your campus is not yet provisioned on STRIDE. Contact the system administrator.'], 403);
         }
 
         // User must already exist — no auto-creation via this endpoint

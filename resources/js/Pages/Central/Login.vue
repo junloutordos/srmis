@@ -21,8 +21,8 @@ function submit() {
     <div class="w-full max-w-md">
       <div class="text-center mb-8">
         <img src="/images/pshslogo.png" alt="PSHS Logo" class="mx-auto h-16 w-16 object-contain" />
-        <h1 class="mt-4 text-2xl font-bold text-white">SRMIS</h1>
-        <p class="text-sm text-indigo-200">Service Requests Management Information System</p>
+        <h1 class="mt-4 text-2xl font-bold text-white">STRIDE</h1>
+        <p class="text-sm text-indigo-200">Service Ticketing and Request Information &amp; Dispatch Engine</p>
         <p class="mt-1 text-xs text-indigo-300/70 uppercase tracking-widest">System Administration</p>
       </div>
 

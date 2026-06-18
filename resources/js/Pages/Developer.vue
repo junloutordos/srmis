@@ -19,7 +19,7 @@ const team = [
     icon: CodeBracketIcon,
     name: 'Junlou Tordos',
     role: 'Lead Developer & System Architect',
-    bio: 'Designed and built CRCMIS and SRMIS from the ground up — from the data layer and backend API to the multi-tenant architecture, cloud infrastructure, and CI/CD pipeline. Specializes in building practical, role-based management platforms for Philippine government institutions.',
+    bio: 'Designed and built CRCMIS and STRIDE from the ground up — from the data layer and backend API to the multi-tenant architecture, cloud infrastructure, and CI/CD pipeline. Specializes in building practical, role-based management platforms for Philippine government institutions.',
     contacts: [
       { icon: EnvelopeIcon, label: 'jtordos@crc.pshs.edu.ph',  href: 'mailto:jtordos@crc.pshs.edu.ph' },
       { icon: PhoneIcon,    label: '+63 955 559 8885',        href: 'tel:+639555598885' },
@@ -31,7 +31,7 @@ const team = [
     icon: CpuChipIcon,
     name: 'Michael Francisco',
     role: 'Support Developer & System Analyst',
-    bio: 'Responsible for system analysis, requirements gathering, quality assurance, and end-user support. Works closely with campus stakeholders to ensure SRMIS aligns with the operational and administrative needs of every PSHS campus.',
+    bio: 'Responsible for system analysis, requirements gathering, quality assurance, and end-user support. Works closely with campus stakeholders to ensure STRIDE aligns with the operational and administrative needs of every PSHS campus.',
     contacts: [
       { icon: EnvelopeIcon, label: 'mafrancisco@crc.pshs.edu.ph', href: 'mailto:mafrancisco@crc.pshs.edu.ph' },
     ],
@@ -56,7 +56,7 @@ const stack = [
 </script>
 
 <template>
-  <Head title="Development Team — SRMIS" />
+  <Head title="Development Team — STRIDE" />
   <div class="page">
 
     <!-- ── Nav ───────────────────────────────────────── -->
@@ -64,7 +64,7 @@ const stack = [
       <div class="nav-inner">
         <a href="/" class="back-link">
           <ArrowLeftIcon class="back-icon" />
-          Back to SRMIS
+          Back to STRIDE
         </a>
       </div>
     </header>
@@ -76,9 +76,9 @@ const stack = [
       <div class="hero-glow2" />
       <div class="hero-inner">
         <div class="hero-head">
-          <p class="hero-eyebrow">PSHS-CRC MIS Team · SRMIS</p>
+          <p class="hero-eyebrow">PSHS-CRC MIS Team · STRIDE</p>
           <h1 class="hero-title">Development Team</h1>
-          <p class="hero-sub">The people behind the Service Requests Management Information System.</p>
+          <p class="hero-sub">The people behind the Service Ticketing and Request Information &amp; Dispatch Engine.</p>
         </div>
         <div class="team-grid">
           <div v-for="member in team" :key="member.name" class="member-card">
@@ -116,8 +116,8 @@ const stack = [
     <section class="section bg-white">
       <div class="section-inner">
         <p class="eyebrow">Featured Project</p>
-        <h2 class="section-h2">SRMIS</h2>
-        <p class="section-lead">Service Requests Management Information System — PSHS System-wide</p>
+        <h2 class="section-h2">STRIDE</h2>
+        <p class="section-lead">Service Ticketing and Request Information &amp; Dispatch Engine — PSHS System-wide</p>
         <div class="project-card">
           <div class="pc-meta">
             <div class="meta-row">
@@ -126,7 +126,7 @@ const stack = [
             </div>
             <div class="meta-row">
               <span class="meta-k">Type</span>
-              <span class="meta-v">Multi-tenant Service Requests Management Information System</span>
+              <span class="meta-v">Multi-tenant Service Ticketing and Request Information &amp; Dispatch Engine</span>
             </div>
             <div class="meta-row">
               <span class="meta-k">Users</span>
@@ -172,7 +172,7 @@ const stack = [
     <!-- ── Footer ─────────────────────────────────────── -->
     <footer class="dev-footer">
       <p class="df-copy">© 2026 PSHS-CRC MIS Team</p>
-      <a href="/" class="df-back">← Back to SRMIS</a>
+      <a href="/" class="df-back">← Back to STRIDE</a>
     </footer>
 
   </div>

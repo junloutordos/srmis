@@ -3,7 +3,7 @@
     "name": "pshs/srmis",
     "version": "1.0.0",
     "type": "project",
-    "description": "SRMIS \u2014 Service Requests Management Information System for PSHS (multi-tenant)",
+    "description": "STRIDE \u2014 Service Ticketing and Request Information & Dispatch Engine for PSHS (multi-tenant)",
     "keywords": [
         "laravel",
         "framework"

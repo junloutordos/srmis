@@ -7,7 +7,7 @@ import { Link } from '@inertiajs/vue3';
 
         <Link href="/" class="flex flex-col items-center gap-2 mb-6">
             <img src="/pshslogo.png" alt="PSHS Logo" class="h-16 w-16 object-contain drop-shadow-sm" />
-            <span class="text-sm font-semibold text-slate-700 tracking-wide">SRMIS</span>
+            <span class="text-sm font-semibold text-slate-700 tracking-wide">STRIDE</span>
             <span class="text-xs text-slate-400">Philippine Science High School System</span>
         </Link>
 
@@ -15,7 +15,7 @@ import { Link } from '@inertiajs/vue3';
             <slot />
         </div>
 
-        <p class="mt-6 text-xs text-slate-400">Service Requests Management Information System</p>
+        <p class="mt-6 text-xs text-slate-400">Service Ticketing and Request Information &amp; Dispatch Engine</p>
 
     </div>
 </template>

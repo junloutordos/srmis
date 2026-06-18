@@ -23,7 +23,7 @@ class ResetPasswordNotification extends Notification
         ], false));
 
         return (new MailMessage)
-            ->subject('Reset Your Password — SRMIS')
+            ->subject('Reset Your Password — STRIDE')
             ->view('emails.auth.password_reset', [
                 'resetUrl' => $resetUrl,
                 'expiry'   => $expiry,

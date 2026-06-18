@@ -19,7 +19,7 @@
 
 <div class="callout callout-blue">
     <div class="callout-title">Action Required</div>
-    Open the work request in SRMIS and assign it to the appropriate staff member.
+    Open the work request in STRIDE and assign it to the appropriate staff member.
 </div>
 @endsection
 

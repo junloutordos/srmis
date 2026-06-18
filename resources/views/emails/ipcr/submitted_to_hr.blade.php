@@ -32,7 +32,7 @@
 
 <div class="callout callout-blue">
     <div class="callout-title">For HR Action</div>
-    Review this IPCR in SRMIS and submit it to the PMT for review when ready.
+    Review this IPCR in STRIDE and submit it to the PMT for review when ready.
 </div>
 @endsection
 

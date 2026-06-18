@@ -129,7 +129,7 @@ const modules = [
 </script>
 
 <template>
-  <Head title="SRMIS — Sign in" />
+  <Head title="STRIDE — Sign in" />
 
   <div class="flex min-h-screen bg-white">
 
@@ -147,7 +147,7 @@ const modules = [
       <div class="relative z-10 flex items-center gap-3 px-10 pt-8">
         <img src="/images/pshslogo.png" alt="PSHS" class="h-9 w-9 object-contain" style="filter: drop-shadow(0 0 8px rgba(0,200,232,0.45));" />
         <div>
-          <p class="text-sm font-bold tracking-wide text-white">SRMIS</p>
+          <p class="text-sm font-bold tracking-wide text-white">STRIDE</p>
           <p class="text-[11px] text-blue-200/60">Philippine Science High School System</p>
         </div>
       </div>
@@ -271,8 +271,8 @@ const modules = [
         <!-- brand (compact, all viewports) -->
         <div class="text-center">
           <img src="/images/pshslogo.png" alt="PSHS" class="mx-auto h-12 w-12 object-contain" />
-          <h1 class="mt-3 text-2xl font-bold tracking-tight text-slate-900">SRMIS</h1>
-          <p class="mt-1 text-sm text-slate-500">Service Requests Management Information System</p>
+          <h1 class="mt-3 text-2xl font-bold tracking-tight text-slate-900">STRIDE</h1>
+          <p class="mt-1 text-sm text-slate-500">Service Ticketing and Request Information &amp; Dispatch Engine</p>
         </div>
 
         <!-- Google sign-in -->
@@ -356,7 +356,7 @@ const modules = [
 
       <div class="mt-6 text-center">
         <p class="text-[11px] text-slate-400">
-          SRMIS v{{ appVersion }} · Philippine Science High School System
+          STRIDE v{{ appVersion }} · Philippine Science High School System
         </p>
         <p class="mt-1 text-[11px] text-slate-400">
           Developed by the <a href="/developer" class="font-medium text-indigo-400 hover:text-indigo-600">PSHS-CRC MIS Team</a>

@@ -27,7 +27,7 @@ function formatDate(iso) {
             <ShieldCheckIcon class="w-8 h-8 text-indigo-600" />
             <div>
                 <p class="text-xs font-semibold text-slate-500 uppercase tracking-wide">Philippine Science High School</p>
-                <p class="text-lg font-bold text-slate-800 leading-tight">SRMIS Document Verification</p>
+                <p class="text-lg font-bold text-slate-800 leading-tight">STRIDE Document Verification</p>
             </div>
         </div>
 

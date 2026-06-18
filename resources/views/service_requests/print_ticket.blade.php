@@ -295,7 +295,7 @@
         </td>
         <td style="border:none;padding:0 0 0 12px;vertical-align:middle;">
           <div style="font-size:11px;font-weight:bold;color:#1e293b;margin-bottom:2px;">Digitally Signed Document</div>
-          <div style="font-size:9.5px;color:#64748b;">{{ count($sigs) }} digital signature(s) on record &mdash; SRMIS, Philippine Science High School System</div>
+          <div style="font-size:9.5px;color:#64748b;">{{ count($sigs) }} digital signature(s) on record &mdash; STRIDE, Philippine Science High School System</div>
           <div style="font-size:9px;color:#94a3b8;margin-top:2px;">Scan the QR code to verify all digital signatures and their authenticity</div>
         </td>
       </tr>

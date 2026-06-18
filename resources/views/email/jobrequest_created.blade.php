@@ -2,7 +2,7 @@
 
 @section('header-gradient','linear-gradient(90deg,#0ea5e9,#3b82f6)')
 @section('header-title','New IT Job Request Submitted')
-@section('header-subtitle','SRMIS IT Services')
+@section('header-subtitle','STRIDE IT Services')
 
 @section('content')
 @php

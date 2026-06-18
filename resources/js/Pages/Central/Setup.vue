@@ -96,13 +96,13 @@ function skipStep() {
 </script>
 
 <template>
-  <Head title="SRMIS Setup" />
+  <Head title="STRIDE Setup" />
 
   <div class="min-h-screen bg-gradient-to-br from-indigo-950 via-indigo-900 to-blue-800 px-4 py-10">
     <div class="mx-auto max-w-3xl">
       <div class="text-center mb-8">
         <img src="/images/pshslogo.png" alt="PSHS Logo" class="mx-auto h-14 w-14 object-contain" />
-        <h1 class="mt-3 text-2xl font-bold text-white">SRMIS First-Run Setup</h1>
+        <h1 class="mt-3 text-2xl font-bold text-white">STRIDE First-Run Setup</h1>
         <p class="text-sm text-indigo-200">Configure this instance for the OED and the 16 PSHS campuses.</p>
       </div>
 
@@ -163,7 +163,7 @@ function skipStep() {
             <span class="font-mono">@pshssystem.edu.ph</span> → OED.
           </p>
           <label class="block text-sm font-medium text-slate-700 mt-4 mb-1">Domain</label>
-          <input v-model="domain" type="text" placeholder="srmis.pshs.edu.ph"
+          <input v-model="domain" type="text" placeholder="stride.pshs.edu.ph"
             class="rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 w-full" />
         </div>
 
@@ -189,7 +189,7 @@ function skipStep() {
             </div>
             <div>
               <label class="block text-sm font-medium text-slate-700 mb-1">Bucket</label>
-              <input v-model="storage.bucket" type="text" placeholder="srmis-storage" class="rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 w-full" />
+              <input v-model="storage.bucket" type="text" placeholder="stride-storage" class="rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 w-full" />
             </div>
           </div>
         </div>
@@ -216,7 +216,7 @@ function skipStep() {
             </div>
             <div>
               <label class="block text-sm font-medium text-slate-700 mb-1">Host</label>
-              <input v-model="sockets.host" type="text" placeholder="soketi.srmis.pshs.edu.ph" class="rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 w-full" />
+              <input v-model="sockets.host" type="text" placeholder="soketi.stride.pshs.edu.ph" class="rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 w-full" />
             </div>
             <div>
               <label class="block text-sm font-medium text-slate-700 mb-1">Port</label>
@@ -236,7 +236,7 @@ function skipStep() {
         <div v-else-if="steps[current].key === 'superadmin'">
           <h2 class="text-lg font-bold text-slate-800">System Superadmin</h2>
           <p class="mt-1 text-sm text-slate-500">
-            This account manages the SRMIS instance itself — provisioning campuses and toggling
+            This account manages the STRIDE instance itself — provisioning campuses and toggling
             modules. It is separate from campus administrator accounts.
           </p>
           <div class="mt-4 space-y-3">

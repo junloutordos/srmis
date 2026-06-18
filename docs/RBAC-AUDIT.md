@@ -1,7 +1,7 @@
-# SRMIS RBAC Audit — Extraction from CRCMIS (June 2026)
+# STRIDE RBAC Audit — Extraction from CRCMIS (June 2026)
 
 Scope: all roles, permissions, policies and gates carried over from the
-CRCMIS/BugSayMis monolith into SRMIS, audited during extraction. Every
+CRCMIS/BugSayMis monolith into STRIDE, audited during extraction. Every
 permission string referenced by route middleware, controllers, or the sidebar
 is registered in `TenantPermissionsSeeder` (+ `OrgStructurePermissionsSeeder`),
 and every role grant lives in `TenantRolePermissionSeeder`. Each tenant
@@ -29,9 +29,9 @@ exist anywhere.
   `EnsureNotInstalled` and abort 404 permanently once the instance is marked
   installed, so the wizard cannot be re-run to register a rogue superadmin.
 
-## Gaps found in the monolith and closed in SRMIS
+## Gaps found in the monolith and closed in STRIDE
 
-| # | Finding (monolith behavior) | Fix in SRMIS |
+| # | Finding (monolith behavior) | Fix in STRIDE |
 |---|---|---|
 | 1 | `work-requests.gsu.approve/decline(.submit)` email links had **no `signed` middleware** while every analogous DC/FAD/OCD link was signed — a guessable URL could approve work requests. | All three GSU routes now require a valid signature. |
 | 2 | OCD approval dashboards/actions for vehicle, facility and messengerial requests had **no permission middleware** (only `auth`). | Gated behind new `vehicles.ocd-approve` / `facilities.ocd-approve` permissions, granted to the OCD role. |

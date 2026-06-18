@@ -88,7 +88,7 @@ function logout() {
 </script>
 
 <template>
-  <Head title="SRMIS — System Administration" />
+  <Head title="STRIDE — System Administration" />
 
   <div class="min-h-screen bg-slate-100">
     <!-- Top bar -->
@@ -97,7 +97,7 @@ function logout() {
         <div class="flex items-center gap-3">
           <img src="/images/pshslogo.png" alt="PSHS Logo" class="h-9 w-9 object-contain" />
           <div>
-            <h1 class="text-lg font-bold leading-tight">SRMIS System Administration</h1>
+            <h1 class="text-lg font-bold leading-tight">STRIDE System Administration</h1>
             <p class="text-xs text-indigo-200">{{ domain }}</p>
           </div>
         </div>

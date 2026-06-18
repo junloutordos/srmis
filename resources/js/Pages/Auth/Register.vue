@@ -27,9 +27,9 @@ const submit = () => {
     <div class="w-full max-w-md bg-white shadow-xl rounded-2xl p-8">
       <!-- Logo -->
       <div class="text-center">
-        <img src="/images/pshslogo.png" alt="SRMIS Logo" class="h-16 mx-auto mb-4" />
+        <img src="/images/pshslogo.png" alt="STRIDE Logo" class="h-16 mx-auto mb-4" />
         <h1 class="text-2xl font-bold text-gray-800 mb-6">
-          Create Your <span class="text-blue-600">SRMIS</span> Account
+          Create Your <span class="text-blue-600">STRIDE</span> Account
         </h1>
       </div>
 

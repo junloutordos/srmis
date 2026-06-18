@@ -6,7 +6,7 @@
 
 @section('content')
 <p class="greeting">Dear <strong>{{ $recipientName }}</strong>,</p>
-<p class="lead">Your IPCR targets have been <strong>approved</strong>. You may now log in to SRMIS and record your actual accomplishments for each assigned work plan.</p>
+<p class="lead">Your IPCR targets have been <strong>approved</strong>. You may now log in to STRIDE and record your actual accomplishments for each assigned work plan.</p>
 
 <table class="details" role="presentation">
     <tr><td class="lbl">Rating Period</td><td class="val">{{ $ipcr->rating_period }}</td></tr>
