@@ -352,9 +352,6 @@ const modules = [
         <p class="mt-5 text-center text-xs leading-relaxed text-slate-400">
           Need access? Contact your campus administrator.
         </p>
-        <p class="mt-2 text-center text-xs text-slate-400">
-          <a href="/privacy" class="hover:text-slate-600 underline">Data Privacy Policy</a>
-        </p>
       </div>
 
       <div class="mt-6 text-center">
@@ -362,11 +359,8 @@ const modules = [
           SRMIS v{{ appVersion }} · Philippine Science High School System
         </p>
         <p class="mt-1 text-[11px] text-slate-400">
-          Developed by the PSHS-CRC MIS Team
+          Developed by the <a href="/developer" class="font-medium text-indigo-400 hover:text-indigo-600">PSHS-CRC MIS Team</a>
         </p>
-        <a href="/developer" class="mt-0.5 inline-block text-[11px] font-medium text-indigo-400 hover:text-indigo-600">
-          Meet the developers →
-        </a>
       </div>
     </div>
   </div>
