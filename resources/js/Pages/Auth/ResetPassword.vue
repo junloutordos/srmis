@@ -5,6 +5,7 @@ import InputLabel from '@/Components/InputLabel.vue';
 import PrimaryButton from '@/Components/PrimaryButton.vue';
 import TextInput from '@/Components/TextInput.vue';
 import { Head, useForm } from '@inertiajs/vue3';
+import Swal from 'sweetalert2';
 
 const props = defineProps({
     email: {
@@ -27,6 +28,16 @@ const form = useForm({
 const submit = () => {
     form.post(route('password.store'), {
         onFinish: () => form.reset('password', 'password_confirmation'),
+        onSuccess: () => {
+            Swal.fire({
+                icon: 'success',
+                title: 'Password Reset!',
+                text: 'Your password has been updated. You can now sign in.',
+                confirmButtonColor: '#1447c0',
+                timer: 2500,
+                showConfirmButton: false,
+            })
+        },
     });
 };
 </script>
