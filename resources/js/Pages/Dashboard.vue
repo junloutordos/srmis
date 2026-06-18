@@ -105,7 +105,7 @@ const baseOptions = {
         <p class="text-sm text-indigo-200">{{ today }}</p>
         <h1 class="mt-1 text-2xl font-bold">{{ greeting }}, {{ authUser?.name }}!</h1>
         <p class="mt-1 text-sm text-indigo-100">
-          Service Requests Management Information System<span v-if="campusName"> — {{ campusName }}</span>
+          Service Ticketing and Request Information &amp; Dispatch Engine<span v-if="campusName"> — {{ campusName }}</span>
         </p>
       </div>
 
