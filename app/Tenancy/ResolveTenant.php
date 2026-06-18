@@ -91,7 +91,7 @@ class ResolveTenant
             return null;
         }
 
-        if (! in_array($request->path(), ['login', 'google/login', 'forgot-password'], true)) {
+        if (! in_array($request->path(), ['login', 'google/login', 'forgot-password', 'reset-password'], true)) {
             return null;
         }
 
