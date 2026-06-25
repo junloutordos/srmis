@@ -163,6 +163,10 @@ class DigitalSignatureService
         return new KmsClient([
             'region'  => config('services.kms.region', 'ap-southeast-1'),
             'version' => 'latest',
+            'http'    => [
+                'connect_timeout' => 3,
+                'timeout'         => 8,
+            ],
         ]);
     }
 

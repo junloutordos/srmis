@@ -23,6 +23,8 @@ use App\Models\DigitalSignature;
 use App\Services\DigitalSignatureService;
 use App\Services\SnapshotService;
 use App\Services\ITJobRequestPdfService;
+use App\Jobs\SignITJobRequestJob;
+use App\Jobs\GenerateITJobRequestPdfJob;
 
 class ITJobRequestController extends Controller
 {
@@ -596,14 +598,7 @@ public function showOCDDeclineForm(ITJobRequest $jobRequest, $ocd)
             $jobRequest->itjr_no . 'mis_acted' . $request->user()->id
         );
 
-        try {
-            $this->pdfService->generate($jobRequest);
-        } catch (\Throwable $e) {
-            logger()->error('Failed to generate IT Job Request PDF', [
-                'job_request_id' => $jobRequest->id,
-                'error'          => $e->getMessage(),
-            ]);
-        }
+        GenerateITJobRequestPdfJob::dispatch($jobRequest);
     }
 
     return back()->with('success', 'MIS assessment saved.');
@@ -1059,25 +1054,6 @@ public function showOCDDeclineForm(ITJobRequest $jobRequest, $ocd)
             }
         }
 
-        try {
-            $this->sigService->sign(
-                signer:        $signer,
-                signableType:  ITJobRequest::class,
-                signableId:    $jobRequest->id,
-                documentTitle: $title,
-                contentToHash: $contentHash,
-                metadata:      [
-                    'stage'   => $stage,
-                    'itjr_no' => $jobRequest->itjr_no,
-                    'title'   => $jobRequest->title,
-                ],
-            );
-        } catch (\Throwable $e) {
-            logger()->error('ITJR digital sign failed', [
-                'job_request_id' => $jobRequest->id,
-                'stage'          => $stage,
-                'error'          => $e->getMessage(),
-            ]);
-        }
+        SignITJobRequestJob::dispatch($signer, $jobRequest, $stage, $title, $contentHash);
     }
 }
