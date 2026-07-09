@@ -1,5 +1,5 @@
 <script setup>
-import { ref, computed } from 'vue'
+import { ref, computed, onMounted, watch } from 'vue'
 import { Head, router } from '@inertiajs/vue3'
 import AdminLayout from '@/Layouts/AdminLayout.vue'
 import { EyeIcon, CheckCircleIcon, XCircleIcon, XMarkIcon } from '@heroicons/vue/24/outline'
@@ -18,6 +18,21 @@ const props = defineProps({
 // ── Local state ───────────────────────────────────────────────────────────────
 const localTabs    = ref(props.tabs.map(t => ({ ...t, items: [...t.items] })))
 const activeTab    = ref(localTabs.value[0]?.type ?? null)
+
+// Force a fresh fetch on mount so returning from another module (or an
+// Inertia back/forward history restore) never shows an already-processed
+// request as still pending.
+onMounted(() => {
+  router.reload({ only: ['tabs', 'totalCount'], preserveScroll: true, preserveState: true })
+})
+
+// Resync local state whenever fresh tabs arrive (e.g. from the reload above).
+watch(() => props.tabs, (newTabs) => {
+  localTabs.value = newTabs.map(t => ({ ...t, items: [...t.items] }))
+  if (!localTabs.value.some(t => t.type === activeTab.value)) {
+    activeTab.value = localTabs.value.find(t => t.count > 0)?.type ?? localTabs.value[0]?.type ?? null
+  }
+})
 const search       = ref(props.filters?.search ?? '')
 const showModal    = ref(false)
 const selectedItem = ref(null)

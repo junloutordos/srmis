@@ -31,9 +31,11 @@ export function useUsers(props) {
   })
 
   const isEmployeesPage = !!(props.pageTitle && String(props.pageTitle).toLowerCase().includes('employee'))
-  const isInactivePage = !!(props.pageTitle && String(props.pageTitle).toLowerCase().includes('inactive'))
+  const statusFilter = ref(props.filters?.status ?? 'active')
+  const isInactivePage = computed(() => statusFilter.value === 'inactive')
 
-  // Filtered + paginated users
+  // Filtered + paginated users (backend already scopes by status; this only
+  // applies the free-text search on top of the current status-scoped list)
   const filteredUsersAll = computed(() => {
     const q = searchQuery.value.toLowerCase()
     return usersList.value.filter((u) => {
@@ -55,24 +57,13 @@ export function useUsers(props) {
   })
 
   const filteredUsers = computed(() => {
-    // Start from the pre-filtered list, then apply active/inactive filtering
-    const base = filteredUsersAll.value || []
-    const statusFiltered = base.filter((u) => {
-      const status = (u.status || '').toLowerCase()
-      return isInactivePage ? status === 'inactive' : status !== 'inactive'
-    })
     const start = (currentPage.value - 1) * perPage
-    return statusFiltered.slice(start, start + perPage)
+    return filteredUsersAll.value.slice(start, start + perPage)
   })
 
-  const totalPages = computed(() => {
-    const base = filteredUsersAll.value || []
-    const count = base.filter((u) => {
-      const status = (u.status || '').toLowerCase()
-      return isInactivePage ? status === 'inactive' : status !== 'inactive'
-    }).length
-    return Math.max(1, Math.ceil(count / perPage))
-  })
+  const totalPages = computed(() =>
+    Math.max(1, Math.ceil(filteredUsersAll.value.length / perPage))
+  )
 
   // Modal logic
   const openModal = (mode, user = null) => {
@@ -191,7 +182,12 @@ export function useUsers(props) {
     if (result.isConfirmed) {
       router.delete(`/users/${user.id}`, {
         onSuccess: async () => {
-          usersList.value = usersList.value.filter((u) => u.id !== user.id)
+          if (statusFilter.value === 'all') {
+            const target = usersList.value.find((u) => u.id === user.id)
+            if (target) target.status = 'inactive'
+          } else {
+            usersList.value = usersList.value.filter((u) => u.id !== user.id)
+          }
           await Swal.fire("Deleted", "User has been deleted", "success")
           closeModal()
         },
@@ -237,7 +233,12 @@ export function useUsers(props) {
     if (result.isConfirmed) {
       router.post(`/users/${user.id}/activate`, null, {
         onSuccess: async () => {
-          usersList.value = usersList.value.filter((u) => u.id !== user.id)
+          if (statusFilter.value === 'inactive') {
+            usersList.value = usersList.value.filter((u) => u.id !== user.id)
+          } else {
+            const target = usersList.value.find((u) => u.id === user.id)
+            if (target) target.status = 'active'
+          }
           await Swal.fire('Activated', 'User has been reactivated', 'success')
         },
         onError: async (errors) => {
@@ -269,5 +270,6 @@ export function useUsers(props) {
     sendPasswordReset,
     isEmployeesPage,
     isInactivePage,
+    statusFilter,
   }
 }

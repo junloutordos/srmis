@@ -148,8 +148,9 @@ export function useJobRequests(initialRequests = []) {
           await Swal.fire("Success", "IT Job Request has been created!", "success")
           window.location.reload()
         },
-        onError: async () => {
-          await Swal.fire("Error", "Please fill all required fields.", "error")
+        onError: async (errors) => {
+          const message = Object.values(errors)[0] || "Please fill all required fields."
+          await Swal.fire("Error", message, "error")
         },
       })
     }
@@ -163,8 +164,9 @@ export function useJobRequests(initialRequests = []) {
           await Swal.fire("Updated", "IT Job Request updated successfully!", "success")
           window.location.reload()
         },
-        onError: async () => {
-          await Swal.fire("Error", "Failed to update request. Please try again.", "error")
+        onError: async (errors) => {
+          const message = Object.values(errors)[0] || "Failed to update request. Please try again."
+          await Swal.fire("Error", message, "error")
         },
       })
     }

@@ -100,25 +100,37 @@ export default function usePMS(initialSchedules = []) {
   const storeSchedule = () => {
     form.schedule_dates = scheduleDates.value.map((d) => ({ date: d.date }))
     showLoadingSwal('Saving schedule...')
-    router.post(route("ict-pms.store"), form, {
-      onError: (e) => { errors.value = e; Swal.close() },
-      onSuccess: () => {
-        closeModal()
-        Swal.fire({ icon: "success", title: "Schedule Added", timer: 2000, showConfirmButton: false })
-      },
-    })
+    try {
+      router.post(route("ict-pms.store"), form, {
+        onError: (e) => { errors.value = e },
+        onSuccess: () => {
+          closeModal()
+          Swal.fire({ icon: "success", title: "Schedule Added", timer: 2000, showConfirmButton: false })
+        },
+        onFinish: () => { if (Swal.isVisible()) Swal.close() },
+      })
+    } catch (e) {
+      Swal.close()
+      Swal.fire({ icon: "error", title: "Error", text: "Unable to save schedule. Please try again." })
+    }
   }
 
   const updateSchedule = (id) => {
     form.schedule_dates = scheduleDates.value.map((d) => ({ date: d.date }))
     showLoadingSwal('Updating schedule...')
-    router.put(route("ict-pms.update", id), form, {
-      onError: (e) => { errors.value = e; Swal.close() },
-      onSuccess: () => {
-        closeModal()
-        Swal.fire({ icon: "success", title: "Schedule Updated", timer: 2000, showConfirmButton: false })
-      },
-    })
+    try {
+      router.put(route("ict-pms.update", id), form, {
+        onError: (e) => { errors.value = e },
+        onSuccess: () => {
+          closeModal()
+          Swal.fire({ icon: "success", title: "Schedule Updated", timer: 2000, showConfirmButton: false })
+        },
+        onFinish: () => { if (Swal.isVisible()) Swal.close() },
+      })
+    } catch (e) {
+      Swal.close()
+      Swal.fire({ icon: "error", title: "Error", text: "Unable to update schedule. Please try again." })
+    }
   }
 
   const destroySchedule = (id) => {
@@ -132,11 +144,18 @@ export default function usePMS(initialSchedules = []) {
       confirmButtonText: "Yes, delete it!",
     }).then((result) => {
       if (result.isConfirmed) {
-        router.delete(route("ict-pms.destroy", id), {
-          onSuccess: () => {
-            Swal.fire({ icon: "success", title: "Deleted", timer: 2000, showConfirmButton: false })
-          },
-        })
+        try {
+          router.delete(route("ict-pms.destroy", id), {
+            onSuccess: () => {
+              Swal.fire({ icon: "success", title: "Deleted", timer: 2000, showConfirmButton: false })
+            },
+            onError: () => {
+              Swal.fire({ icon: "error", title: "Error", text: "Unable to delete schedule. Please try again." })
+            },
+          })
+        } catch (e) {
+          Swal.fire({ icon: "error", title: "Error", text: "Unable to delete schedule. Please try again." })
+        }
       }
     })
   }

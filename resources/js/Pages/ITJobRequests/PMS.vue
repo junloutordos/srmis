@@ -44,6 +44,13 @@ const page = usePage()
 const userRole = page.props.auth?.user?.role?.name ?? null
 const { isSubmitting, submit } = useSubmit()
 
+// ── School year bounds for schedule dates ─────────────────────────────────
+const schoolYearBounds = computed(() => {
+  const m = /^(\d{4})-(\d{4})$/.exec(form.school_year || "")
+  if (!m) return null
+  return { min: `${m[1]}-01-01`, max: `${m[2]}-12-31` }
+})
+
 // ── Assign Equipment Modal ────────────────────────────────────────────────────
 
 const showAssignEquipmentModal = ref(false)
@@ -399,9 +406,11 @@ const totalPages       = computed(() => props.pmsSchedules?.last_page ?? 1)
                   required />
               </div>
               <div>
-                <label class="block text-xs font-medium text-slate-600 mb-1">School Year</label>
-                <input v-model="form.school_year" type="text" placeholder="e.g. 2025-2026"
-                  class="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-400" />
+                <label class="block text-xs font-medium text-slate-600 mb-1">School Year <span class="text-red-500">*</span></label>
+                <input v-model="form.school_year" type="text" placeholder="e.g. 2025-2026" pattern="\d{4}-\d{4}"
+                  title="Format: YYYY-YYYY (e.g. 2025-2026)"
+                  class="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-400"
+                  required />
               </div>
               <div>
                 <label class="block text-xs font-medium text-slate-600 mb-1">Office/Area</label>
@@ -431,9 +440,13 @@ const totalPages       = computed(() => props.pmsSchedules?.last_page ?? 1)
               </div>
               <div class="col-span-2">
                 <label class="block text-xs font-medium text-slate-600 mb-1">Scheduled Date(s) <span class="text-red-500">*</span></label>
+                <p v-if="schoolYearBounds" class="text-xs text-slate-400 mb-1">
+                  Must fall within {{ form.school_year }} ({{ schoolYearBounds.min }} to {{ schoolYearBounds.max }})
+                </p>
                 <div class="grid grid-cols-2 gap-2 mt-1">
                   <div v-for="(d, i) in scheduleDates" :key="i">
                     <input v-model="d.date" type="date"
+                      :min="schoolYearBounds?.min" :max="schoolYearBounds?.max"
                       class="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-400"
                       required />
                   </div>

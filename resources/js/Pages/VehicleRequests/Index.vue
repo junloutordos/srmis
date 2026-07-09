@@ -1,6 +1,6 @@
 <script setup>
 import { Head, usePage, router } from "@inertiajs/vue3";
-import { computed, ref } from "vue";
+import { computed, ref, onMounted } from "vue";
 import axios from "axios";
 import { PencilSquareIcon, TrashIcon, UserIcon, PrinterIcon } from "@heroicons/vue/24/outline";
 import AdminLayout from "@/Layouts/AdminLayout.vue";
@@ -43,7 +43,15 @@ const {
   openModal, closeModal, submit,
   // actions
   destroy, openPrint,
-} = useVehicleRequests(props.requests || [], props.vehicles || [])
+} = useVehicleRequests(() => props.requests, props.vehicles || [])
+
+// Force a fresh fetch of requests whenever this page mounts (e.g. after
+// navigating back from another module), so an approval/decline made
+// elsewhere — or restored from Inertia's back/forward history cache —
+// never shows a stale status.
+onMounted(() => {
+  router.reload({ only: ['requests'], preserveScroll: true, preserveState: true })
+})
 
 // Dynamically add pin field to composable form
 form.pin = null
@@ -204,8 +212,8 @@ async function handleNewRequest() {
         <div class="flex items-center justify-between px-4 py-3 border-t border-slate-100 text-sm text-slate-600">
           <span>Page {{ currentPage }} of {{ totalPages }}</span>
           <div class="flex gap-2">
-            <button @click="currentPage--" :disabled="currentPage === 1" class="inline-flex items-center gap-2 bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 px-4 py-2 rounded-lg text-sm font-medium transition-colors shadow-sm disabled:opacity-50">Prev</button>
-            <button @click="currentPage++" :disabled="currentPage === totalPages" class="inline-flex items-center gap-2 bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 px-4 py-2 rounded-lg text-sm font-medium transition-colors shadow-sm disabled:opacity-50">Next</button>
+            <button @click="currentPage--" :disabled="currentPage === 1" class="inline-flex items-center gap-2 bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 px-3 py-1.5 rounded-lg text-sm font-medium transition-colors shadow-sm disabled:opacity-50">Prev</button>
+            <button @click="currentPage++" :disabled="currentPage === totalPages" class="inline-flex items-center gap-2 bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 px-3 py-1.5 rounded-lg text-sm font-medium transition-colors shadow-sm disabled:opacity-50">Next</button>
           </div>
         </div>
 
@@ -332,7 +340,7 @@ async function handleNewRequest() {
         <div class="px-6 py-5 space-y-4 max-h-[80vh] overflow-auto">
 
           <div>
-            <label class="block text-xs font-medium text-slate-600 mb-1">Purpose</label>
+            <label class="block text-xs font-medium text-slate-600 mb-1">Purpose <span class="text-red-500">*</span></label>
             <input v-model="form.purpose" @input="() => validateField('purpose')" type="text"
                    :class="['rounded-lg border bg-white px-3 py-2 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-400 w-full', fieldErrors.purpose ? 'border-red-400' : 'border-slate-200']" />
             <p v-if="fieldErrors.purpose" class="text-red-500 text-xs mt-1">{{ fieldErrors.purpose }}</p>
@@ -340,7 +348,7 @@ async function handleNewRequest() {
           </div>
 
           <div>
-            <label class="block text-xs font-medium text-slate-600 mb-1">Destination</label>
+            <label class="block text-xs font-medium text-slate-600 mb-1">Destination <span class="text-red-500">*</span></label>
             <input v-model="form.destination" @input="() => validateField('destination')" type="text"
                    :class="['rounded-lg border bg-white px-3 py-2 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-400 w-full', fieldErrors.destination ? 'border-red-400' : 'border-slate-200']" />
             <p v-if="fieldErrors.destination" class="text-red-500 text-xs mt-1">{{ fieldErrors.destination }}</p>
@@ -349,13 +357,13 @@ async function handleNewRequest() {
 
           <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
-              <label class="block text-xs font-medium text-slate-600 mb-1">Time of Departure</label>
+              <label class="block text-xs font-medium text-slate-600 mb-1">Time of Departure <span class="text-red-500">*</span></label>
               <input v-model="form.time_of_departure" @input="() => validateField('time_of_departure')" type="time"
                      :class="['rounded-lg border bg-white px-3 py-2 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-400 w-full', fieldErrors.time_of_departure ? 'border-red-400' : 'border-slate-200']" />
               <p v-if="fieldErrors.time_of_departure" class="text-red-500 text-xs mt-1">{{ fieldErrors.time_of_departure }}</p>
             </div>
             <div>
-              <label class="block text-xs font-medium text-slate-600 mb-1">Estimated Time of Arrival</label>
+              <label class="block text-xs font-medium text-slate-600 mb-1">Estimated Time of Arrival <span class="text-red-500">*</span></label>
               <input v-model="form.eta" @input="() => validateField('eta')" type="time"
                      :class="['rounded-lg border bg-white px-3 py-2 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-400 w-full', fieldErrors.eta ? 'border-red-400' : 'border-slate-200']" />
               <p v-if="fieldErrors.eta" class="text-red-500 text-xs mt-1">{{ fieldErrors.eta }}</p>
@@ -363,7 +371,7 @@ async function handleNewRequest() {
           </div>
 
           <div>
-            <label class="block text-xs font-medium text-slate-600 mb-1">Date(s) Needed</label>
+            <label class="block text-xs font-medium text-slate-600 mb-1">Date(s) Needed <span class="text-red-500">*</span></label>
             <div class="mt-1 flex flex-col sm:flex-row sm:items-start gap-2">
               <input v-model="dateInput" type="date"
                      class="rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-400" />
@@ -381,7 +389,7 @@ async function handleNewRequest() {
           </div>
 
           <div>
-            <label class="block text-xs font-medium text-slate-600 mb-1">Vehicle Type</label>
+            <label class="block text-xs font-medium text-slate-600 mb-1">Vehicle Type <span class="text-red-500">*</span></label>
             <select v-model="form.vehicle_type" @change="() => validateField('vehicle_type')"
                     :class="['rounded-lg border bg-white px-3 py-2 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-400 w-full', fieldErrors.vehicle_type ? 'border-red-400' : 'border-slate-200']">
               <option value="">Select vehicle</option>
@@ -391,7 +399,7 @@ async function handleNewRequest() {
           </div>
 
           <div>
-            <label class="block text-xs font-medium text-slate-600 mb-1">Division Chief (Approver)</label>
+            <label class="block text-xs font-medium text-slate-600 mb-1">Division Chief (Approver) <span class="text-red-500">*</span></label>
             <select v-model="form.division_chief_id" @change="() => validateField('division_chief_id')"
                     :class="['rounded-lg border bg-white px-3 py-2 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-400 w-full', fieldErrors.division_chief_id ? 'border-red-400' : 'border-slate-200']">
               <option value="">Select division chief</option>
@@ -401,7 +409,7 @@ async function handleNewRequest() {
           </div>
 
           <div>
-            <label class="block text-xs font-medium text-slate-600 mb-1">Passengers</label>
+            <label class="block text-xs font-medium text-slate-600 mb-1">Passengers <span class="text-red-500">*</span></label>
             <input v-model.number="form.passengers" @input="() => validateField('passengers')" type="number" min="1"
                    :class="['rounded-lg border bg-white px-3 py-2 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-400 w-24', fieldErrors.passengers ? 'border-red-400' : 'border-slate-200']" />
             <p v-if="fieldErrors.passengers" class="text-red-500 text-xs mt-1">{{ fieldErrors.passengers }}</p>

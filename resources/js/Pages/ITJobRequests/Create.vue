@@ -20,8 +20,9 @@ const submit = () => {
       form.reset()
       Swal.fire({ icon: 'success', title: 'Submitted!', text: 'IT Job Request has been created.', timer: 2000, showConfirmButton: false })
     },
-    onError: () => {
-      Swal.fire({ icon: 'error', title: 'Error', text: 'Please fill all required fields.' })
+    onError: (errors) => {
+      const message = Object.values(errors)[0] || 'Please fill all required fields.'
+      Swal.fire({ icon: 'error', title: 'Error', text: message })
     }
   })
 }

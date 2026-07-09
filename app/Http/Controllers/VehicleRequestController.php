@@ -206,7 +206,7 @@ class VehicleRequestController extends Controller
 
         if (! $user || ! $user->hasPermission('vehicles.dc-approve')) {
             logger()->warning('approveInApp forbidden - not division chief', ['user_id' => $user->id ?? null]);
-            return back()->with('error', 'You are not authorized to approve this request.');
+            abort(403, 'You are not authorized to approve this request.');
         }
 
         // Allow if assigned chief OR if the acting user is the chief of the requester's division
@@ -225,10 +225,10 @@ class VehicleRequestController extends Controller
 
         if (! $canAct) {
             logger()->warning('approveInApp forbidden - not assigned nor chief of requester division', ['vehicle_request_id' => $vehicleRequest->id, 'assigned_chief' => $vehicleRequest->division_chief_id ?? null, 'user_id' => $user->id]);
-            return back()->with('error', 'You are not authorized to approve this request.');
+            abort(403, 'You are not authorized to approve this request.');
         }
 
-        if ($vehicleRequest->status === 'Approved') return back()->with('success', 'Already approved');
+        if ($vehicleRequest->status === 'Approved') abort(409, 'This request has already been approved.');
 
         $vehicleRequest->status = 'Approved';
         $vehicleRequest->save();
@@ -274,7 +274,7 @@ class VehicleRequestController extends Controller
 
         if (! $user || ! $user->hasPermission('vehicles.dc-approve')) {
             logger()->warning('declineInApp forbidden - not division chief', ['user_id' => $user->id ?? null]);
-            return back()->with('error', 'You are not authorized to decline this request.');
+            abort(403, 'You are not authorized to decline this request.');
         }
 
         $canAct = false;
@@ -292,12 +292,12 @@ class VehicleRequestController extends Controller
 
         if (! $canAct) {
             logger()->warning('declineInApp forbidden - not assigned nor chief of requester division', ['vehicle_request_id' => $vehicleRequest->id, 'assigned_chief' => $vehicleRequest->division_chief_id ?? null, 'user_id' => $user->id]);
-            return back()->with('error', 'You are not authorized to decline this request.');
+            abort(403, 'You are not authorized to decline this request.');
         }
 
         $data = $request->validate(['reason' => 'required|string|max:1000']);
 
-        if (in_array($vehicleRequest->status, ['Approved','Declined'])) return back()->with('success', 'Already processed');
+        if (in_array($vehicleRequest->status, ['Approved','Declined'])) abort(409, 'This request has already been processed.');
 
         $vehicleRequest->status = 'Declined';
         $vehicleRequest->decline_reason = $data['reason'];
@@ -726,6 +726,10 @@ class VehicleRequestController extends Controller
     public function approveByOCDInApp(Request $request, VehicleRequest $vehicleRequest)
     {
         $request->validate(['action' => 'required|in:approve,reject']);
+
+        if (in_array($vehicleRequest->status, ['OCD Approved', 'Declined'], true)) {
+            abort(409, 'This request has already been acted upon.');
+        }
 
         if ($request->action === 'approve') {
             $vehicleRequest->update(['status' => 'OCD Approved']);

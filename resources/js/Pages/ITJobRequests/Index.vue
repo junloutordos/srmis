@@ -367,8 +367,10 @@ function handleSigCancel() {
             <tbody class="divide-y divide-slate-100">
               <tr v-for="req in visibleRequests" :key="req.id" class="hover:bg-slate-50/60">
                 <td class="px-4 py-3 text-sm text-slate-700">{{ req.itjr_no }}</td>
-                <td class="px-4 py-3 text-sm text-slate-700">{{ req.title }}</td>
-                <td class="px-4 py-3 text-sm text-slate-700">{{ req.category }}</td>
+                <td class="px-4 py-3 text-sm text-slate-700 max-w-[14rem] truncate" :title="req.title">{{ req.title }}</td>
+                <td class="px-4 py-3">
+                  <span :class="[badgeBase, 'bg-slate-100 text-slate-600']" class="max-w-[10rem] truncate" :title="req.category">{{ req.category }}</span>
+                </td>
 
                 <td v-if="userRole === 'Administrator'" class="px-4 py-3 text-sm text-slate-700">
                   {{ req.user?.name ?? '—' }}

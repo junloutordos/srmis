@@ -137,7 +137,7 @@ const destroy = (id) => {
             <tbody class="divide-y divide-slate-100">
               <tr v-for="v in filteredVehicles" :key="v.id" class="hover:bg-slate-50/60">
                 <td class="px-4 py-3 text-sm text-slate-700">{{ v.id }}</td>
-                <td class="px-4 py-3 text-sm text-slate-700 font-medium">{{ v.name }}</td>
+                <td class="px-4 py-3 text-sm text-slate-700 font-medium max-w-[14rem] truncate" :title="v.name">{{ v.name }}</td>
                 <td class="px-4 py-3 text-sm text-slate-700">{{ v.plate_number ?? '—' }}</td>
                 <td class="px-4 py-3 text-sm text-slate-700">{{ v.capacity ?? '—' }}</td>
                 <td class="px-4 py-3 text-sm text-slate-700">

@@ -138,7 +138,7 @@ const destroy = (f) => {
             <tbody class="divide-y divide-slate-100">
               <tr v-for="f in filteredFacilities" :key="f.id" class="hover:bg-slate-50/60">
                 <td class="px-4 py-3 text-sm text-slate-700">{{ f.id }}</td>
-                <td class="px-4 py-3 text-sm text-slate-700 font-medium">{{ f.name }}</td>
+                <td class="px-4 py-3 text-sm text-slate-700 font-medium max-w-[14rem] truncate" :title="f.name">{{ f.name }}</td>
                 <td class="px-4 py-3 text-sm text-slate-700">{{ f.location ?? '—' }}</td>
                 <td class="px-4 py-3 text-sm text-slate-700">{{ f.capacity ?? '—' }}</td>
                 <td class="px-4 py-3 text-sm text-slate-700">
@@ -224,7 +224,7 @@ const destroy = (f) => {
           </div>
           <div>
             <label class="block text-xs font-medium text-slate-600 mb-1">Capacity</label>
-            <input type="number" v-model.number="form.capacity" class="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-400" />
+            <input type="number" min="0" v-model.number="form.capacity" class="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-400" />
             <p v-if="form.errors.capacity" class="text-red-600 text-xs mt-1">{{ form.errors.capacity }}</p>
           </div>
           <div>

@@ -67,6 +67,14 @@ class AppServiceProvider extends ServiceProvider
             return null; // fall through to policies
         });
 
+        // Administrator always has every permission. Rather than relying only
+        // on the seeder's one-time sync, auto-grant every newly created
+        // permission (via UI or seeder) to Administrator as it's created.
+        \App\Models\Permission::created(function (\App\Models\Permission $permission) {
+            $admin = \App\Models\Role::where('name', 'Administrator')->first();
+            $admin?->permissions()->syncWithoutDetaching([$permission->id]);
+        });
+
         Vite::prefetch(concurrency: 3);
 
         // Ensure preload tags for CSS use the correct `as` attribute so browsers

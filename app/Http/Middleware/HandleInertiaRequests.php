@@ -76,6 +76,7 @@ class HandleInertiaRequests extends Middleware
                         'electronic_signature' => $authUser->electronic_signature
                             ? $this->s3Url($authUser->electronic_signature)
                             : null,
+                        'needsSignatureSetup' => empty($authUser->electronic_signature) || empty($authUser->signature_pin),
                         'permissions' => $authUser->getPermissions(),
                         'primary_unit' => fn () => $authUser->primaryUnitAssignment?->unit
                             ? [

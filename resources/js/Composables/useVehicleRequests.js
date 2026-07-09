@@ -3,9 +3,18 @@ import { ref, reactive, computed, watch } from 'vue'
 import { useForm } from '@inertiajs/vue3'
 import Swal from 'sweetalert2'
 
-export function useVehicleRequests(initialRequests = [], vehicles = []) {
+export function useVehicleRequests(requestsSource = [], vehicles = []) {
+  const resolveRequests = () => (typeof requestsSource === 'function' ? requestsSource() : requestsSource) || []
+
   // ── List / search / pagination ───────────────────────────────────────────
-  const requestsList = ref([...initialRequests])
+  const requestsList = ref([...resolveRequests()])
+
+  // Keep in sync with fresh props (e.g. after an Inertia partial reload or
+  // returning to this page from another module) — this was previously a
+  // one-time snapshot that never updated after the initial render.
+  if (typeof requestsSource === 'function') {
+    watch(requestsSource, (newVal) => { requestsList.value = [...(newVal || [])] })
+  }
   const searchQuery  = ref('')
   const currentPage  = ref(1)
   const perPage      = 10

@@ -661,12 +661,12 @@ const bookingsForDate = (dt) => {
           <div class="px-6 py-5 space-y-4 max-h-[80vh] overflow-auto">
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
-                <label class="block text-xs font-medium text-slate-600 mb-1">Activity</label>
+                <label class="block text-xs font-medium text-slate-600 mb-1">Activity <span class="text-red-500">*</span></label>
                 <input v-model="form.activity" @input="validateField('activity')" type="text" :class="['w-full rounded-lg border bg-white px-3 py-2 text-sm text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500', fieldErrors.activity ? 'border-red-400' : 'border-slate-200 focus:border-indigo-400']" />
                 <p v-if="fieldErrors.activity" class="mt-1 text-xs text-red-600">{{ fieldErrors.activity }}</p>
               </div>
               <div>
-                <label class="block text-xs font-medium text-slate-600 mb-1">Purpose</label>
+                <label class="block text-xs font-medium text-slate-600 mb-1">Purpose <span class="text-red-500">*</span></label>
                 <input v-model="form.purpose" @input="validateField('purpose')" type="text" :class="['w-full rounded-lg border bg-white px-3 py-2 text-sm text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500', fieldErrors.purpose ? 'border-red-400' : 'border-slate-200 focus:border-indigo-400']" />
                 <p v-if="fieldErrors.purpose" class="mt-1 text-xs text-red-600">{{ fieldErrors.purpose }}</p>
               </div>
@@ -691,7 +691,7 @@ const bookingsForDate = (dt) => {
 
             <div class="grid grid-cols-2 gap-4">
               <div>
-                <label class="block text-xs font-medium text-slate-600 mb-1">Nature of Activity</label>
+                <label class="block text-xs font-medium text-slate-600 mb-1">Nature of Activity <span class="text-red-500">*</span></label>
                 <select v-model="form.nature" @change="validateField('nature')" :class="['w-full rounded-lg border bg-white px-3 py-2 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-indigo-500', fieldErrors.nature ? 'border-red-400' : 'border-slate-200 focus:border-indigo-400']">
                   <option value="">-- Select Nature --</option>
                   <option value="Curricular">Curricular</option>
@@ -708,7 +708,7 @@ const bookingsForDate = (dt) => {
               </div>
 
               <div>
-                <label class="block text-xs font-medium text-slate-600 mb-1">Participants (description)</label>
+                <label class="block text-xs font-medium text-slate-600 mb-1">Participants (description) <span class="text-red-500">*</span></label>
                 <input v-model="form.participants" @input="validateField('participants')" type="text" :class="['w-full rounded-lg border bg-white px-3 py-2 text-sm text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500', fieldErrors.participants ? 'border-red-400' : 'border-slate-200 focus:border-indigo-400']" placeholder="e.g. Students, Faculty" />
                 <p v-if="fieldErrors.participants" class="mt-1 text-xs text-red-600">{{ fieldErrors.participants }}</p>
               </div>
@@ -727,12 +727,12 @@ const bookingsForDate = (dt) => {
 
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
-                <label class="block text-xs font-medium text-slate-600 mb-1">Start Date</label>
+                <label class="block text-xs font-medium text-slate-600 mb-1">Start Date <span class="text-red-500">*</span></label>
                 <input v-model="form.date_start" @change="validateField('date_start')" type="date" :min="minEventDate" :class="['w-full rounded-lg border bg-white px-3 py-2 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-indigo-500', fieldErrors.date_start ? 'border-red-400' : 'border-slate-200 focus:border-indigo-400']" />
                 <p v-if="fieldErrors.date_start" class="mt-1 text-xs text-red-600">{{ fieldErrors.date_start }}</p>
               </div>
               <div>
-                <label class="block text-xs font-medium text-slate-600 mb-1">End Date</label>
+                <label class="block text-xs font-medium text-slate-600 mb-1">End Date <span class="text-red-500">*</span></label>
                 <input v-model="form.date_end" @change="validateField('date_end')" type="date" :min="form.date_start || minEventDate" :class="['w-full rounded-lg border bg-white px-3 py-2 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-indigo-500', fieldErrors.date_end ? 'border-red-400' : 'border-slate-200 focus:border-indigo-400']" />
                 <p v-if="fieldErrors.date_end" class="mt-1 text-xs text-red-600">{{ fieldErrors.date_end }}</p>
               </div>
@@ -740,12 +740,12 @@ const bookingsForDate = (dt) => {
 
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
-                <label class="block text-xs font-medium text-slate-600 mb-1">Start Time</label>
+                <label class="block text-xs font-medium text-slate-600 mb-1">Start Time <span class="text-red-500">*</span></label>
                 <input v-model="form.time_start" @change="validateField('time_start')" type="time" :class="['w-full rounded-lg border bg-white px-3 py-2 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-indigo-500', fieldErrors.time_start ? 'border-red-400' : 'border-slate-200 focus:border-indigo-400']" />
                 <p v-if="fieldErrors.time_start" class="mt-1 text-xs text-red-600">{{ fieldErrors.time_start }}</p>
               </div>
               <div>
-                <label class="block text-xs font-medium text-slate-600 mb-1">End Time</label>
+                <label class="block text-xs font-medium text-slate-600 mb-1">End Time <span class="text-red-500">*</span></label>
                 <input v-model="form.time_end" @change="validateField('time_end')" type="time" :class="['w-full rounded-lg border bg-white px-3 py-2 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-indigo-500', fieldErrors.time_end ? 'border-red-400' : 'border-slate-200 focus:border-indigo-400']" />
                 <p v-if="fieldErrors.time_end" class="mt-1 text-xs text-red-600">{{ fieldErrors.time_end }}</p>
               </div>

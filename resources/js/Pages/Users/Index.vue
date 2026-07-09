@@ -24,6 +24,7 @@ const props = defineProps({
   salaryGrades: { type: Array, default: () => [] },
   pageTitle:    { type: String, default: 'Users' },
   headerTitle:  { type: String, default: 'Users List' },
+  filters:      { type: Object, default: () => ({}) },
 })
 
 const {
@@ -46,6 +47,7 @@ const {
   sendPasswordReset,
   isEmployeesPage,
   isInactivePage,
+  statusFilter,
 } = useUsers(props)
 
 // ── Local filters (employees page only) ───────────────────────────────────────
@@ -55,6 +57,15 @@ const filterSex      = ref('')
 
 // Reset page when any filter changes
 watch([filterDivision, filterCategory, filterSex, searchQuery], () => { currentPage.value = 1 })
+
+// Status is scoped server-side, so changing it re-fetches the matching set.
+watch(statusFilter, (status) => {
+  router.get(route('users.index'), { status }, {
+    preserveState: true,
+    replace: true,
+    only: ['users', 'filters'],
+  })
+})
 
 const EMP_CATEGORIES = [
   'Plantilla Teaching',
@@ -68,8 +79,6 @@ const PER_PAGE = 15
 const allFiltered = computed(() => {
   const q = searchQuery.value.toLowerCase()
   return usersList.value.filter(u => {
-    const status = (u.status || '').toLowerCase()
-    if (isInactivePage ? status !== 'inactive' : status === 'inactive') return false
     if (filterDivision.value && String(u.division_id) !== String(filterDivision.value)) return false
     if (filterCategory.value && u.emp_category !== filterCategory.value) return false
     if (filterSex.value && u.sex !== filterSex.value) return false
@@ -252,6 +261,17 @@ function formatSg(user) {
             />
           </div>
 
+          <!-- Status filter -->
+          <div class="min-w-[140px]">
+            <label class="block text-xs font-medium text-slate-500 mb-1">Status</label>
+            <select v-model="statusFilter"
+              class="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-400">
+              <option value="active">Active</option>
+              <option value="inactive">Inactive</option>
+              <option value="all">All</option>
+            </select>
+          </div>
+
           <!-- Division filter -->
           <div class="min-w-[170px]">
             <label class="block text-xs font-medium text-slate-500 mb-1">Division</label>
@@ -285,8 +305,8 @@ function formatSg(user) {
 
           <!-- Clear filters -->
           <button
-            v-if="filterDivision || filterCategory || filterSex || searchQuery"
-            @click="filterDivision = ''; filterCategory = ''; filterSex = ''; searchQuery = ''"
+            v-if="filterDivision || filterCategory || filterSex || searchQuery || statusFilter !== 'active'"
+            @click="filterDivision = ''; filterCategory = ''; filterSex = ''; searchQuery = ''; statusFilter = 'active'"
             class="inline-flex items-center gap-1.5 px-3 py-2 text-xs font-medium text-slate-500 border border-slate-200 rounded-lg hover:bg-slate-50 transition-colors"
           >
             <XMarkIcon class="w-3.5 h-3.5" />
@@ -346,21 +366,19 @@ function formatSg(user) {
                 <th class="px-4 py-3 text-left text-xs font-semibold text-slate-500 uppercase tracking-wide whitespace-nowrap">#</th>
                 <th class="px-4 py-3 text-left text-xs font-semibold text-slate-500 uppercase tracking-wide whitespace-nowrap">Name</th>
                 <th class="px-4 py-3 text-left text-xs font-semibold text-slate-500 uppercase tracking-wide whitespace-nowrap">Sex</th>
-                <th v-if="!isEmployeesPage" class="px-4 py-3 text-left text-xs font-semibold text-slate-500 uppercase tracking-wide whitespace-nowrap">Email</th>
                 <th v-if="isEmployeesPage" class="px-4 py-3 text-left text-xs font-semibold text-slate-500 uppercase tracking-wide whitespace-nowrap">Emp. No.</th>
                 <th class="px-4 py-3 text-left text-xs font-semibold text-slate-500 uppercase tracking-wide whitespace-nowrap">Position</th>
                 <th class="px-4 py-3 text-left text-xs font-semibold text-slate-500 uppercase tracking-wide whitespace-nowrap">Division</th>
                 <th v-if="isEmployeesPage" class="px-4 py-3 text-left text-xs font-semibold text-slate-500 uppercase tracking-wide whitespace-nowrap">Category</th>
                 <th v-if="isEmployeesPage" class="px-4 py-3 text-left text-xs font-semibold text-slate-500 uppercase tracking-wide whitespace-nowrap">Salary Grade</th>
-                <th v-if="!isEmployeesPage" class="px-4 py-3 text-left text-xs font-semibold text-slate-500 uppercase tracking-wide whitespace-nowrap">Office</th>
-                <th v-if="!isEmployeesPage" class="px-4 py-3 text-left text-xs font-semibold text-slate-500 uppercase tracking-wide whitespace-nowrap">Created At</th>
+                <th v-if="!isEmployeesPage" class="px-4 py-3 text-left text-xs font-semibold text-slate-500 uppercase tracking-wide whitespace-nowrap">Unit</th>
                 <th class="px-4 py-3 text-center text-xs font-semibold text-slate-500 uppercase tracking-wide whitespace-nowrap">Action</th>
               </tr>
             </thead>
             <tbody class="divide-y divide-slate-100">
               <tr v-for="user in displayedUsers" :key="user.id" class="hover:bg-slate-50/60">
                 <td class="px-4 py-3 text-slate-700">{{ user.id }}</td>
-                <td class="px-4 py-3 font-medium text-slate-800">{{ user.name }}</td>
+                <td class="px-4 py-3 font-medium text-slate-800 max-w-[14rem] truncate" :title="user.name">{{ user.name }}</td>
                 <td class="px-4 py-3">
                   <div class="flex items-center gap-1.5">
                     <svg v-if="user.sex === 'Male'" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" class="w-4 h-4 text-blue-500" fill="none" stroke="currentColor" stroke-width="5">
@@ -372,7 +390,6 @@ function formatSg(user) {
                     <span class="text-xs text-slate-500">{{ user.sex ?? '—' }}</span>
                   </div>
                 </td>
-                <td v-if="!isEmployeesPage" class="px-4 py-3 text-slate-700">{{ user.email }}</td>
                 <td v-if="isEmployeesPage" class="px-4 py-3 font-mono text-xs text-slate-600">{{ user.employee_no ?? '—' }}</td>
                 <td class="px-4 py-3 text-slate-700">{{ user.position ?? '—' }}</td>
                 <td class="px-4 py-3 text-slate-700 text-xs">{{ user.division?.division_name ?? '—' }}</td>
@@ -390,8 +407,7 @@ function formatSg(user) {
                   </span>
                   <span v-else class="text-slate-400 text-xs">Not set</span>
                 </td>
-                <td v-if="!isEmployeesPage" class="px-4 py-3 text-slate-700">{{ user.office?.name ?? user.office ?? '—' }}</td>
-                <td v-if="!isEmployeesPage" class="px-4 py-3 text-slate-700">{{ new Date(user.created_at).toLocaleDateString() }}</td>
+                <td v-if="!isEmployeesPage" class="px-4 py-3 text-slate-700">{{ user.primary_unit?.name ?? '—' }}</td>
                 <td class="px-4 py-3 text-center">
                   <div class="flex justify-center gap-1 items-center">
                     <template v-if="!isInactivePage">
@@ -433,7 +449,7 @@ function formatSg(user) {
                 </td>
               </tr>
               <tr v-if="displayedUsers.length === 0">
-                <td :colspan="isEmployeesPage ? 9 : 9" class="py-16 text-center text-slate-400 text-sm">
+                <td :colspan="isEmployeesPage ? 9 : 7" class="py-16 text-center text-slate-400 text-sm">
                   No employees found matching the selected filters.
                 </td>
               </tr>
@@ -444,12 +460,12 @@ function formatSg(user) {
         <!-- Pagination -->
         <div class="flex items-center justify-between px-4 py-3 border-t border-slate-100 text-sm text-slate-600">
           <button @click="currentPage--" :disabled="currentPage === 1"
-            class="inline-flex items-center gap-2 bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 px-4 py-2 rounded-lg text-sm font-medium transition-colors shadow-sm disabled:opacity-40">
+            class="inline-flex items-center gap-2 bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 px-3 py-1.5 rounded-lg text-sm font-medium transition-colors shadow-sm disabled:opacity-40">
             Prev
           </button>
           <span>Page {{ currentPage }} of {{ totalPages }}</span>
           <button @click="currentPage++" :disabled="currentPage === totalPages"
-            class="inline-flex items-center gap-2 bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 px-4 py-2 rounded-lg text-sm font-medium transition-colors shadow-sm disabled:opacity-40">
+            class="inline-flex items-center gap-2 bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 px-3 py-1.5 rounded-lg text-sm font-medium transition-colors shadow-sm disabled:opacity-40">
             Next
           </button>
         </div>
@@ -499,6 +515,7 @@ function formatSg(user) {
               <p class="text-sm text-slate-700">Division: <strong>{{ selectedUser.division?.division_name ?? '—' }}</strong></p>
               <p class="text-sm text-slate-700">Division Chief: <strong>{{ selectedUser.division?.chief?.name ?? '—' }}</strong></p>
               <p class="text-sm text-slate-700">Office: <strong>{{ selectedUser.office?.name ?? selectedUser.office ?? '—' }}</strong></p>
+              <p class="text-sm text-slate-700">Unit: <strong>{{ selectedUser.primary_unit?.name ?? '—' }}</strong></p>
               <p class="text-sm text-slate-700">Created At: <strong>{{ new Date(selectedUser.created_at).toLocaleString() }}</strong></p>
             </div>
 

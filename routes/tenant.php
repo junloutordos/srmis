@@ -200,6 +200,17 @@ Route::middleware(['auth', 'allowed.domain'])->group(function () {
     Route::get('/job-requests/{jobRequest}', [ITJobRequestController::class, 'show'])
         ->name('job-requests.show');
 
+    // ITJR category catalog (admin-manageable)
+    Route::middleware('permission:it.requests.manage')
+        ->prefix('admin/it-job-categories')
+        ->name('admin.it-job-categories.')
+        ->group(function () {
+            Route::get('/', [\App\Http\Controllers\Admin\ITJobCategoryController::class, 'index'])->name('index');
+            Route::post('/', [\App\Http\Controllers\Admin\ITJobCategoryController::class, 'store'])->name('store');
+            Route::put('/{itJobCategory}', [\App\Http\Controllers\Admin\ITJobCategoryController::class, 'update'])->name('update');
+            Route::delete('/{itJobCategory}', [\App\Http\Controllers\Admin\ITJobCategoryController::class, 'destroy'])->name('destroy');
+        });
+
     // App versions (deployment cache-busting banner)
     Route::post('/app-versions', [\App\Http\Controllers\AppVersionController::class, 'store'])->name('app-versions.store');
 
@@ -226,6 +237,8 @@ Route::middleware(['auth', 'allowed.domain'])->group(function () {
     });
     Route::middleware('permission:it.equipment.manage')->group(function () {
         Route::post('/ict-pms', [PMSController::class, 'store'])->name('ict-pms.store');
+        Route::put('/ict-pms/{pms}', [PMSController::class, 'update'])->name('ict-pms.update');
+        Route::delete('/ict-pms/{pms}', [PMSController::class, 'destroy'])->name('ict-pms.destroy');
         Route::post('/ict-pms/{pmsId}/assign-equipments', [PMSController::class, 'assignEquipments'])->name('ict-pms.assign-equipments');
         Route::post('/ict-pms-history', [ICTPMSHistoryController::class, 'store'])->name('ict-pms-history.store');
     });
@@ -419,7 +432,7 @@ Route::middleware(['auth', 'allowed.domain'])->group(function () {
         Route::put('users/{id}', [UserController::class, 'update'])->name('users.update')->middleware('permission:users.manage');
         Route::delete('users/{id}', [UserController::class, 'destroy'])->name('users.destroy')->middleware('permission:users.manage');
         Route::post('users/{user}/upload-signature', [UserController::class, 'uploadSignature'])->name('users.upload_signature')->middleware('permission:users.manage');
-        Route::get('/users/inactive', [UserController::class, 'inactiveIndex'])->name('users.inactive')->middleware('permission:users.manage');
+        Route::get('/users/inactive', fn () => redirect()->route('users.index', ['status' => 'inactive']))->name('users.inactive')->middleware('permission:users.manage');
         Route::post('/users/{id}/activate', [UserController::class, 'activate'])->name('users.activate')->middleware('permission:users.manage');
         Route::post('/users/{id}/send-password-reset', [UserController::class, 'sendPasswordReset'])->name('users.send_password_reset')->middleware('permission:users.manage');
 

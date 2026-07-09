@@ -71,18 +71,41 @@ class PMSController extends Controller
 
 
 
-    public function store(Request $request)
+    /**
+     * Validate schedule payload, ensuring school_year is well-formed (YYYY-YYYY,
+     * consecutive years) and every schedule date falls within that school year.
+     */
+    private function validateScheduleData(Request $request): array
     {
-        $data = $request->validate([
+        return $request->validate([
             'title'                  => 'required|string|max:255',
             'frequency'              => 'required|string|max:255',
-            'school_year'            => 'required|string|max:20',   // ✅ new
+            'school_year'            => ['required', 'string', 'max:20', 'regex:/^\d{4}-\d{4}$/', function ($attribute, $value, $fail) {
+                if (preg_match('/^(\d{4})-(\d{4})$/', $value, $m) && (int) $m[2] !== (int) $m[1] + 1) {
+                    $fail('School year must span two consecutive years (e.g. 2025-2026).');
+                }
+            }],
             'office_area'            => 'required|string|max:255',  // ✅ new
             'status'                 => 'required|string|max:255',
             'remarks'                => 'nullable|string',
             'schedule_dates'         => 'required|array',
-            'schedule_dates.*.date'  => 'required|date',
+            'schedule_dates.*.date'  => ['required', 'date', function ($attribute, $value, $fail) use ($request) {
+                if (!preg_match('/^(\d{4})-(\d{4})$/', (string) $request->input('school_year'), $m)) {
+                    return;
+                }
+                [$rangeStart, $rangeEnd] = ["{$m[1]}-01-01", "{$m[2]}-12-31"];
+                if ($value < $rangeStart || $value > $rangeEnd) {
+                    $fail("The scheduled date must fall within the school year {$request->input('school_year')}.");
+                }
+            }],
+        ], [
+            'school_year.regex' => 'School year must be in the format YYYY-YYYY (e.g. 2025-2026).',
         ]);
+    }
+
+    public function store(Request $request)
+    {
+        $data = $this->validateScheduleData($request);
 
         // Create PMS
         $pms = PMS::create([
@@ -107,16 +130,7 @@ class PMSController extends Controller
 
     public function update(Request $request, PMS $pms)
     {
-        $data = $request->validate([
-            'title'                  => 'required|string|max:255',
-            'frequency'              => 'required|string|max:255',
-            'school_year'            => 'required|string|max:20',   // ✅ new
-            'office_area'            => 'required|string|max:255',  // ✅ new
-            'status'                 => 'required|string|max:255',
-            'remarks'                => 'nullable|string',
-            'schedule_dates'         => 'required|array',
-            'schedule_dates.*.date'  => 'required|date',
-        ]);
+        $data = $this->validateScheduleData($request);
 
         // Update PMS
         $pms->update([

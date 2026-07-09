@@ -88,6 +88,10 @@ class RoleController extends Controller
      */
     public function syncPermissions(Request $request, Role $role): JsonResponse
     {
+        if ($role->name === 'Administrator') {
+            return response()->json(['message' => 'The Administrator role\'s permissions are locked and always include every permission.'], 422);
+        }
+
         $data = $request->validate([
             'permission_ids'   => 'required|array',
             'permission_ids.*' => 'integer|exists:permissions,id',

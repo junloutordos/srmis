@@ -127,7 +127,7 @@ const remove = (office) => {
             <tbody class="divide-y divide-slate-100">
               <tr v-for="o in filteredOffices" :key="o.id" class="hover:bg-slate-50/60">
                 <td class="px-4 py-3 text-sm text-slate-700">{{ o.id }}</td>
-                <td class="px-4 py-3 text-sm text-slate-700 font-medium">{{ o.name }}</td>
+                <td class="px-4 py-3 text-sm text-slate-700 font-medium max-w-[14rem] truncate" :title="o.name">{{ o.name }}</td>
                 <td class="px-4 py-3 text-sm text-slate-700">{{ o.division?.division_name ?? '—' }}</td>
                 <td class="px-4 py-3 text-sm text-slate-700">{{ o.unitHeadUser?.name ?? o.unit_head_user?.name ?? '—' }}</td>
                 <td class="px-4 py-3">

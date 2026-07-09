@@ -42,7 +42,7 @@
             <tbody class="divide-y divide-slate-100">
               <tr v-for="r in filteredRooms" :key="r.id" class="hover:bg-slate-50/60">
                 <td class="px-4 py-3 text-sm text-slate-700">{{ r.id }}</td>
-                <td class="px-4 py-3 text-sm text-slate-700 font-medium">{{ r.name }}</td>
+                <td class="px-4 py-3 text-sm text-slate-700 font-medium max-w-[14rem] truncate" :title="r.name">{{ r.name }}</td>
                 <td class="px-4 py-3 text-sm text-slate-700">{{ r.code ?? '—' }}</td>
                 <td class="px-4 py-3 text-sm text-slate-700">{{ r.building?.name ?? '—' }}</td>
                 <td class="px-4 py-3 text-sm text-slate-700">{{ r.floor ?? '—' }}</td>

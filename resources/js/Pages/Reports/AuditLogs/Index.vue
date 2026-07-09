@@ -47,8 +47,7 @@
                 </td>
                 <td class="px-4 py-3 text-sm text-slate-700">{{ log.auditable_type ? log.auditable_type.split('\\').pop() + ' #' + (log.auditable_id ?? '') : '' }}</td>
                 <td class="px-4 py-3 text-sm text-slate-700 max-w-xs">
-                  <div v-if="log.old_values" class="text-xs text-slate-500 mb-0.5">Old: <pre class="inline">{{ JSON.stringify(log.old_values) }}</pre></div>
-                  <div v-if="log.new_values" class="text-xs text-slate-500">New: <pre class="inline">{{ JSON.stringify(log.new_values) }}</pre></div>
+                  <AuditDiff :old-values="log.old_values" :new-values="log.new_values" />
                 </td>
                 <td class="px-4 py-3 text-sm text-slate-700 whitespace-nowrap">{{ log.ip_address }}</td>
               </tr>
@@ -82,6 +81,7 @@
 <script setup>
 import { Head } from '@inertiajs/vue3'
 import AdminLayout from '@/Layouts/AdminLayout.vue'
+import AuditDiff from '@/Components/AuditDiff.vue'
 import { ref, watch, onBeforeUnmount } from 'vue'
 
 const props = defineProps({ auditLogs: Object });
@@ -117,7 +117,3 @@ function clearSearch() {
   doSearch();
 }
 </script>
-
-<style scoped>
-pre { white-space: pre-wrap; word-break: break-word; }
-</style>

@@ -1,5 +1,5 @@
 <script setup>
-import { ref, computed, watch } from "vue"
+import { ref, computed, watch, onMounted } from "vue"
 import { Head, router } from "@inertiajs/vue3"
 import AdminLayout from "@/Layouts/AdminLayout.vue"
 import { CheckCircleIcon, XCircleIcon, EyeIcon, XMarkIcon } from "@heroicons/vue/24/outline"
@@ -50,6 +50,12 @@ const currentPage      = computed(() => props.requests?.current_page ?? 1)
 const totalPages       = computed(() => props.requests?.last_page ?? 1)
 const filteredRequests = computed(() => props.requests?.data ?? [])
 
+// Force a fresh fetch on mount so returning from another module (or an
+// Inertia back/forward history restore) never shows a stale approval status.
+onMounted(() => {
+  router.reload({ only: ['requests'], preserveScroll: true, preserveState: true })
+})
+
 const openModal  = (req) => { selectedRequest.value = req; showModal.value = true }
 const closeModal = () => { selectedRequest.value = null; showModal.value = false }
 
@@ -74,6 +80,7 @@ function handleApproveConfirm(pin) {
   Swal.fire({ title: 'Approving…', allowOutsideClick: false, showConfirmButton: false, didOpen: () => Swal.showLoading() })
   router.post(route('vehicle-requests.ocd-action', pendingApproveId.value), { action: 'approve', pin: pin || null }, {
     onSuccess: () => Swal.fire('Approved!', 'Vehicle request approved by OCD.', 'success'),
+    onError: (errors) => Swal.fire('Error', errors?.message ?? 'Could not approve this request. It may have already been acted upon.', 'error'),
     onFinish:  () => { isSubmitting.value = false },
   })
 }

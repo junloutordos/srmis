@@ -65,7 +65,7 @@ const moduleOptions = Object.entries(props.moduleLabels).map(([value, label]) =>
       <!-- Header -->
       <div class="flex items-center justify-between">
         <div>
-          <h1 class="text-xl font-bold text-slate-800">CSM Feedback</h1>
+          <h1 class="text-xl font-semibold text-slate-800">CSM Feedback</h1>
           <p class="text-sm text-slate-500 mt-0.5">All client satisfaction survey responses</p>
         </div>
         <div class="flex items-center gap-2">

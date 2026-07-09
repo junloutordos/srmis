@@ -178,6 +178,15 @@ const hasPerm = (...perms) => perms.some(p => userPermissions.has(p));
 // Also expose hasPerm for use in template (e.g. version modal button)
 const isAdmin = hasPerm('roles.assign');
 
+// --- Mandatory digital signature + PIN setup gate ---
+// Blocks interaction with the rest of the app (via a non-dismissable overlay,
+// not a server redirect) until the user has both a signature image and PIN
+// on file. Client-side only, so it can never create a redirect loop or
+// interfere with JSON/API calls or signed email-action links.
+const showSignatureGate = computed(() =>
+  !!user.needsSignatureSetup && page.component !== 'Profile/Signature'
+);
+
 
 // --- Helpers ---
 const isActive = (name) => name && route().current(name); // ✅ check via routeName
@@ -380,13 +389,6 @@ const menuItems = [
         permissions: ["users.view"],
       },
       {
-        label: "Inactive Users",
-        routeName: "users.inactive",
-        href: route("users.inactive"),
-        icon: UserGroupIcon,
-        permissions: ["users.manage"],
-      },
-      {
         label: "Roles & Permissions",
         routeName: "admin.roles",
         href: "/admin/roles",
@@ -504,6 +506,13 @@ const menuItems = [
         href: route("ict-pms.index"),
         icon: ClockIcon,
         permissions: ["it.equipment.view"],
+      },
+      {
+        label: "ITJR Categories",
+        routeName: "admin.it-job-categories.index",
+        href: route("admin.it-job-categories.index"),
+        icon: ComputerDesktopIcon,
+        permissions: ["it.requests.manage"],
       },
     ],
   },
@@ -684,7 +693,7 @@ filteredMenu.value.forEach((item) => {
               />
             </button>
 
-            <div v-show="expanded[item.label]" class="mt-0.5 ml-4 pl-3 border-l border-white/10 space-y-0.5">
+            <div v-show="expanded[item.label] && !collapsed" class="mt-0.5 ml-4 pl-3 border-l border-white/10 space-y-0.5">
               <template v-for="child in item.children" :key="child.label">
                 <SidebarLink
                   v-if="!['consultations.log.print','consultations.employee.log.print','library.statistics.report','health.statistics.report','hr.attendance.index'].includes(child.routeName)"
@@ -879,7 +888,7 @@ filteredMenu.value.forEach((item) => {
           </button>
           <!-- Desktop hamburger -->
           <button
-            @click="collapsed = !collapsed"
+            @click="collapsed = !collapsed; if (collapsed) expanded = {}"
             class="hidden md:block p-1.5 rounded-md hover:bg-gray-100"
             aria-label="Toggle sidebar"
           >
@@ -1098,6 +1107,27 @@ filteredMenu.value.forEach((item) => {
           class="block w-full mt-3 text-sm text-slate-500 hover:text-slate-700 py-1 transition-colors text-center"
         >
           Sign Out
+        </a>
+      </div>
+    </div>
+  </Teleport>
+
+  <Teleport to="body">
+    <div v-if="showSignatureGate" class="fixed inset-0 z-[9999] flex items-center justify-center bg-black/60 backdrop-blur-sm">
+      <div class="bg-white rounded-2xl shadow-2xl px-8 py-8 max-w-sm w-full mx-4 text-center">
+        <div class="flex items-center justify-center w-14 h-14 rounded-full bg-indigo-100 mx-auto mb-4">
+          <svg class="w-7 h-7 text-indigo-600" fill="none" viewBox="0 0 24 24" stroke-width="1.8" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M15.232 5.232l3.536 3.536M9 11l6.293-6.293a1 1 0 011.414 0l2.586 2.586a1 1 0 010 1.414L13 15l-4 1 1-4z" />
+            <path stroke-linecap="round" stroke-linejoin="round" d="M5 19h14" />
+          </svg>
+        </div>
+        <h2 class="text-lg font-semibold text-slate-800 mb-1">Set Up Your Digital Signature</h2>
+        <p class="text-sm text-slate-500 mb-6">Before you continue, please upload your electronic signature and set a PIN. You'll use these to sign and approve requests in STRIDE.</p>
+        <a
+          :href="route('profile.signature')"
+          class="block w-full bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-medium px-4 py-2.5 rounded-lg transition-colors text-center"
+        >
+          Set Up Now
         </a>
       </div>
     </div>

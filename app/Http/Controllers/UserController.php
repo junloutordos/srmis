@@ -16,13 +16,23 @@ use Inertia\Inertia;
 
 class UserController extends Controller
 {
-    public function index()
+    /**
+     * Status filter: 'active' (default), 'inactive', or 'all'.
+     */
+    public function index(Request $request)
     {
-        // Exclude users explicitly marked as 'inactive'
-        $users = User::with(['role', 'division.divisionchief', 'office'])
-            ->select('id', 'name','sex', 'email', 'badge_id', 'role_id', 'position', 'specialization', 'division_id', 'office_id', 'profile_picture', 'electronic_signature', 'status', 'created_at')
-            ->where('status', '<>', 'inactive')
-            ->get();
+        $status = $request->query('status', 'active');
+
+        $query = User::with(['role', 'division.divisionchief', 'office', 'primaryUnit'])
+            ->select('id', 'name','sex', 'email', 'badge_id', 'role_id', 'position', 'specialization', 'division_id', 'office_id', 'profile_picture', 'electronic_signature', 'status', 'created_at');
+
+        if ($status === 'inactive') {
+            $query->where('status', 'inactive');
+        } elseif ($status !== 'all') {
+            $query->where('status', '<>', 'inactive');
+        }
+
+        $users = $query->get();
 
         // For dropdowns
         $roles = Role::select('id', 'name')->get();
@@ -38,38 +48,7 @@ class UserController extends Controller
             'roles'     => $roles,
             'divisions' => $divisions,
             'offices'   => $offices,
-        ]);
-    }
-
-    /**
-     * Show the employees list page (same data as users.index but labelled for HR/Employees).
-     * Accessible to administrators only.
-     */
-
-
-    /**
-     * Show users marked as inactive (Administrator only).
-     */
-    public function inactiveIndex()
-    {
-        $users = User::with(['role', 'division.divisionchief', 'office'])
-            ->select('id', 'name','sex', 'email', 'badge_id', 'role_id', 'position', 'specialization', 'division_id', 'office_id', 'profile_picture', 'electronic_signature', 'created_at', 'status')
-            ->where('status', 'inactive')
-            ->get();
-
-        $roles = Role::select('id', 'name')->get();
-        $divisions = Division::where('status', 'active')
-            ->select('id', 'division_name')
-            ->get();
-        $offices = Office::select('id', 'name', 'division_id')->get();
-
-        return Inertia::render('Users/Index', [
-            'users'     => $users,
-            'roles'     => $roles,
-            'divisions' => $divisions,
-            'offices'   => $offices,
-            'pageTitle' => 'Inactive Users',
-            'headerTitle' => 'Inactive Users',
+            'filters'   => ['status' => $status],
         ]);
     }
 
