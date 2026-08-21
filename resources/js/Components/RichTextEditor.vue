@@ -88,7 +88,7 @@ function setHighlight(color) {
 </script>
 
 <template>
-  <div class="rich-editor-wrapper border border-slate-200 rounded-lg overflow-hidden focus-within:ring-2 focus-within:ring-indigo-500 focus-within:border-indigo-500">
+  <div class="rich-editor-wrapper border border-slate-200 rounded-lg overflow-hidden focus-within:ring-2 focus-within:ring-primary-500 focus-within:border-primary-500">
 
     <!-- ── Toolbar ──────────────────────────────────────────────────────────── -->
     <div v-if="editor" class="toolbar bg-slate-50 border-b border-slate-200 px-2 py-1.5 flex flex-wrap gap-0.5 items-center">

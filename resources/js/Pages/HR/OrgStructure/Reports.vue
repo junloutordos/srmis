@@ -84,7 +84,7 @@ function categoryColor(c) {
       <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
         <div>
           <h1 class="text-xl font-semibold text-slate-800 flex items-center gap-2">
-            <ChartBarIcon class="h-6 w-6 text-indigo-500" />
+            <ChartBarIcon class="h-6 w-6 text-primary-500" />
             Org Structure Report
           </h1>
           <p class="text-xs text-slate-400 mt-0.5">
@@ -117,7 +117,7 @@ function categoryColor(c) {
       <div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
         <div class="bg-white rounded-xl border border-slate-100 shadow-sm px-5 py-4">
           <p class="text-xs text-slate-400 uppercase tracking-wide font-medium">Total Employees</p>
-          <p class="text-3xl font-bold text-indigo-600 mt-1">{{ totalCount }}</p>
+          <p class="text-3xl font-bold text-primary-600 mt-1">{{ totalCount }}</p>
           <p class="text-xs text-slate-500 mt-0.5">active</p>
         </div>
         <div class="bg-white rounded-xl border border-slate-100 shadow-sm px-5 py-4">
@@ -151,7 +151,7 @@ function categoryColor(c) {
           v-model="search"
           type="search"
           placeholder="Search employee, badge ID, or position…"
-          class="w-full max-w-sm border border-slate-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-400"
+          class="w-full max-w-sm border border-slate-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary-400"
         />
         <span v-if="search" class="text-xs text-slate-400">
           Showing results in {{ filtered.length }} division(s)
@@ -171,17 +171,17 @@ function categoryColor(c) {
             class="w-full flex items-center justify-between gap-3 px-5 py-4 text-left hover:bg-slate-50 transition-colors"
           >
             <div class="flex items-center gap-3 min-w-0">
-              <BuildingLibraryIcon class="h-5 w-5 text-indigo-400 shrink-0" />
+              <BuildingLibraryIcon class="h-5 w-5 text-primary-400 shrink-0" />
               <div class="min-w-0">
                 <span class="text-sm font-semibold text-slate-800">{{ div.name }}</span>
-                <span class="ml-2 text-xs font-mono text-indigo-500 bg-indigo-50 px-2 py-0.5 rounded">{{ div.acronym }}</span>
+                <span class="ml-2 text-xs font-mono text-primary-500 bg-primary-50 px-2 py-0.5 rounded">{{ div.acronym }}</span>
                 <p v-if="div.chief" class="text-xs text-slate-400 mt-0.5 truncate">
                   Chief: {{ div.chief }}<span v-if="div.chief_pos"> — {{ div.chief_pos }}</span>
                 </p>
               </div>
             </div>
             <div class="flex items-center gap-3 shrink-0">
-              <span class="text-xs bg-indigo-100 text-indigo-700 px-2.5 py-1 rounded-full font-semibold">
+              <span class="text-xs bg-primary-100 text-primary-700 px-2.5 py-1 rounded-full font-semibold">
                 {{ div.total }} employee{{ div.total !== 1 ? 's' : '' }}
               </span>
               <ChevronDownIcon v-if="expanded[div.id]" class="h-4 w-4 text-slate-400" />

@@ -98,7 +98,7 @@ const kpiCards = computed(() => [
 ])
 
 const cardColors = {
-  indigo:  'bg-indigo-50 text-indigo-600 border-indigo-100',
+  indigo:  'bg-primary-50 text-primary-600 border-primary-100',
   emerald: 'bg-emerald-50 text-emerald-600 border-emerald-100',
   amber:   'bg-amber-50 text-amber-600 border-amber-100',
   violet:  'bg-violet-50 text-violet-600 border-violet-100',
@@ -279,7 +279,7 @@ function statusShort(status) {
             v-model="currentMonth"
             type="month"
             @change="goMonth"
-            class="border border-slate-200 rounded-lg px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-400"
+            class="border border-slate-200 rounded-lg px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary-400"
           />
         </div>
       </div>
@@ -388,7 +388,7 @@ function statusShort(status) {
       <div class="bg-white rounded-xl border border-slate-100 shadow-sm">
         <div class="px-5 py-4 border-b border-slate-100 flex items-center justify-between">
           <h2 class="text-sm font-semibold text-slate-700">Recent Requests</h2>
-          <a :href="route('jobrequests.index')" class="text-xs text-indigo-600 hover:underline">View all →</a>
+          <a :href="route('jobrequests.index')" class="text-xs text-primary-600 hover:underline">View all →</a>
         </div>
         <div class="overflow-x-auto">
           <table class="min-w-full divide-y divide-slate-100 text-sm">

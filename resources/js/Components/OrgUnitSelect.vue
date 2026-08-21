@@ -124,7 +124,7 @@ const TYPE_COLOR = {
       type="button"
       @click="toggle"
       :class="[
-        'w-full flex items-center gap-2 border rounded-lg px-3 py-2 text-sm text-left focus:outline-none focus:ring-2 focus:ring-indigo-400 bg-white',
+        'w-full flex items-center gap-2 border rounded-lg px-3 py-2 text-sm text-left focus:outline-none focus:ring-2 focus:ring-primary-400 bg-white',
         error ? 'border-red-400' : 'border-slate-200',
       ]"
     >
@@ -163,7 +163,7 @@ const TYPE_COLOR = {
             type="text"
             placeholder="Search…"
             autofocus
-            class="w-full pl-7 pr-3 py-1.5 text-sm border border-slate-200 rounded-lg focus:outline-none focus:ring-1 focus:ring-indigo-400"
+            class="w-full pl-7 pr-3 py-1.5 text-sm border border-slate-200 rounded-lg focus:outline-none focus:ring-1 focus:ring-primary-400"
           />
         </div>
       </div>
@@ -177,8 +177,8 @@ const TYPE_COLOR = {
           :key="u.id"
           @click="select(u)"
           :class="[
-            'flex items-center gap-2 px-3 py-2 cursor-pointer hover:bg-indigo-50 text-sm',
-            modelValue === u.id ? 'bg-indigo-50' : '',
+            'flex items-center gap-2 px-3 py-2 cursor-pointer hover:bg-primary-50 text-sm',
+            modelValue === u.id ? 'bg-primary-50' : '',
           ]"
           :style="{ paddingLeft: (u.depth * 10 + 12) + 'px' }"
         >

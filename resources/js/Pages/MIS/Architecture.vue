@@ -20,7 +20,7 @@ function printDiagram() {
       </div>
       <button
         @click="printDiagram"
-        class="inline-flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors shadow-sm"
+        class="inline-flex items-center gap-2 bg-primary-600 hover:bg-primary-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors shadow-sm"
       >
         <PrinterIcon class="w-4 h-4" />
         Print / Export PDF

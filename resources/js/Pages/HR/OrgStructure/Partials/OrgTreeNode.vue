@@ -87,7 +87,7 @@ const hasChildren = props.node.children?.length > 0
         <button
           v-if="can.create"
           @click.stop="emit('add-child', node)"
-          class="p-1 rounded hover:bg-indigo-50 text-slate-400 hover:text-indigo-600"
+          class="p-1 rounded hover:bg-primary-50 text-slate-400 hover:text-primary-600"
           title="Add child unit"
         >
           <PlusIcon class="h-3.5 w-3.5" />
@@ -95,7 +95,7 @@ const hasChildren = props.node.children?.length > 0
         <button
           v-if="can.update"
           @click.stop="emit('edit', node)"
-          class="p-1 rounded hover:bg-indigo-50 text-slate-400 hover:text-indigo-600"
+          class="p-1 rounded hover:bg-primary-50 text-slate-400 hover:text-primary-600"
           title="Edit"
         >
           <PencilSquareIcon class="h-3.5 w-3.5" />

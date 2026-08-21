@@ -100,7 +100,7 @@ const remove = (office) => {
           <p class="text-sm text-slate-500 mt-0.5">Manage offices and organizational units</p>
         </div>
         <button @click.prevent="openModal()"
-          class="inline-flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors shadow-sm">
+          class="inline-flex items-center gap-2 bg-primary-600 hover:bg-primary-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors shadow-sm">
           + New Office
         </button>
       </div>
@@ -110,7 +110,7 @@ const remove = (office) => {
         <!-- Search -->
         <div class="px-5 py-4 border-b border-slate-100">
           <input v-model="searchQuery" type="text" placeholder="Search offices..."
-            class="w-full sm:w-80 rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-400" />
+            class="w-full sm:w-80 rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-400" />
         </div>
 
         <div class="overflow-x-auto" v-if="!isMobile">
@@ -162,7 +162,7 @@ const remove = (office) => {
               </div>
               <div class="flex flex-col items-end gap-2">
                 <button @click.prevent="openModal(o)"
-                  class="inline-flex items-center gap-1 bg-indigo-600 hover:bg-indigo-700 text-white px-3 py-1 rounded-lg text-xs font-medium transition-colors">Edit</button>
+                  class="inline-flex items-center gap-1 bg-primary-600 hover:bg-primary-700 text-white px-3 py-1 rounded-lg text-xs font-medium transition-colors">Edit</button>
                 <button @click.prevent="remove(o)"
                   class="inline-flex items-center gap-1 bg-red-600 hover:bg-red-700 text-white px-3 py-1 rounded-lg text-xs font-medium transition-colors">Delete</button>
               </div>
@@ -200,13 +200,13 @@ const remove = (office) => {
             <div>
               <label class="block text-xs font-medium text-slate-600 mb-1">Name</label>
               <input v-model="form.name" type="text"
-                class="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-400" />
+                class="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-400" />
               <p v-if="form.errors.name" class="text-red-500 text-xs mt-1">{{ form.errors.name }}</p>
             </div>
             <div>
               <label class="block text-xs font-medium text-slate-600 mb-1">Division</label>
               <select v-model="form.division_id"
-                class="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-400">
+                class="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-400">
                 <option value="" disabled>Select division</option>
                 <option v-for="d in divisions" :key="d.id" :value="d.id">{{ d.division_name }}</option>
               </select>
@@ -215,7 +215,7 @@ const remove = (office) => {
             <div>
               <label class="block text-xs font-medium text-slate-600 mb-1">Unit Head</label>
               <select v-model="form.unit_head"
-                class="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-400">
+                class="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-400">
                 <option value="">-- No unit head --</option>
                 <option v-for="u in usersList" :key="u.id" :value="u.id">{{ u.name }}</option>
               </select>
@@ -227,7 +227,7 @@ const remove = (office) => {
                 Cancel
               </button>
               <button :disabled="form.processing" type="submit"
-                class="inline-flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors shadow-sm disabled:opacity-50 disabled:cursor-not-allowed">
+                class="inline-flex items-center gap-2 bg-primary-600 hover:bg-primary-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors shadow-sm disabled:opacity-50 disabled:cursor-not-allowed">
                 {{ form.processing ? 'Saving...' : 'Save' }}
               </button>
             </div>

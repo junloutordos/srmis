@@ -216,7 +216,7 @@ const canPrint = (r) => {
           <h1 class="text-xl font-semibold text-slate-800">Request for Services</h1>
           <p class="text-sm text-slate-500 mt-0.5">Manage reproduction, security, and janitorial service requests</p>
         </div>
-        <button @click="handleNewRequest" class="inline-flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors shadow-sm">
+        <button @click="handleNewRequest" class="inline-flex items-center gap-2 bg-primary-600 hover:bg-primary-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors shadow-sm">
           + New Request
         </button>
       </div>
@@ -226,7 +226,7 @@ const canPrint = (r) => {
         <!-- Search -->
         <div class="px-5 py-4 border-b border-slate-100">
           <input v-model="searchQuery" type="text" placeholder="Search requests…"
-                 class="w-full sm:w-72 rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-400" />
+                 class="w-full sm:w-72 rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-400" />
         </div>
 
         <!-- Mobile cards -->
@@ -335,7 +335,7 @@ const canPrint = (r) => {
           <div class="px-6 py-5 space-y-4">
             <div>
               <label class="block text-xs font-medium text-slate-600 mb-1">Service requested</label>
-              <select v-model="form.service_type" @change="validateField('service_type')" :class="['w-full rounded-lg border bg-white px-3 py-2 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-indigo-500', fieldErrors.service_type ? 'border-red-400' : 'border-slate-200 focus:border-indigo-400']">
+              <select v-model="form.service_type" @change="validateField('service_type')" :class="['w-full rounded-lg border bg-white px-3 py-2 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-primary-500', fieldErrors.service_type ? 'border-red-400' : 'border-slate-200 focus:border-primary-400']">
                 <option>Reproduction</option>
                 <option>Security</option>
                 <option>Janitorial</option>
@@ -346,12 +346,12 @@ const canPrint = (r) => {
             <div v-if="form.service_type === 'Reproduction'" class="grid grid-cols-2 gap-4">
               <div>
                 <label class="block text-xs font-medium text-slate-600 mb-1">Number of copies</label>
-                <input v-model.number="form.copies" @input="validateField('copies')" type="number" min="1" :class="['w-full rounded-lg border bg-white px-3 py-2 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-indigo-500', fieldErrors.copies ? 'border-red-400' : 'border-slate-200 focus:border-indigo-400']" />
+                <input v-model.number="form.copies" @input="validateField('copies')" type="number" min="1" :class="['w-full rounded-lg border bg-white px-3 py-2 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-primary-500', fieldErrors.copies ? 'border-red-400' : 'border-slate-200 focus:border-primary-400']" />
                 <p v-if="fieldErrors.copies" class="mt-1 text-xs text-red-600">{{ fieldErrors.copies }}</p>
               </div>
               <div>
                 <label class="block text-xs font-medium text-slate-600 mb-1">Sheets per set</label>
-                <input v-model.number="form.sheets_per_set" @input="validateField('sheets_per_set')" type="number" min="1" :class="['w-full rounded-lg border bg-white px-3 py-2 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-indigo-500', fieldErrors.sheets_per_set ? 'border-red-400' : 'border-slate-200 focus:border-indigo-400']" />
+                <input v-model.number="form.sheets_per_set" @input="validateField('sheets_per_set')" type="number" min="1" :class="['w-full rounded-lg border bg-white px-3 py-2 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-primary-500', fieldErrors.sheets_per_set ? 'border-red-400' : 'border-slate-200 focus:border-primary-400']" />
                 <p v-if="fieldErrors.sheets_per_set" class="mt-1 text-xs text-red-600">{{ fieldErrors.sheets_per_set }}</p>
               </div>
             </div>
@@ -359,31 +359,31 @@ const canPrint = (r) => {
             <div class="grid grid-cols-2 gap-4">
               <div>
                 <label class="block text-xs font-medium text-slate-600 mb-1">Date Needed</label>
-                <input v-model="form.date_needed" @change="validateField('date_needed')" type="date" :class="['w-full rounded-lg border bg-white px-3 py-2 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-indigo-500', fieldErrors.date_needed ? 'border-red-400' : 'border-slate-200 focus:border-indigo-400']" />
+                <input v-model="form.date_needed" @change="validateField('date_needed')" type="date" :class="['w-full rounded-lg border bg-white px-3 py-2 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-primary-500', fieldErrors.date_needed ? 'border-red-400' : 'border-slate-200 focus:border-primary-400']" />
                 <p v-if="fieldErrors.date_needed" class="mt-1 text-xs text-red-600">{{ fieldErrors.date_needed }}</p>
               </div>
               <div>
                 <label class="block text-xs font-medium text-slate-600 mb-1">Time Needed</label>
-                <input v-model="form.time_needed" @change="validateField('time_needed')" type="time" :class="['w-full rounded-lg border bg-white px-3 py-2 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-indigo-500', fieldErrors.time_needed ? 'border-red-400' : 'border-slate-200 focus:border-indigo-400']" />
+                <input v-model="form.time_needed" @change="validateField('time_needed')" type="time" :class="['w-full rounded-lg border bg-white px-3 py-2 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-primary-500', fieldErrors.time_needed ? 'border-red-400' : 'border-slate-200 focus:border-primary-400']" />
                 <p v-if="fieldErrors.time_needed" class="mt-1 text-xs text-red-600">{{ fieldErrors.time_needed }}</p>
               </div>
             </div>
 
             <div>
               <label class="block text-xs font-medium text-slate-600 mb-1">Purpose(s)</label>
-              <input v-model="form.purposes" @input="validateField('purposes')" :class="['w-full rounded-lg border bg-white px-3 py-2 text-sm text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500', fieldErrors.purposes ? 'border-red-400' : 'border-slate-200 focus:border-indigo-400']" />
+              <input v-model="form.purposes" @input="validateField('purposes')" :class="['w-full rounded-lg border bg-white px-3 py-2 text-sm text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-primary-500', fieldErrors.purposes ? 'border-red-400' : 'border-slate-200 focus:border-primary-400']" />
               <p v-if="fieldErrors.purposes" class="mt-1 text-xs text-red-600">{{ fieldErrors.purposes }}</p>
             </div>
 
             <div>
               <label class="block text-xs font-medium text-slate-600 mb-1">Details</label>
-              <textarea v-model="form.details" @input="validateField('details')" :class="['w-full rounded-lg border bg-white px-3 py-2 text-sm text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500', fieldErrors.details ? 'border-red-400' : 'border-slate-200 focus:border-indigo-400']" rows="4"></textarea>
+              <textarea v-model="form.details" @input="validateField('details')" :class="['w-full rounded-lg border bg-white px-3 py-2 text-sm text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-primary-500', fieldErrors.details ? 'border-red-400' : 'border-slate-200 focus:border-primary-400']" rows="4"></textarea>
               <p v-if="fieldErrors.details" class="mt-1 text-xs text-red-600">{{ fieldErrors.details }}</p>
             </div>
           </div>
           <div class="px-6 py-4 border-t border-slate-100 flex justify-end gap-2">
             <button @click="closeModal" class="inline-flex items-center gap-2 bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 px-4 py-2 rounded-lg text-sm font-medium transition-colors shadow-sm">Cancel</button>
-            <button @click="editingId ? submit() : openPinModal()" :disabled="form.processing" class="inline-flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors shadow-sm disabled:opacity-60">
+            <button @click="editingId ? submit() : openPinModal()" :disabled="form.processing" class="inline-flex items-center gap-2 bg-primary-600 hover:bg-primary-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors shadow-sm disabled:opacity-60">
               <span v-if="form.processing">Processing…</span>
               <span v-else>{{ editingId ? 'Update' : 'Submit' }}</span>
             </button>

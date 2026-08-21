@@ -141,10 +141,10 @@ const starRating = computed(() => Math.round((props.overallAvg / 5) * 5 * 10) / 
 
       <!-- KPI Cards -->
       <div class="grid grid-cols-2 lg:grid-cols-4 gap-3">
-        <div class="bg-indigo-50 border border-indigo-100 rounded-xl p-4 text-center">
-          <ClipboardDocumentCheckIcon class="h-5 w-5 text-indigo-500 mx-auto mb-1" />
-          <div class="text-2xl font-bold text-indigo-700">{{ total }}</div>
-          <div class="text-xs text-indigo-500 font-semibold">Total Responses</div>
+        <div class="bg-primary-50 border border-primary-100 rounded-xl p-4 text-center">
+          <ClipboardDocumentCheckIcon class="h-5 w-5 text-primary-500 mx-auto mb-1" />
+          <div class="text-2xl font-bold text-primary-700">{{ total }}</div>
+          <div class="text-xs text-primary-500 font-semibold">Total Responses</div>
         </div>
         <div class="bg-emerald-50 border border-emerald-100 rounded-xl p-4 text-center">
           <ChatBubbleLeftRightIcon class="h-5 w-5 text-emerald-500 mx-auto mb-1" />

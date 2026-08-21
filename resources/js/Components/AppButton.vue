@@ -8,7 +8,7 @@ defineProps({
 })
 
 const variantMap = {
-  primary:   'bg-indigo-600 hover:bg-indigo-700 text-white shadow-sm',
+  primary:   'bg-primary-600 hover:bg-primary-700 text-white shadow-sm',
   secondary: 'bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 shadow-sm',
   danger:    'bg-red-600 hover:bg-red-700 text-white shadow-sm',
   ghost:     'text-slate-600 hover:bg-slate-100',
@@ -25,7 +25,7 @@ const sizeMap = {
     :type="type"
     :disabled="disabled || loading"
     :class="[
-      'inline-flex items-center font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-1 disabled:opacity-50 disabled:cursor-not-allowed',
+      'inline-flex items-center font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-1 disabled:opacity-50 disabled:cursor-not-allowed',
       variantMap[variant] ?? variantMap.primary,
       sizeMap[size] ?? sizeMap.md,
     ]"

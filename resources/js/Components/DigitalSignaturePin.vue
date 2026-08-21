@@ -42,8 +42,8 @@ function cancel() {
 
                 <!-- Header -->
                 <div class="flex items-center gap-3">
-                    <div class="w-9 h-9 rounded-lg bg-indigo-50 flex items-center justify-center shrink-0">
-                        <FingerPrintIcon class="w-5 h-5 text-indigo-600" />
+                    <div class="w-9 h-9 rounded-lg bg-primary-50 flex items-center justify-center shrink-0">
+                        <FingerPrintIcon class="w-5 h-5 text-primary-600" />
                     </div>
                     <div>
                         <p class="font-semibold text-slate-800 text-sm">Digital Signature</p>
@@ -73,7 +73,7 @@ function cancel() {
                            pattern="\d*"
                            placeholder="••••••"
                            @keyup.enter="confirm"
-                           class="w-full rounded-lg border border-slate-200 px-3 py-2 text-sm tracking-[0.4em] focus:outline-none focus:ring-2 focus:ring-indigo-500" />
+                           class="w-full rounded-lg border border-slate-200 px-3 py-2 text-sm tracking-[0.4em] focus:outline-none focus:ring-2 focus:ring-primary-500" />
                     <p v-if="error" class="mt-1 text-xs text-red-600">{{ error }}</p>
                 </div>
 
@@ -90,7 +90,7 @@ function cancel() {
                         Cancel
                     </button>
                     <button @click="confirm" :disabled="props.loading"
-                            class="bg-indigo-600 hover:bg-indigo-700 disabled:opacity-60 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors">
+                            class="bg-primary-600 hover:bg-primary-700 disabled:opacity-60 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors">
                         {{ props.loading ? 'Processing…' : props.confirmLabel }}
                     </button>
                 </div>

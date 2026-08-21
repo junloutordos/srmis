@@ -47,7 +47,7 @@ const isNavLink = (label) => label.includes('&laquo;') || label.includes('&raquo
         :class="[
           'inline-flex items-center justify-center min-w-[32px] px-2.5 py-1.5 rounded-lg text-xs font-medium border transition-colors',
           link.active
-            ? 'bg-indigo-600 text-white border-indigo-600 pointer-events-none'
+            ? 'bg-primary-600 text-white border-primary-600 pointer-events-none'
             : link.url
               ? 'border-slate-200 text-slate-600 hover:bg-slate-50'
               : 'border-slate-100 text-slate-300 pointer-events-none',

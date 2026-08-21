@@ -67,7 +67,7 @@ function positionBadgeClass(pos) {
 }
 
 function statusChipClass(status) {
-  if (status === 'In Progress') return 'bg-indigo-100 text-indigo-700 ring-1 ring-indigo-200'
+  if (status === 'In Progress') return 'bg-primary-100 text-primary-700 ring-1 ring-primary-200'
   return 'bg-amber-100 text-amber-700 ring-1 ring-amber-200'
 }
 
@@ -131,7 +131,7 @@ const stats = computed(() => {
       <!-- Header -->
       <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-6">
         <div class="flex items-center gap-2">
-          <QueueListIcon class="w-6 h-6 text-indigo-600" />
+          <QueueListIcon class="w-6 h-6 text-primary-600" />
           <h1 class="text-xl font-semibold text-slate-800">MIS Work Queue</h1>
         </div>
         <a
@@ -156,9 +156,9 @@ const stats = computed(() => {
           <div class="text-xs text-orange-500 uppercase tracking-wide">High</div>
           <div class="text-2xl font-bold text-orange-700 mt-0.5">{{ stats.high }}</div>
         </div>
-        <div class="bg-indigo-50 rounded-xl border border-indigo-100 shadow-sm px-4 py-3">
-          <div class="text-xs text-indigo-500 uppercase tracking-wide">In Progress</div>
-          <div class="text-2xl font-bold text-indigo-700 mt-0.5">{{ stats.inProg }}</div>
+        <div class="bg-primary-50 rounded-xl border border-primary-100 shadow-sm px-4 py-3">
+          <div class="text-xs text-primary-500 uppercase tracking-wide">In Progress</div>
+          <div class="text-2xl font-bold text-primary-700 mt-0.5">{{ stats.inProg }}</div>
         </div>
         <div class="bg-amber-50 rounded-xl border border-amber-100 shadow-sm px-4 py-3">
           <div class="text-xs text-amber-500 uppercase tracking-wide">Assessed</div>
@@ -175,10 +175,10 @@ const stats = computed(() => {
               type="text"
               placeholder="Search queue..."
               @keydown.enter.prevent="applyFilters(true)"
-              class="rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-400 w-full"
+              class="rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-400 w-full"
             />
             <span v-if="isLoading" class="absolute right-3 top-1/2 -translate-y-1/2">
-              <svg class="animate-spin h-4 w-4 text-indigo-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+              <svg class="animate-spin h-4 w-4 text-primary-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                 <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/>
                 <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/>
               </svg>
@@ -186,7 +186,7 @@ const stats = computed(() => {
           </div>
           <select
             v-model="filterCategory"
-            class="rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-400"
+            class="rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-400"
           >
             <option value="">All Categories</option>
             <option v-for="cat in props.categories" :key="cat.id" :value="cat.name">{{ cat.name }}</option>
@@ -194,7 +194,7 @@ const stats = computed(() => {
           <button
             @click="applyFilters(true)"
             :disabled="isLoading"
-            class="inline-flex items-center gap-1.5 bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors shadow-sm disabled:opacity-50"
+            class="inline-flex items-center gap-1.5 bg-primary-600 hover:bg-primary-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors shadow-sm disabled:opacity-50"
           >
             <ArrowPathIcon class="w-4 h-4" :class="{ 'animate-spin': isLoading }" />
             Refresh
@@ -279,7 +279,7 @@ const stats = computed(() => {
                       :value="item.priority ?? 'normal'"
                       :disabled="updatingId === item.id"
                       @change="changePriority(item, $event.target.value)"
-                      class="rounded-lg border border-slate-200 bg-white px-2 py-1 text-xs text-slate-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 disabled:opacity-50 w-28"
+                      class="rounded-lg border border-slate-200 bg-white px-2 py-1 text-xs text-slate-700 focus:outline-none focus:ring-2 focus:ring-primary-500 disabled:opacity-50 w-28"
                     >
                       <option value="urgent">Urgent</option>
                       <option value="high">High</option>
@@ -287,7 +287,7 @@ const stats = computed(() => {
                       <option value="low">Low</option>
                     </select>
                     <span v-if="updatingId === item.id" class="absolute right-6 top-1/2 -translate-y-1/2">
-                      <svg class="animate-spin h-3 w-3 text-indigo-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                      <svg class="animate-spin h-3 w-3 text-primary-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                         <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/>
                         <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/>
                       </svg>
@@ -299,7 +299,7 @@ const stats = computed(() => {
                 <td class="px-4 py-3 text-center">
                   <button
                     @click="openAssessment(item)"
-                    class="inline-flex items-center gap-1.5 bg-indigo-600 hover:bg-indigo-700 text-white px-3 py-1.5 rounded-lg text-xs font-medium transition-colors shadow-sm"
+                    class="inline-flex items-center gap-1.5 bg-primary-600 hover:bg-primary-700 text-white px-3 py-1.5 rounded-lg text-xs font-medium transition-colors shadow-sm"
                     title="Open MIS Assessment"
                   >
                     <PencilSquareIcon class="w-3.5 h-3.5" />
@@ -367,7 +367,7 @@ const stats = computed(() => {
                 :value="item.priority ?? 'normal'"
                 :disabled="updatingId === item.id"
                 @change="changePriority(item, $event.target.value)"
-                class="rounded-lg border border-slate-200 bg-white px-2 py-1 text-xs text-slate-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 disabled:opacity-50"
+                class="rounded-lg border border-slate-200 bg-white px-2 py-1 text-xs text-slate-700 focus:outline-none focus:ring-2 focus:ring-primary-500 disabled:opacity-50"
               >
                 <option value="urgent">Urgent</option>
                 <option value="high">High</option>
@@ -376,7 +376,7 @@ const stats = computed(() => {
               </select>
               <button
                 @click="openAssessment(item)"
-                class="inline-flex items-center gap-1.5 bg-indigo-600 hover:bg-indigo-700 text-white px-3 py-1.5 rounded-lg text-xs font-medium transition-colors shadow-sm"
+                class="inline-flex items-center gap-1.5 bg-primary-600 hover:bg-primary-700 text-white px-3 py-1.5 rounded-lg text-xs font-medium transition-colors shadow-sm"
               >
                 <PencilSquareIcon class="w-3.5 h-3.5" />
                 Assess

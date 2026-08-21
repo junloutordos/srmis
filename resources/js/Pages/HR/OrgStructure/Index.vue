@@ -322,7 +322,7 @@ function toggleInactive() {
       <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
         <div>
           <h1 class="text-xl font-semibold text-slate-800 flex items-center gap-2">
-            <BuildingLibraryIcon class="h-6 w-6 text-indigo-500" />
+            <BuildingLibraryIcon class="h-6 w-6 text-primary-500" />
             Organizational Structure
           </h1>
           <p class="text-sm text-slate-500 mt-0.5">
@@ -374,7 +374,7 @@ function toggleInactive() {
           <button
             v-if="can.create"
             @click="openCreate()"
-            class="inline-flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-medium px-4 py-2 rounded-lg transition-colors shadow-sm"
+            class="inline-flex items-center gap-2 bg-primary-600 hover:bg-primary-700 text-white text-sm font-medium px-4 py-2 rounded-lg transition-colors shadow-sm"
           >
             <PlusIcon class="h-4 w-4" /> New Unit
           </button>
@@ -471,7 +471,7 @@ function toggleInactive() {
                 v-model="search"
                 type="search"
                 placeholder="Search units…"
-                class="w-full pl-8 pr-3 py-1.5 text-sm border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-400"
+                class="w-full pl-8 pr-3 py-1.5 text-sm border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-400"
               />
             </div>
             <button
@@ -555,7 +555,7 @@ function toggleInactive() {
               <button
                 v-if="can.update"
                 @click="openEdit(selectedNode)"
-                class="text-xs px-3 py-1.5 bg-indigo-50 hover:bg-indigo-100 text-indigo-700 rounded-lg font-medium"
+                class="text-xs px-3 py-1.5 bg-primary-50 hover:bg-primary-100 text-primary-700 rounded-lg font-medium"
               >
                 Edit
               </button>
@@ -590,7 +590,7 @@ function toggleInactive() {
         <div>
           <label class="block text-xs font-medium text-slate-600 mb-1">Full Name <span class="text-red-500">*</span></label>
           <input v-model="form.name" type="text" placeholder="Official name of the unit"
-            class="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-400"
+            class="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary-400"
             :class="{ 'border-red-400': errors.name }"
           />
           <p v-if="errors.name" class="text-red-500 text-xs mt-1">{{ errors.name[0] }}</p>
@@ -600,7 +600,7 @@ function toggleInactive() {
         <div>
           <label class="block text-xs font-medium text-slate-600 mb-1">Type <span class="text-red-500">*</span></label>
           <select v-model="form.type"
-            class="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-400 capitalize"
+            class="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary-400 capitalize"
             :class="{ 'border-red-400': errors.type }"
           >
             <option v-for="t in types" :key="t" :value="t" class="capitalize">{{ t }}</option>
@@ -616,7 +616,7 @@ function toggleInactive() {
             <button
               type="button"
               @click="showParentList = !showParentList"
-              class="w-full text-left border border-slate-200 rounded-lg px-3 py-2 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-indigo-400 flex items-center justify-between"
+              class="w-full text-left border border-slate-200 rounded-lg px-3 py-2 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-primary-400 flex items-center justify-between"
               :class="{ 'border-red-400': errors.parent_id }"
             >
               <span :class="selectedParentNode ? 'text-slate-800' : 'text-slate-400'">
@@ -631,7 +631,7 @@ function toggleInactive() {
                   v-model="parentSearch"
                   type="text"
                   placeholder="Search by name or code…"
-                  class="w-full border border-slate-200 rounded px-2 py-1.5 text-xs focus:outline-none focus:ring-2 focus:ring-indigo-400"
+                  class="w-full border border-slate-200 rounded px-2 py-1.5 text-xs focus:outline-none focus:ring-2 focus:ring-primary-400"
                 />
               </div>
               <div class="max-h-52 overflow-y-auto py-1">
@@ -643,7 +643,7 @@ function toggleInactive() {
                   v-for="u in filteredParentUnits"
                   :key="u.id"
                   @click="selectParent(u)"
-                  class="w-full text-left py-2 pr-3 text-sm hover:bg-indigo-50 flex items-center gap-2"
+                  class="w-full text-left py-2 pr-3 text-sm hover:bg-primary-50 flex items-center gap-2"
                   :style="`padding-left: ${12 + u.depth * 14}px`"
                 >
                   <span class="shrink-0 text-[9px] font-bold text-slate-400 uppercase font-mono w-4">{{ u.type[0] }}</span>
@@ -680,7 +680,7 @@ function toggleInactive() {
                 v-model="form.code"
                 @input="codeManual = true"
                 type="text" maxlength="50" placeholder="e.g. ACAD-DIV"
-                class="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm font-mono focus:outline-none focus:ring-2 focus:ring-indigo-400"
+                class="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm font-mono focus:outline-none focus:ring-2 focus:ring-primary-400"
                 :class="{ 'border-red-400': errors.code }"
               />
               <p v-if="errors.code" class="text-red-500 text-xs mt-1">{{ errors.code[0] }}</p>
@@ -688,7 +688,7 @@ function toggleInactive() {
             <div>
               <label class="block text-xs font-medium text-slate-600 mb-1">Abbreviation</label>
               <input v-model="form.short_name" type="text" maxlength="100" placeholder="e.g. ACAD"
-                class="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-400"
+                class="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary-400"
               />
             </div>
           </div>
@@ -696,7 +696,7 @@ function toggleInactive() {
           <div>
             <label class="block text-xs font-medium text-slate-600 mb-1">Description</label>
             <textarea v-model="form.description" rows="2" placeholder="Brief description of the unit's function"
-              class="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-400 resize-none"
+              class="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary-400 resize-none"
             ></textarea>
           </div>
 
@@ -704,13 +704,13 @@ function toggleInactive() {
             <div>
               <label class="block text-xs font-medium text-slate-600 mb-1">Established Date</label>
               <input v-model="form.established_date" type="date"
-                class="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-400"
+                class="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary-400"
               />
             </div>
             <div>
               <label class="block text-xs font-medium text-slate-600 mb-1">Sort Order</label>
               <input v-model.number="form.order_index" type="number" min="0"
-                class="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-400"
+                class="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary-400"
               />
             </div>
           </div>
@@ -718,12 +718,12 @@ function toggleInactive() {
           <div>
             <label class="block text-xs font-medium text-slate-600 mb-1">Legal Basis</label>
             <input v-model="form.legal_basis" type="text" placeholder="RA / EO / CSC Resolution"
-              class="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-400"
+              class="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary-400"
             />
           </div>
 
           <label class="flex items-center gap-2 cursor-pointer">
-            <input v-model="form.is_active" type="checkbox" class="rounded border-slate-300 text-indigo-600" />
+            <input v-model="form.is_active" type="checkbox" class="rounded border-slate-300 text-primary-600" />
             <span class="text-sm text-slate-700">Active unit</span>
           </label>
         </div>
@@ -732,7 +732,7 @@ function toggleInactive() {
       <template #footer>
         <button @click="showCreate = false" class="text-sm px-4 py-2 rounded-lg border border-slate-200 text-slate-600 hover:bg-slate-50">Cancel</button>
         <button @click="submitCreate" :disabled="loading"
-          class="text-sm px-4 py-2 rounded-lg bg-indigo-600 hover:bg-indigo-700 text-white font-medium disabled:opacity-60">
+          class="text-sm px-4 py-2 rounded-lg bg-primary-600 hover:bg-primary-700 text-white font-medium disabled:opacity-60">
           {{ loading ? 'Saving…' : 'Create Unit' }}
         </button>
       </template>
@@ -747,7 +747,7 @@ function toggleInactive() {
         <div>
           <label class="block text-xs font-medium text-slate-600 mb-1">Full Name <span class="text-red-500">*</span></label>
           <input v-model="form.name" type="text"
-            class="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-400"
+            class="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary-400"
             :class="{ 'border-red-400': errors.name }"
           />
           <p v-if="errors.name" class="text-red-500 text-xs mt-1">{{ errors.name[0] }}</p>
@@ -756,7 +756,7 @@ function toggleInactive() {
           <div>
             <label class="block text-xs font-medium text-slate-600 mb-1">Code <span class="text-red-500">*</span></label>
             <input v-model="form.code" type="text" maxlength="50"
-              class="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm font-mono focus:outline-none focus:ring-2 focus:ring-indigo-400"
+              class="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm font-mono focus:outline-none focus:ring-2 focus:ring-primary-400"
               :class="{ 'border-red-400': errors.code }"
             />
             <p v-if="errors.code" class="text-red-500 text-xs mt-1">{{ errors.code[0] }}</p>
@@ -764,7 +764,7 @@ function toggleInactive() {
           <div>
             <label class="block text-xs font-medium text-slate-600 mb-1">Type <span class="text-red-500">*</span></label>
             <select v-model="form.type"
-              class="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-400 capitalize"
+              class="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary-400 capitalize"
             >
               <option v-for="t in types" :key="t" :value="t" class="capitalize">{{ t }}</option>
             </select>
@@ -774,7 +774,7 @@ function toggleInactive() {
           <div>
             <label class="block text-xs font-medium text-slate-600 mb-1">Abbreviation</label>
             <input v-model="form.short_name" type="text" maxlength="100"
-              class="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-400"
+              class="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary-400"
             />
           </div>
           <div>
@@ -783,7 +783,7 @@ function toggleInactive() {
               <button
                 type="button"
                 @click="showEditParentList = !showEditParentList"
-                class="w-full text-left border border-slate-200 rounded-lg px-3 py-2 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-indigo-400 flex items-center justify-between"
+                class="w-full text-left border border-slate-200 rounded-lg px-3 py-2 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-primary-400 flex items-center justify-between"
                 :class="{ 'border-red-400': errors.parent_id }"
               >
                 <span :class="selectedEditParentNode ? 'text-slate-800' : 'text-slate-400'" class="truncate">
@@ -794,7 +794,7 @@ function toggleInactive() {
               <div v-if="showEditParentList" class="absolute top-full left-0 right-0 mt-1 bg-white border border-slate-200 rounded-lg shadow-lg" style="z-index: 20">
                 <div class="p-2 border-b border-slate-100">
                   <input v-model="editParentSearch" type="text" placeholder="Search units…"
-                    class="w-full border border-slate-200 rounded px-2 py-1.5 text-xs focus:outline-none focus:ring-2 focus:ring-indigo-400"
+                    class="w-full border border-slate-200 rounded px-2 py-1.5 text-xs focus:outline-none focus:ring-2 focus:ring-primary-400"
                   />
                 </div>
                 <div class="max-h-48 overflow-y-auto py-1">
@@ -805,7 +805,7 @@ function toggleInactive() {
                     v-for="u in filteredEditParentUnits"
                     :key="u.id"
                     @click="selectEditParent(u)"
-                    class="w-full text-left py-2 pr-3 text-sm hover:bg-indigo-50 flex items-center gap-2"
+                    class="w-full text-left py-2 pr-3 text-sm hover:bg-primary-50 flex items-center gap-2"
                     :style="`padding-left: ${12 + u.depth * 14}px`"
                   >
                     <span class="shrink-0 text-[9px] font-bold text-slate-400 uppercase font-mono w-4">{{ u.type[0] }}</span>
@@ -821,51 +821,51 @@ function toggleInactive() {
         <div>
           <label class="block text-xs font-medium text-slate-600 mb-1">Description</label>
           <textarea v-model="form.description" rows="2"
-            class="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-400 resize-none"
+            class="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary-400 resize-none"
           ></textarea>
         </div>
         <div class="grid grid-cols-2 gap-4">
           <div>
             <label class="block text-xs font-medium text-slate-600 mb-1">Established Date</label>
             <input v-model="form.established_date" type="date"
-              class="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-400"
+              class="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary-400"
             />
           </div>
           <div>
             <label class="block text-xs font-medium text-slate-600 mb-1">Abolished Date</label>
             <input v-model="form.abolished_date" type="date"
-              class="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-400"
+              class="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary-400"
             />
           </div>
         </div>
         <div>
           <label class="block text-xs font-medium text-slate-600 mb-1">Legal Basis</label>
           <input v-model="form.legal_basis" type="text" placeholder="RA / EO / CSC Resolution"
-            class="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-400"
+            class="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary-400"
           />
         </div>
         <div>
           <label class="block text-xs font-medium text-slate-600 mb-1">Mandate</label>
           <textarea v-model="form.mandate" rows="2" placeholder="Official functions and responsibilities"
-            class="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-400 resize-none"
+            class="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary-400 resize-none"
           ></textarea>
         </div>
         <div class="grid grid-cols-2 gap-4">
           <div>
             <label class="block text-xs font-medium text-slate-600 mb-1">Sort Order</label>
             <input v-model.number="form.order_index" type="number" min="0"
-              class="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-400"
+              class="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary-400"
             />
           </div>
           <div>
             <label class="block text-xs font-medium text-slate-600 mb-1">Remarks</label>
             <input v-model="form.remarks" type="text"
-              class="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-400"
+              class="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary-400"
             />
           </div>
         </div>
         <label class="flex items-center gap-2 cursor-pointer">
-          <input v-model="form.is_active" type="checkbox" class="rounded border-slate-300 text-indigo-600" />
+          <input v-model="form.is_active" type="checkbox" class="rounded border-slate-300 text-primary-600" />
           <span class="text-sm text-slate-700">Active unit</span>
         </label>
       </form>
@@ -873,7 +873,7 @@ function toggleInactive() {
       <template #footer>
         <button @click="showEdit = false" class="text-sm px-4 py-2 rounded-lg border border-slate-200 text-slate-600 hover:bg-slate-50">Cancel</button>
         <button @click="submitUpdate" :disabled="loading"
-          class="text-sm px-4 py-2 rounded-lg bg-indigo-600 hover:bg-indigo-700 text-white font-medium disabled:opacity-60">
+          class="text-sm px-4 py-2 rounded-lg bg-primary-600 hover:bg-primary-700 text-white font-medium disabled:opacity-60">
           {{ loading ? 'Saving…' : 'Save Changes' }}
         </button>
       </template>

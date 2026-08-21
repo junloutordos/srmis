@@ -86,7 +86,7 @@ const submitUpload = async () => {
         <h1 class="text-xl font-semibold text-slate-800">Divisions List</h1>
         <button
           @click="openModal('create')"
-          class="inline-flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors shadow-sm"
+          class="inline-flex items-center gap-2 bg-primary-600 hover:bg-primary-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors shadow-sm"
         >
           <PlusIcon class="w-4 h-4" /> New Division
         </button>
@@ -98,7 +98,7 @@ const submitUpload = async () => {
           v-model="searchQuery"
           type="text"
           placeholder="Search divisions..."
-          class="rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-400 w-full sm:w-64"
+          class="rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-400 w-full sm:w-64"
         />
       </div>
 
@@ -223,7 +223,7 @@ const submitUpload = async () => {
                 <input
                   v-model="form.division_name"
                   type="text"
-                  class="rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-400 w-full"
+                  class="rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-400 w-full"
                   required
                 />
               </div>
@@ -233,7 +233,7 @@ const submitUpload = async () => {
                 <input
                   v-model="form.acronym"
                   type="text"
-                  class="rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-400 w-full"
+                  class="rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-400 w-full"
                   placeholder="e.g. FAD"
                   maxlength="20"
                 />
@@ -243,7 +243,7 @@ const submitUpload = async () => {
                 <label class="block text-xs font-medium text-slate-600 mb-1">Division Chief (optional)</label>
                 <select
                   v-model="form.division_chief_id"
-                  class="rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-400 w-full"
+                  class="rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-400 w-full"
                 >
                   <option :value="null">— None —</option>
                   <option v-for="user in props.users" :key="user.id" :value="user.id">
@@ -259,7 +259,7 @@ const submitUpload = async () => {
                   type="number"
                   min="1900"
                   max="2100"
-                  class="rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-400 w-full"
+                  class="rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-400 w-full"
                   placeholder="e.g. 2023"
                 />
               </div>
@@ -269,7 +269,7 @@ const submitUpload = async () => {
                 <label class="block text-xs font-medium text-slate-600 mb-1">Status</label>
                 <select
                   v-model="form.status"
-                  class="rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-400 w-full"
+                  class="rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-400 w-full"
                 >
                   <option value="active">Active</option>
                   <option value="not_active">Not Active</option>
@@ -287,7 +287,7 @@ const submitUpload = async () => {
                 </button>
                 <button
                   type="submit"
-                  class="inline-flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors shadow-sm"
+                  class="inline-flex items-center gap-2 bg-primary-600 hover:bg-primary-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors shadow-sm"
                 >
                   Save
                 </button>
@@ -318,7 +318,7 @@ const submitUpload = async () => {
         </div>
         <div class="px-6 py-4 border-t border-slate-100 flex justify-end gap-2">
           <button @click="closeUploadModal" class="inline-flex items-center gap-2 bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 px-4 py-2 rounded-lg text-sm font-medium transition-colors shadow-sm">Cancel</button>
-          <button @click="submitUpload" :disabled="isUploading" class="inline-flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors shadow-sm disabled:opacity-50 disabled:cursor-not-allowed">{{ isUploading ? 'Uploading…' : 'Upload' }}</button>
+          <button @click="submitUpload" :disabled="isUploading" class="inline-flex items-center gap-2 bg-primary-600 hover:bg-primary-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors shadow-sm disabled:opacity-50 disabled:cursor-not-allowed">{{ isUploading ? 'Uploading…' : 'Upload' }}</button>
         </div>
       </div>
     </div>

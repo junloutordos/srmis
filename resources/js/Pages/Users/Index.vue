@@ -239,7 +239,7 @@ function formatSg(user) {
         <button
           v-if="!isInactivePage"
           @click="openModal('create')"
-          class="inline-flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors shadow-sm shrink-0"
+          class="inline-flex items-center gap-2 bg-primary-600 hover:bg-primary-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors shadow-sm shrink-0"
         >
           <PlusIcon class="w-4 h-4" />
           <span class="hidden sm:inline">{{ isEmployeesPage ? 'New Employee' : 'New User' }}</span>
@@ -257,7 +257,7 @@ function formatSg(user) {
               v-model="searchQuery"
               type="text"
               placeholder="Name, position, email…"
-              class="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-400"
+              class="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-400"
             />
           </div>
 
@@ -265,7 +265,7 @@ function formatSg(user) {
           <div class="min-w-[140px]">
             <label class="block text-xs font-medium text-slate-500 mb-1">Status</label>
             <select v-model="statusFilter"
-              class="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-400">
+              class="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-700 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-400">
               <option value="active">Active</option>
               <option value="inactive">Inactive</option>
               <option value="all">All</option>
@@ -276,7 +276,7 @@ function formatSg(user) {
           <div class="min-w-[170px]">
             <label class="block text-xs font-medium text-slate-500 mb-1">Division</label>
             <select v-model="filterDivision"
-              class="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-400">
+              class="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-700 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-400">
               <option value="">All Divisions</option>
               <option v-for="d in divisionsList" :key="d.id" :value="d.id">{{ d.division_name }}</option>
             </select>
@@ -286,7 +286,7 @@ function formatSg(user) {
           <div class="min-w-[170px]">
             <label class="block text-xs font-medium text-slate-500 mb-1">Category</label>
             <select v-model="filterCategory"
-              class="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-400">
+              class="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-700 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-400">
               <option value="">All Categories</option>
               <option v-for="cat in EMP_CATEGORIES" :key="cat" :value="cat">{{ cat }}</option>
             </select>
@@ -296,7 +296,7 @@ function formatSg(user) {
           <div class="min-w-[120px]">
             <label class="block text-xs font-medium text-slate-500 mb-1">Sex</label>
             <select v-model="filterSex"
-              class="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-400">
+              class="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-700 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-400">
               <option value="">All</option>
               <option value="Male">Male</option>
               <option value="Female">Female</option>
@@ -351,7 +351,7 @@ function formatSg(user) {
             </div>
             <div class="mt-1.5 flex flex-wrap gap-x-4 gap-y-0.5 text-xs text-slate-500">
               <span v-if="user.division?.division_name">{{ user.division.division_name }}</span>
-              <span v-if="user.emp_category" class="text-indigo-500">{{ user.emp_category }}</span>
+              <span v-if="user.emp_category" class="text-primary-500">{{ user.emp_category }}</span>
               <span v-if="user.salary_grade" class="text-emerald-600">{{ formatSg(user) }}</span>
             </div>
           </div>
@@ -395,7 +395,7 @@ function formatSg(user) {
                 <td class="px-4 py-3 text-slate-700 text-xs">{{ user.division?.division_name ?? '—' }}</td>
                 <td v-if="isEmployeesPage" class="px-4 py-3">
                   <span v-if="user.emp_category" class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-medium"
-                    :class="user.emp_category?.includes('Teaching') && !user.emp_category?.includes('Non') ? 'bg-indigo-50 text-indigo-700' : 'bg-slate-100 text-slate-600'">
+                    :class="user.emp_category?.includes('Teaching') && !user.emp_category?.includes('Non') ? 'bg-primary-50 text-primary-700' : 'bg-slate-100 text-slate-600'">
                     {{ user.emp_category }}
                   </span>
                   <span v-else class="text-slate-400">—</span>
@@ -524,19 +524,19 @@ function formatSg(user) {
               <div>
                 <label class="block text-xs font-medium text-slate-600 mb-1">Name</label>
                 <input v-model="form.name" type="text" required
-                  class="rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-indigo-500 w-full" />
+                  class="rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-primary-500 w-full" />
               </div>
 
               <div v-if="!isEmployeesPage">
                 <label class="block text-xs font-medium text-slate-600 mb-1">Biometric ID</label>
                 <input v-model="form.badge_id" type="text"
-                  class="rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-indigo-500 w-full" />
+                  class="rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-primary-500 w-full" />
               </div>
 
               <div>
                 <label class="block text-xs font-medium text-slate-600 mb-1">Sex</label>
                 <select v-model="form.sex" required
-                  class="rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-indigo-500 w-full">
+                  class="rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-primary-500 w-full">
                   <option value="">-- Select Sex --</option>
                   <option value="Male">Male</option>
                   <option value="Female">Female</option>
@@ -546,31 +546,31 @@ function formatSg(user) {
               <div class="sm:col-span-2" v-if="!isEmployeesPage">
                 <label class="block text-xs font-medium text-slate-600 mb-1">Email</label>
                 <input v-model="form.email" type="email" required
-                  class="rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-indigo-500 w-full" />
+                  class="rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-primary-500 w-full" />
               </div>
 
               <div>
                 <label class="block text-xs font-medium text-slate-600 mb-1">Position</label>
                 <input v-model="form.position" type="text"
-                  class="rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-indigo-500 w-full" />
+                  class="rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-primary-500 w-full" />
               </div>
 
               <div>
                 <label class="block text-xs font-medium text-slate-600 mb-1">Employee No.</label>
                 <input v-model="form.employee_no" type="text" placeholder="e.g. pshscrc13-00123"
-                  class="rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-indigo-500 w-full" />
+                  class="rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-primary-500 w-full" />
               </div>
 
               <div>
                 <label class="block text-xs font-medium text-slate-600 mb-1">Specialization</label>
                 <input v-model="form.specialization" type="text" placeholder="e.g. Mathematics, Biology"
-                  class="rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-indigo-500 w-full" />
+                  class="rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-primary-500 w-full" />
               </div>
 
               <div>
                 <label class="block text-xs font-medium text-slate-600 mb-1">Division</label>
                 <select v-model="form.division_id"
-                  class="rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-indigo-500 w-full">
+                  class="rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-primary-500 w-full">
                   <option value="">-- Select Division --</option>
                   <option v-for="d in divisionsList" :key="d.id" :value="d.id">{{ d.division_name }}</option>
                 </select>
@@ -583,7 +583,7 @@ function formatSg(user) {
               <div>
                 <label class="block text-xs font-medium text-slate-600 mb-1">Office</label>
                 <select v-model="form.office_id"
-                  class="rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-indigo-500 w-full">
+                  class="rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-primary-500 w-full">
                   <option value="">-- Select Office --</option>
                   <option v-if="!form.division_id" disabled value="">Select a division first</option>
                   <option v-for="o in filteredOffices" :key="o.id" :value="o.id">{{ o.name }}</option>
@@ -594,7 +594,7 @@ function formatSg(user) {
               <div>
                 <label class="block text-xs font-medium text-slate-600 mb-1">Employee Category</label>
                 <select v-model="form.emp_category"
-                  class="rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-indigo-500 w-full">
+                  class="rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-primary-500 w-full">
                   <option value="">-- Select Category --</option>
                   <option v-for="cat in EMP_CATEGORIES" :key="cat" :value="cat">{{ cat }}</option>
                 </select>
@@ -627,7 +627,7 @@ function formatSg(user) {
                   Cancel
                 </button>
                 <button type="submit"
-                  class="inline-flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors shadow-sm">
+                  class="inline-flex items-center gap-2 bg-primary-600 hover:bg-primary-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors shadow-sm">
                   Save
                 </button>
               </div>
@@ -654,7 +654,7 @@ function formatSg(user) {
             <div>
               <label class="block text-xs font-medium text-slate-600 mb-1">Salary Grade <span class="text-red-500">*</span></label>
               <select v-model="sgForm.salary_grade"
-                class="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                class="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-primary-500">
                 <option value="">-- Select Grade --</option>
                 <option v-for="g in distinctGrades" :key="g" :value="g">SG {{ g }}</option>
               </select>
@@ -664,7 +664,7 @@ function formatSg(user) {
             <div>
               <label class="block text-xs font-medium text-slate-600 mb-1">Step <span class="text-red-500">*</span></label>
               <select v-model="sgForm.salary_step" :disabled="!sgForm.salary_grade"
-                class="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-indigo-500 disabled:opacity-50">
+                class="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-primary-500 disabled:opacity-50">
                 <option v-for="s in availableSteps" :key="s" :value="s">Step {{ s }}</option>
               </select>
             </div>

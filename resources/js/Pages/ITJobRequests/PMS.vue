@@ -246,7 +246,7 @@ const totalPages       = computed(() => props.pmsSchedules?.last_page ?? 1)
           <p class="text-sm text-slate-500 mt-0.5">Manage and track PMS schedules</p>
         </div>
         <button @click="openModal('create')"
-          class="inline-flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors shadow-sm">
+          class="inline-flex items-center gap-2 bg-primary-600 hover:bg-primary-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors shadow-sm">
           <PlusIcon class="w-4 h-4" /> Add Schedule
         </button>
       </div>
@@ -257,23 +257,23 @@ const totalPages       = computed(() => props.pmsSchedules?.last_page ?? 1)
           <MagnifyingGlassIcon class="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
           <input v-model="search" type="text" placeholder="Search schedules…"
             @keydown.enter.prevent="applyFilters(true)"
-            class="w-full rounded-lg border border-slate-200 bg-white pl-9 pr-3 py-2 text-sm text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-400" />
+            class="w-full rounded-lg border border-slate-200 bg-white pl-9 pr-3 py-2 text-sm text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-400" />
           <span v-if="isLoading" class="absolute right-3 top-1/2 -translate-y-1/2">
-            <svg class="animate-spin h-4 w-4 text-indigo-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+            <svg class="animate-spin h-4 w-4 text-primary-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
               <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/>
               <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/>
             </svg>
           </span>
         </div>
         <select v-model="filterStatus"
-          class="rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-400">
+          class="rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-400">
           <option value="">All Statuses</option>
           <option value="Pending">Pending</option>
           <option value="Ongoing">Ongoing</option>
           <option value="Completed">Completed</option>
         </select>
         <select v-model="filterFrequency"
-          class="rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-400">
+          class="rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-400">
           <option value="">All Frequencies</option>
           <option value="Monthly">Monthly</option>
           <option value="Quarterly">Quarterly</option>
@@ -286,7 +286,7 @@ const totalPages       = computed(() => props.pmsSchedules?.last_page ?? 1)
       <div class="bg-white rounded-xl border border-slate-100 shadow-sm">
         <div v-if="isLoading" class="relative">
           <div class="absolute inset-0 bg-white/70 flex items-center justify-center z-10 rounded-xl">
-            <div class="flex flex-col items-center gap-2 text-indigo-600">
+            <div class="flex flex-col items-center gap-2 text-primary-600">
               <svg class="animate-spin h-8 w-8" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                 <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/>
                 <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/>
@@ -402,25 +402,25 @@ const totalPages       = computed(() => props.pmsSchedules?.last_page ?? 1)
               <div class="col-span-2">
                 <label class="block text-xs font-medium text-slate-600 mb-1">Title <span class="text-red-500">*</span></label>
                 <input v-model="form.title" type="text" placeholder="Enter schedule title"
-                  class="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-400"
+                  class="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-400"
                   required />
               </div>
               <div>
                 <label class="block text-xs font-medium text-slate-600 mb-1">School Year <span class="text-red-500">*</span></label>
                 <input v-model="form.school_year" type="text" placeholder="e.g. 2025-2026" pattern="\d{4}-\d{4}"
                   title="Format: YYYY-YYYY (e.g. 2025-2026)"
-                  class="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-400"
+                  class="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-400"
                   required />
               </div>
               <div>
                 <label class="block text-xs font-medium text-slate-600 mb-1">Office/Area</label>
                 <input v-model="form.office_area" type="text" placeholder="Enter office/area"
-                  class="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-400" />
+                  class="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-400" />
               </div>
               <div>
                 <label class="block text-xs font-medium text-slate-600 mb-1">Frequency</label>
                 <select v-model="form.frequency"
-                  class="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-400"
+                  class="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-400"
                   required>
                   <option disabled value="">Select frequency</option>
                   <option value="Monthly">Monthly</option>
@@ -432,7 +432,7 @@ const totalPages       = computed(() => props.pmsSchedules?.last_page ?? 1)
               <div>
                 <label class="block text-xs font-medium text-slate-600 mb-1">Status</label>
                 <select v-model="form.status"
-                  class="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-400">
+                  class="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-400">
                   <option value="Pending">Pending</option>
                   <option value="Ongoing">Ongoing</option>
                   <option value="Completed">Completed</option>
@@ -447,7 +447,7 @@ const totalPages       = computed(() => props.pmsSchedules?.last_page ?? 1)
                   <div v-for="(d, i) in scheduleDates" :key="i">
                     <input v-model="d.date" type="date"
                       :min="schoolYearBounds?.min" :max="schoolYearBounds?.max"
-                      class="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-400"
+                      class="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-400"
                       required />
                   </div>
                 </div>
@@ -455,7 +455,7 @@ const totalPages       = computed(() => props.pmsSchedules?.last_page ?? 1)
               <div class="col-span-2">
                 <label class="block text-xs font-medium text-slate-600 mb-1">Remarks</label>
                 <textarea v-model="form.remarks" rows="2"
-                  class="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-400"></textarea>
+                  class="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-400"></textarea>
               </div>
             </div>
             <div class="px-6 py-4 border-t border-slate-100 flex justify-end gap-2 -mx-6 -mb-5 mt-4">
@@ -464,7 +464,7 @@ const totalPages       = computed(() => props.pmsSchedules?.last_page ?? 1)
                 Cancel
               </button>
               <button type="submit"
-                class="inline-flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors shadow-sm">
+                class="inline-flex items-center gap-2 bg-primary-600 hover:bg-primary-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors shadow-sm">
                 Save
               </button>
             </div>
@@ -493,7 +493,7 @@ const totalPages       = computed(() => props.pmsSchedules?.last_page ?? 1)
             <div class="flex gap-1 bg-slate-100 rounded-lg p-1">
               <button @click="addMode = 'individual'; equipSearch = ''"
                 :class="addMode === 'individual'
-                  ? 'bg-white shadow text-indigo-600 font-semibold'
+                  ? 'bg-white shadow text-primary-600 font-semibold'
                   : 'text-slate-500 hover:text-slate-700'"
                 class="flex-1 flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-md text-sm transition-colors">
                 <ComputerDesktopIcon class="h-4 w-4" />
@@ -501,7 +501,7 @@ const totalPages       = computed(() => props.pmsSchedules?.last_page ?? 1)
               </button>
               <button @click="addMode = 'location'; equipSearch = ''"
                 :class="addMode === 'location'
-                  ? 'bg-white shadow text-indigo-600 font-semibold'
+                  ? 'bg-white shadow text-primary-600 font-semibold'
                   : 'text-slate-500 hover:text-slate-700'"
                 class="flex-1 flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-md text-sm transition-colors">
                 <MapPinIcon class="h-4 w-4" />
@@ -516,7 +516,7 @@ const totalPages       = computed(() => props.pmsSchedules?.last_page ?? 1)
                 v-model="equipSearch"
                 type="text"
                 :placeholder="addMode === 'individual' ? 'Search by name, serial, category, or room…' : 'Search by location or equipment name…'"
-                class="w-full rounded-lg border border-slate-200 bg-white pl-9 pr-3 py-2 text-sm text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-400"
+                class="w-full rounded-lg border border-slate-200 bg-white pl-9 pr-3 py-2 text-sm text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-400"
               />
             </div>
           </div>
@@ -535,11 +535,11 @@ const totalPages       = computed(() => props.pmsSchedules?.last_page ?? 1)
                   :key="eq.id"
                   @click="toggleEquipment(eq.id)"
                   class="flex items-center gap-3 py-2.5 px-2 rounded-lg cursor-pointer hover:bg-slate-50 transition-colors"
-                  :class="isSelected(eq.id) ? 'bg-indigo-50/60' : ''"
+                  :class="isSelected(eq.id) ? 'bg-primary-50/60' : ''"
                 >
                   <!-- Checkbox -->
                   <div class="h-4 w-4 rounded border flex-shrink-0 flex items-center justify-center transition-colors"
-                    :class="isSelected(eq.id) ? 'bg-indigo-600 border-indigo-600' : 'border-slate-300 bg-white'">
+                    :class="isSelected(eq.id) ? 'bg-primary-600 border-primary-600' : 'border-slate-300 bg-white'">
                     <CheckIcon v-if="isSelected(eq.id)" class="h-3 w-3 text-white" />
                   </div>
                   <!-- Info -->
@@ -570,18 +570,18 @@ const totalPages       = computed(() => props.pmsSchedules?.last_page ?? 1)
                   <!-- Location Header Row -->
                   <div
                     class="flex items-center gap-3 px-3 py-2.5 cursor-pointer select-none hover:bg-slate-50 transition-colors"
-                    :class="isLocationFull(loc) ? 'bg-indigo-50/50' : ''"
+                    :class="isLocationFull(loc) ? 'bg-primary-50/50' : ''"
                   >
                     <!-- Location checkbox -->
                     <div
                       @click.stop="toggleLocation(loc)"
                       class="h-4 w-4 rounded border flex-shrink-0 flex items-center justify-center transition-colors cursor-pointer"
-                      :class="isLocationFull(loc) ? 'bg-indigo-600 border-indigo-600'
-                             : isLocationPartial(loc) ? 'bg-indigo-200 border-indigo-400'
+                      :class="isLocationFull(loc) ? 'bg-primary-600 border-primary-600'
+                             : isLocationPartial(loc) ? 'bg-primary-200 border-primary-400'
                              : 'border-slate-300 bg-white'"
                     >
                       <CheckIcon v-if="isLocationFull(loc)" class="h-3 w-3 text-white" />
-                      <span v-else-if="isLocationPartial(loc)" class="h-1.5 w-1.5 rounded-sm bg-indigo-600 block"></span>
+                      <span v-else-if="isLocationPartial(loc)" class="h-1.5 w-1.5 rounded-sm bg-primary-600 block"></span>
                     </div>
 
                     <!-- Location name + count -->
@@ -607,10 +607,10 @@ const totalPages       = computed(() => props.pmsSchedules?.last_page ?? 1)
                       :key="eq.id"
                       @click="toggleEquipment(eq.id)"
                       class="flex items-center gap-3 px-5 py-2.5 cursor-pointer hover:bg-white transition-colors"
-                      :class="isSelected(eq.id) ? 'bg-indigo-50/40' : ''"
+                      :class="isSelected(eq.id) ? 'bg-primary-50/40' : ''"
                     >
                       <div class="h-4 w-4 rounded border flex-shrink-0 flex items-center justify-center transition-colors"
-                        :class="isSelected(eq.id) ? 'bg-indigo-600 border-indigo-600' : 'border-slate-300 bg-white'">
+                        :class="isSelected(eq.id) ? 'bg-primary-600 border-primary-600' : 'border-slate-300 bg-white'">
                         <CheckIcon v-if="isSelected(eq.id)" class="h-3 w-3 text-white" />
                       </div>
                       <ComputerDesktopIcon class="h-4 w-4 text-slate-300 shrink-0" />
@@ -638,10 +638,10 @@ const totalPages       = computed(() => props.pmsSchedules?.last_page ?? 1)
                 <span
                   v-for="eq in selectedEquipmentObjects"
                   :key="eq.id"
-                  class="inline-flex items-center gap-1 bg-indigo-50 text-indigo-700 text-[11px] font-medium px-2 py-0.5 rounded-full"
+                  class="inline-flex items-center gap-1 bg-primary-50 text-primary-700 text-[11px] font-medium px-2 py-0.5 rounded-full"
                 >
                   {{ eq.description }}
-                  <button @click.stop="toggleEquipment(eq.id)" class="ml-0.5 text-indigo-400 hover:text-indigo-700 leading-none">&times;</button>
+                  <button @click.stop="toggleEquipment(eq.id)" class="ml-0.5 text-primary-400 hover:text-primary-700 leading-none">&times;</button>
                 </span>
               </div>
             </div>
@@ -655,7 +655,7 @@ const totalPages       = computed(() => props.pmsSchedules?.last_page ?? 1)
               <button
                 @click="assignEquipment"
                 :disabled="isSubmitting || selectedCount === 0"
-                class="inline-flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors shadow-sm disabled:opacity-50 disabled:cursor-not-allowed"
+                class="inline-flex items-center gap-2 bg-primary-600 hover:bg-primary-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors shadow-sm disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {{ isSubmitting ? 'Assigning…' : `Assign ${selectedCount > 0 ? selectedCount + ' item' + (selectedCount > 1 ? 's' : '') : ''}` }}
               </button>

@@ -52,8 +52,8 @@ function logout() {
               </div>
               <div class="min-w-0 flex-1">
                 <p class="font-semibold text-white text-sm truncate">{{ user?.name }}</p>
-                <p class="text-indigo-200 text-xs truncate">{{ user?.email }}</p>
-                <p v-if="user?.position" class="text-indigo-300 text-[11px] truncate mt-0.5">{{ user.position }}</p>
+                <p class="text-primary-200 text-xs truncate">{{ user?.email }}</p>
+                <p v-if="user?.position" class="text-primary-300 text-[11px] truncate mt-0.5">{{ user.position }}</p>
               </div>
               <button @click="emit('close')" class="text-white/60 hover:text-white shrink-0">
                 <XMarkIcon class="h-4 w-4" />
@@ -71,22 +71,22 @@ function logout() {
           <div class="p-3 space-y-1">
             <button @click="go(route('profile.edit'))"
               class="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-slate-50 transition-colors text-left group">
-              <UserCircleIcon class="h-4 w-4 text-slate-400 group-hover:text-indigo-500 shrink-0" />
+              <UserCircleIcon class="h-4 w-4 text-slate-400 group-hover:text-primary-500 shrink-0" />
               <div class="flex-1 min-w-0">
                 <p class="text-sm font-medium text-slate-700">Edit Profile</p>
                 <p class="text-xs text-slate-400">Photo, name, specialization</p>
               </div>
-              <ArrowRightIcon class="h-3.5 w-3.5 text-slate-300 group-hover:text-indigo-400" />
+              <ArrowRightIcon class="h-3.5 w-3.5 text-slate-300 group-hover:text-primary-400" />
             </button>
 
             <button @click="go(route('profile.signature'))"
               class="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-slate-50 transition-colors text-left group">
-              <FingerPrintIcon class="h-4 w-4 text-slate-400 group-hover:text-indigo-500 shrink-0" />
+              <FingerPrintIcon class="h-4 w-4 text-slate-400 group-hover:text-primary-500 shrink-0" />
               <div class="flex-1 min-w-0">
                 <p class="text-sm font-medium text-slate-700">Digital Signature</p>
                 <p class="text-xs text-slate-400">Manage signature & PIN</p>
               </div>
-              <ArrowRightIcon class="h-3.5 w-3.5 text-slate-300 group-hover:text-indigo-400" />
+              <ArrowRightIcon class="h-3.5 w-3.5 text-slate-300 group-hover:text-primary-400" />
             </button>
 
             <div class="border-t border-slate-100 my-1" />

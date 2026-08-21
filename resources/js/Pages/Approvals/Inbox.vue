@@ -202,7 +202,7 @@ function submitDecline(item) {
           <h1 class="text-xl font-semibold text-slate-800">Approvals Inbox</h1>
           <p class="text-sm text-slate-500 mt-0.5">All pending requests awaiting your approval</p>
         </div>
-        <div v-if="totalCount > 0" class="inline-flex items-center gap-1.5 bg-indigo-50 text-indigo-700 px-3 py-1.5 rounded-full text-sm font-medium">
+        <div v-if="totalCount > 0" class="inline-flex items-center gap-1.5 bg-primary-50 text-primary-700 px-3 py-1.5 rounded-full text-sm font-medium">
           {{ totalCount }} pending
         </div>
       </div>
@@ -224,14 +224,14 @@ function submitDecline(item) {
             :class="[
               'inline-flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-colors',
               activeTab === tab.type
-                ? 'bg-indigo-600 text-white shadow-sm'
+                ? 'bg-primary-600 text-white shadow-sm'
                 : 'bg-white border border-slate-200 text-slate-700 hover:bg-slate-50',
             ]"
           >
             {{ tab.label }}
             <span :class="[
               'inline-flex items-center justify-center w-5 h-5 rounded-full text-xs font-semibold',
-              activeTab === tab.type ? 'bg-white/20 text-white' : 'bg-indigo-100 text-indigo-700',
+              activeTab === tab.type ? 'bg-white/20 text-white' : 'bg-primary-100 text-primary-700',
             ]">{{ tab.count }}</span>
           </button>
         </div>
@@ -242,7 +242,7 @@ function submitDecline(item) {
             v-model="search"
             type="text"
             placeholder="Search by requestor, reference no., or summary…"
-            class="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-400"
+            class="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-400"
           />
         </div>
 
@@ -274,7 +274,7 @@ function submitDecline(item) {
                   <td class="px-4 py-3 text-center">
                     <button
                       @click="openModal(item)"
-                      class="inline-flex items-center gap-1.5 bg-indigo-600 hover:bg-indigo-700 text-white px-3 py-1.5 rounded-lg text-xs font-medium transition-colors"
+                      class="inline-flex items-center gap-1.5 bg-primary-600 hover:bg-primary-700 text-white px-3 py-1.5 rounded-lg text-xs font-medium transition-colors"
                       title="View details and take action"
                     >
                       <EyeIcon class="w-3.5 h-3.5" />

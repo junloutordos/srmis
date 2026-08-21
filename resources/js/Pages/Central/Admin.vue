@@ -92,13 +92,13 @@ function logout() {
 
   <div class="min-h-screen bg-slate-100">
     <!-- Top bar -->
-    <header class="bg-gradient-to-r from-indigo-950 to-blue-800 text-white">
+    <header class="bg-gradient-to-r from-primary-950 to-blue-800 text-white">
       <div class="mx-auto flex max-w-6xl items-center justify-between px-6 py-4">
         <div class="flex items-center gap-3">
           <img src="/images/pshslogo.png" alt="PSHS Logo" class="h-9 w-9 object-contain" />
           <div>
             <h1 class="text-lg font-bold leading-tight">STRIDE System Administration</h1>
-            <p class="text-xs text-indigo-200">{{ domain }}</p>
+            <p class="text-xs text-primary-200">{{ domain }}</p>
           </div>
         </div>
         <div class="flex items-center gap-2">
@@ -123,11 +123,11 @@ function logout() {
           <button
             v-if="unprovisionedPresets.length"
             @click="provisionAllPresets"
-            class="rounded-lg border border-indigo-200 bg-indigo-50 px-4 py-2 text-sm font-medium text-indigo-700 hover:bg-indigo-100"
+            class="rounded-lg border border-primary-200 bg-primary-50 px-4 py-2 text-sm font-medium text-primary-700 hover:bg-primary-100"
           >Provision all presets ({{ unprovisionedPresets.length }} missing)</button>
           <button
             @click="showCreate = !showCreate"
-            class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg text-sm font-medium"
+            class="bg-primary-600 hover:bg-primary-700 text-white px-4 py-2 rounded-lg text-sm font-medium"
           >+ New campus</button>
         </div>
       </div>
@@ -143,7 +143,7 @@ function logout() {
               v-for="c in unprovisionedPresets"
               :key="c.slug"
               @click="applyPreset(c)"
-              class="rounded-full border border-slate-200 px-3 py-1 text-xs text-slate-600 hover:border-indigo-300 hover:text-indigo-700"
+              class="rounded-full border border-slate-200 px-3 py-1 text-xs text-slate-600 hover:border-primary-300 hover:text-primary-700"
             >{{ c.code }}</button>
           </div>
         </div>
@@ -152,24 +152,24 @@ function logout() {
           <div>
             <label class="block text-sm font-medium text-slate-700 mb-1">Campus slug (schema + email prefix)</label>
             <input v-model="createForm.slug" type="text" placeholder="crc"
-              class="rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 w-full" />
+              class="rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500 w-full" />
             <p v-if="createForm.errors.slug" class="mt-1 text-xs text-red-600">{{ createForm.errors.slug }}</p>
           </div>
           <div>
             <label class="block text-sm font-medium text-slate-700 mb-1">Campus name</label>
             <input v-model="createForm.name" type="text" placeholder="Caraga Region Campus"
-              class="rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 w-full" />
+              class="rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500 w-full" />
           </div>
           <div>
             <label class="block text-sm font-medium text-slate-700 mb-1">Campus code</label>
             <input v-model="createForm.campus_code" type="text" placeholder="PSHS-CRC"
-              class="rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 w-full" />
+              class="rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500 w-full" />
           </div>
         </div>
 
         <div class="mt-3 flex flex-wrap gap-x-4 gap-y-1">
           <label v-for="(label, key) in modules" :key="key" class="flex items-center gap-1.5 text-xs text-slate-600" :title="label">
-            <input v-model="createForm.modules[key]" type="checkbox" class="rounded border-slate-300 text-indigo-600 focus:ring-indigo-500 h-3.5 w-3.5" />
+            <input v-model="createForm.modules[key]" type="checkbox" class="rounded border-slate-300 text-primary-600 focus:ring-primary-500 h-3.5 w-3.5" />
             {{ key }}
           </label>
         </div>
@@ -177,7 +177,7 @@ function logout() {
         <div class="mt-4 flex justify-end gap-2">
           <button @click="showCreate = false" class="px-4 py-2 rounded-lg text-sm text-slate-500 hover:bg-slate-100">Cancel</button>
           <button @click="submitCreate" :disabled="createForm.processing"
-            class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg text-sm font-medium disabled:opacity-60">
+            class="bg-primary-600 hover:bg-primary-700 text-white px-4 py-2 rounded-lg text-sm font-medium disabled:opacity-60">
             {{ createForm.processing ? 'Provisioning…' : 'Provision campus' }}
           </button>
         </div>
@@ -194,8 +194,8 @@ function logout() {
               </p>
             </div>
             <div class="flex gap-2">
-              <button @click="seedTarget = t" class="rounded-lg border border-slate-200 px-3 py-1.5 text-xs font-medium text-slate-600 hover:border-indigo-300 hover:text-indigo-700">Seed RBAC / admin</button>
-              <button @click="migrateTenant(t)" class="rounded-lg border border-slate-200 px-3 py-1.5 text-xs font-medium text-slate-600 hover:border-indigo-300 hover:text-indigo-700">Migrate</button>
+              <button @click="seedTarget = t" class="rounded-lg border border-slate-200 px-3 py-1.5 text-xs font-medium text-slate-600 hover:border-primary-300 hover:text-primary-700">Seed RBAC / admin</button>
+              <button @click="migrateTenant(t)" class="rounded-lg border border-slate-200 px-3 py-1.5 text-xs font-medium text-slate-600 hover:border-primary-300 hover:text-primary-700">Migrate</button>
               <button @click="deleteTenant(t)" class="rounded-lg border border-red-200 px-3 py-1.5 text-xs font-medium text-red-500 hover:bg-red-50">Delete</button>
             </div>
           </div>
@@ -235,23 +235,23 @@ function logout() {
         <div class="mt-4 space-y-3">
           <div>
             <label class="block text-sm font-medium text-slate-700 mb-1">Admin name (optional)</label>
-            <input v-model="seedForm.name" type="text" class="rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 w-full" />
+            <input v-model="seedForm.name" type="text" class="rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500 w-full" />
           </div>
           <div>
             <label class="block text-sm font-medium text-slate-700 mb-1">Admin email (optional)</label>
-            <input v-model="seedForm.email" type="email" class="rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 w-full" />
+            <input v-model="seedForm.email" type="email" class="rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500 w-full" />
             <p v-if="seedForm.errors.email" class="mt-1 text-xs text-red-600">{{ seedForm.errors.email }}</p>
           </div>
           <div>
             <label class="block text-sm font-medium text-slate-700 mb-1">Admin password (min 12 chars)</label>
-            <input v-model="seedForm.password" type="password" class="rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 w-full" />
+            <input v-model="seedForm.password" type="password" class="rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500 w-full" />
             <p v-if="seedForm.errors.password" class="mt-1 text-xs text-red-600">{{ seedForm.errors.password }}</p>
           </div>
         </div>
         <div class="mt-5 flex justify-end gap-2">
           <button @click="seedTarget = null" class="px-4 py-2 rounded-lg text-sm text-slate-500 hover:bg-slate-100">Cancel</button>
           <button @click="submitSeed" :disabled="seedForm.processing"
-            class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg text-sm font-medium disabled:opacity-60">
+            class="bg-primary-600 hover:bg-primary-700 text-white px-4 py-2 rounded-lg text-sm font-medium disabled:opacity-60">
             {{ seedForm.processing ? 'Seeding…' : 'Run seeder' }}
           </button>
         </div>

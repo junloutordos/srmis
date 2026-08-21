@@ -17,16 +17,16 @@ function logout() {
 </script>
 
 <template>
-    <div class="min-h-screen bg-gradient-to-br from-indigo-50 via-white to-blue-50 flex flex-col">
+    <div class="min-h-screen bg-gradient-to-br from-primary-50 via-white to-blue-50 flex flex-col">
         <!-- Top nav -->
         <header class="bg-white border-b border-slate-200 shadow-sm">
             <div class="max-w-4xl mx-auto px-4 sm:px-6 h-14 flex items-center justify-between">
                 <div class="flex items-center gap-2.5">
-                    <div class="w-8 h-8 rounded-full bg-indigo-600 flex items-center justify-center shrink-0">
+                    <div class="w-8 h-8 rounded-full bg-primary-600 flex items-center justify-center shrink-0">
                         <AcademicCapIcon class="w-4 h-4 text-white" />
                     </div>
                     <div class="leading-none">
-                        <p class="text-xs font-semibold text-indigo-700 uppercase tracking-wide">PSHS-CRC</p>
+                        <p class="text-xs font-semibold text-primary-700 uppercase tracking-wide">PSHS-CRC</p>
                         <p class="text-xs text-slate-500">Student Portal</p>
                     </div>
                 </div>
@@ -34,19 +34,19 @@ function logout() {
                 <nav class="flex items-center gap-1 sm:gap-2">
                     <a
                         :href="route('student-portal.dashboard')"
-                        class="text-sm text-slate-600 hover:text-indigo-700 px-2 py-1.5 rounded-lg hover:bg-indigo-50 transition-colors"
+                        class="text-sm text-slate-600 hover:text-primary-700 px-2 py-1.5 rounded-lg hover:bg-primary-50 transition-colors"
                     >Dashboard</a>
                     <a
                         :href="route('student-portal.profile')"
-                        class="text-sm text-slate-600 hover:text-indigo-700 px-2 py-1.5 rounded-lg hover:bg-indigo-50 transition-colors hidden sm:inline"
+                        class="text-sm text-slate-600 hover:text-primary-700 px-2 py-1.5 rounded-lg hover:bg-primary-50 transition-colors hidden sm:inline"
                     >Profile</a>
                     <a
                         :href="route('student-portal.medical')"
-                        class="text-sm text-slate-600 hover:text-indigo-700 px-2 py-1.5 rounded-lg hover:bg-indigo-50 transition-colors hidden sm:inline"
+                        class="text-sm text-slate-600 hover:text-primary-700 px-2 py-1.5 rounded-lg hover:bg-primary-50 transition-colors hidden sm:inline"
                     >Medical</a>
                     <a
                         :href="route('student-portal.grades')"
-                        class="text-sm text-slate-600 hover:text-indigo-700 px-2 py-1.5 rounded-lg hover:bg-indigo-50 transition-colors hidden sm:inline"
+                        class="text-sm text-slate-600 hover:text-primary-700 px-2 py-1.5 rounded-lg hover:bg-primary-50 transition-colors hidden sm:inline"
                     >Grades</a>
                     <button
                         @click="logout"

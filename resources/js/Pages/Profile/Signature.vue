@@ -183,7 +183,7 @@ async function savePin() {
                 <div class="bg-slate-50 rounded-lg border border-slate-200 p-4 flex items-center justify-center min-h-[80px]">
                     <img :src="props.signatureUri" alt="Your signature" class="max-h-20 max-w-xs object-contain" />
                 </div>
-                <div v-if="!props.hasPin" class="mt-3 rounded-lg bg-indigo-50 border border-indigo-200 px-4 py-3 text-sm text-indigo-800">
+                <div v-if="!props.hasPin" class="mt-3 rounded-lg bg-primary-50 border border-primary-200 px-4 py-3 text-sm text-primary-800">
                     Your existing signature is loaded. <strong>Just set your 6-digit PIN below</strong> to activate digital signing — no need to re-upload your signature.
                 </div>
                 <div v-else class="mt-3 rounded-lg bg-emerald-50 border border-emerald-200 px-4 py-3 text-sm text-emerald-800">
@@ -202,7 +202,7 @@ async function savePin() {
                     <button @click="activeTab = 'draw'; clearCanvas()"
                             class="flex items-center gap-1.5 px-4 py-2 text-sm font-medium border-b-2 -mb-px transition-colors"
                             :class="activeTab === 'draw'
-                                ? 'border-indigo-600 text-indigo-600'
+                                ? 'border-primary-600 text-primary-600'
                                 : 'border-transparent text-slate-500 hover:text-slate-700'">
                         <PencilSquareIcon class="w-4 h-4" />
                         Draw
@@ -210,7 +210,7 @@ async function savePin() {
                     <button @click="activeTab = 'upload'"
                             class="flex items-center gap-1.5 px-4 py-2 text-sm font-medium border-b-2 -mb-px transition-colors"
                             :class="activeTab === 'upload'
-                                ? 'border-indigo-600 text-indigo-600'
+                                ? 'border-primary-600 text-primary-600'
                                 : 'border-transparent text-slate-500 hover:text-slate-700'">
                         <ArrowUpTrayIcon class="w-4 h-4" />
                         Upload
@@ -248,7 +248,7 @@ async function savePin() {
                 <div v-if="activeTab === 'upload'">
                     <p class="text-xs text-slate-500 mb-2">Upload a PNG image of your signature (transparent background recommended).</p>
                     <input ref="fileInputRef" type="file" accept="image/png,image/jpeg"
-                           class="block w-full text-sm text-slate-600 file:mr-3 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:text-sm file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100"
+                           class="block w-full text-sm text-slate-600 file:mr-3 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:text-sm file:bg-primary-50 file:text-primary-700 hover:file:bg-primary-100"
                            @change="onFileChange" />
                     <div v-if="uploadPreview" class="mt-3 border border-slate-200 rounded-lg bg-slate-50 p-4 flex items-center justify-center min-h-[80px]">
                         <img :src="uploadPreview" alt="Preview" class="max-h-20 max-w-xs object-contain" />
@@ -261,7 +261,7 @@ async function savePin() {
 
                 <div class="mt-4 flex justify-end">
                     <button @click="saveSignature" :disabled="saving"
-                            class="bg-indigo-600 hover:bg-indigo-700 disabled:opacity-60 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors">
+                            class="bg-primary-600 hover:bg-primary-700 disabled:opacity-60 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors">
                         {{ saving ? 'Saving…' : 'Save Signature' }}
                     </button>
                 </div>
@@ -287,7 +287,7 @@ async function savePin() {
                                inputmode="numeric"
                                pattern="\d*"
                                placeholder="6 digits"
-                               class="rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 w-full tracking-widest" />
+                               class="rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500 w-full tracking-widest" />
                     </div>
                     <div>
                         <label class="block text-xs font-medium text-slate-600 mb-1">Confirm PIN</label>
@@ -297,7 +297,7 @@ async function savePin() {
                                inputmode="numeric"
                                pattern="\d*"
                                placeholder="6 digits"
-                               class="rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 w-full tracking-widest" />
+                               class="rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500 w-full tracking-widest" />
                     </div>
                 </div>
                 <label class="flex items-center gap-2 mt-2 cursor-pointer select-none">
@@ -310,7 +310,7 @@ async function savePin() {
 
                 <div class="mt-4 flex justify-end">
                     <button @click="savePin" :disabled="savingPin"
-                            class="bg-indigo-600 hover:bg-indigo-700 disabled:opacity-60 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors">
+                            class="bg-primary-600 hover:bg-primary-700 disabled:opacity-60 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors">
                         {{ savingPin ? 'Saving…' : (props.hasPin ? 'Update PIN' : 'Set PIN') }}
                     </button>
                 </div>

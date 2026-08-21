@@ -247,7 +247,7 @@ onUnmounted(() => {
             <h2 class="text-sm font-semibold text-slate-800">
               Messages
               <span v-if="totalUnread > 0"
-                class="ml-1 inline-flex items-center justify-center rounded-full bg-indigo-600 px-1.5 py-0.5 text-[10px] font-bold text-white">
+                class="ml-1 inline-flex items-center justify-center rounded-full bg-primary-600 px-1.5 py-0.5 text-[10px] font-bold text-white">
                 {{ totalUnread > 99 ? '99+' : totalUnread }}
               </span>
             </h2>
@@ -255,7 +255,7 @@ onUnmounted(() => {
                   :class="['inline-block h-2 w-2 rounded-full transition-colors', echoConnected ? 'bg-emerald-400' : 'bg-amber-400 animate-pulse']" />
           </div>
           <button @click="showNewChat = true"
-                  class="flex items-center gap-1 rounded-lg bg-indigo-50 px-2.5 py-1.5 text-xs font-medium text-indigo-600 hover:bg-indigo-100 transition-colors">
+                  class="flex items-center gap-1 rounded-lg bg-primary-50 px-2.5 py-1.5 text-xs font-medium text-primary-600 hover:bg-primary-100 transition-colors">
             <span class="text-base leading-none">+</span> New
           </button>
         </div>
@@ -263,11 +263,11 @@ onUnmounted(() => {
         <!-- Tabs: Chats / Archived -->
         <div class="flex border-b border-slate-100">
           <button @click="switchTab(false)"
-                  :class="['flex-1 py-2 text-xs font-medium transition-colors', !showArchived ? 'text-indigo-600 border-b-2 border-indigo-500' : 'text-slate-400 hover:text-slate-600']">
+                  :class="['flex-1 py-2 text-xs font-medium transition-colors', !showArchived ? 'text-primary-600 border-b-2 border-primary-500' : 'text-slate-400 hover:text-slate-600']">
             Chats
           </button>
           <button @click="switchTab(true)"
-                  :class="['flex-1 py-2 text-xs font-medium transition-colors flex items-center justify-center gap-1', showArchived ? 'text-indigo-600 border-b-2 border-indigo-500' : 'text-slate-400 hover:text-slate-600']">
+                  :class="['flex-1 py-2 text-xs font-medium transition-colors flex items-center justify-center gap-1', showArchived ? 'text-primary-600 border-b-2 border-primary-500' : 'text-slate-400 hover:text-slate-600']">
             <ArchiveBoxIcon class="h-3.5 w-3.5" /> Archived
           </button>
         </div>
@@ -277,14 +277,14 @@ onUnmounted(() => {
           <div class="relative">
             <MagnifyingGlassIcon class="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-slate-400" />
             <input v-model="convSearch" type="text" placeholder="Search…"
-                   class="w-full rounded-lg border-0 bg-slate-50 pl-8 pr-3 py-1.5 text-xs text-slate-700 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500" />
+                   class="w-full rounded-lg border-0 bg-slate-50 pl-8 pr-3 py-1.5 text-xs text-slate-700 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-primary-500" />
           </div>
         </div>
 
         <!-- Conversation list -->
         <div class="flex-1 overflow-y-auto">
           <div v-if="loadingConversations" class="flex justify-center py-12">
-            <svg class="animate-spin h-5 w-5 text-indigo-400" fill="none" viewBox="0 0 24 24">
+            <svg class="animate-spin h-5 w-5 text-primary-400" fill="none" viewBox="0 0 24 24">
               <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/>
               <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/>
             </svg>
@@ -296,19 +296,19 @@ onUnmounted(() => {
 
           <div v-for="conv in filteredConversations" :key="conv.id"
                class="group relative flex items-center gap-3 px-4 py-3 text-left transition-colors hover:bg-slate-50 cursor-pointer active:bg-slate-100"
-               :class="activeConversation?.id === conv.id ? 'bg-indigo-50 border-l-2 border-indigo-500' : ''"
+               :class="activeConversation?.id === conv.id ? 'bg-primary-50 border-l-2 border-primary-500' : ''"
                @click="selectConversation(conv)">
 
             <!-- Avatar -->
             <div class="relative shrink-0">
               <img v-if="conv.avatar" :src="conv.avatar" class="h-10 w-10 rounded-full object-cover" />
               <div v-else class="flex h-10 w-10 items-center justify-center rounded-full font-bold text-sm"
-                   :class="conv.type === 'group' ? 'bg-violet-100 text-violet-600' : 'bg-indigo-100 text-indigo-600'">
+                   :class="conv.type === 'group' ? 'bg-violet-100 text-violet-600' : 'bg-primary-100 text-primary-600'">
                 <UserGroupIcon v-if="conv.type === 'group'" class="h-5 w-5" />
                 <span v-else>{{ initials(conv.name) }}</span>
               </div>
               <span v-if="conv.unread_count > 0"
-                    class="absolute -top-0.5 -right-0.5 flex h-4 w-4 items-center justify-center rounded-full bg-indigo-600 text-[9px] font-bold text-white ring-2 ring-white">
+                    class="absolute -top-0.5 -right-0.5 flex h-4 w-4 items-center justify-center rounded-full bg-primary-600 text-[9px] font-bold text-white ring-2 ring-white">
                 {{ conv.unread_count > 9 ? '9+' : conv.unread_count }}
               </span>
             </div>
@@ -335,7 +335,7 @@ onUnmounted(() => {
             <!-- Archive button (visible on hover) -->
             <button @click.stop="handleArchive(conv.id, $event)"
                     :title="showArchived ? 'Unarchive' : 'Archive'"
-                    class="shrink-0 opacity-0 group-hover:opacity-100 transition-opacity rounded-lg p-1 text-slate-400 hover:text-indigo-600 hover:bg-indigo-50">
+                    class="shrink-0 opacity-0 group-hover:opacity-100 transition-opacity rounded-lg p-1 text-slate-400 hover:text-primary-600 hover:bg-primary-50">
               <ArchiveBoxIcon class="h-4 w-4" />
             </button>
           </div>
@@ -365,7 +365,7 @@ onUnmounted(() => {
             <div class="relative shrink-0">
               <img v-if="activeConversation.avatar" :src="activeConversation.avatar" class="h-9 w-9 rounded-full object-cover" />
               <div v-else class="flex h-9 w-9 items-center justify-center rounded-full font-bold text-xs"
-                   :class="activeConversation.type === 'group' ? 'bg-violet-100 text-violet-600' : 'bg-indigo-100 text-indigo-600'">
+                   :class="activeConversation.type === 'group' ? 'bg-violet-100 text-violet-600' : 'bg-primary-100 text-primary-600'">
                 <UserGroupIcon v-if="activeConversation.type === 'group'" class="h-4 w-4" />
                 <span v-else>{{ initials(activeConversation.name) }}</span>
               </div>
@@ -393,7 +393,7 @@ onUnmounted(() => {
             </div>
 
             <div v-if="loadingMessages && !messages.length" class="flex justify-center py-12">
-              <svg class="animate-spin h-6 w-6 text-indigo-400" fill="none" viewBox="0 0 24 24">
+              <svg class="animate-spin h-6 w-6 text-primary-400" fill="none" viewBox="0 0 24 24">
                 <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/>
                 <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/>
               </svg>
@@ -443,9 +443,9 @@ onUnmounted(() => {
                         : msg._failed
                         ? 'bg-red-50 text-red-600 ring-1 ring-red-200'
                         : msg._pending
-                        ? 'opacity-60 ' + (msg.sender_id === authUser.id ? 'bg-indigo-400 text-white' : 'bg-slate-100 text-slate-800')
+                        ? 'opacity-60 ' + (msg.sender_id === authUser.id ? 'bg-primary-400 text-white' : 'bg-slate-100 text-slate-800')
                         : msg.sender_id === authUser.id
-                        ? 'bg-indigo-600 text-white rounded-br-sm'
+                        ? 'bg-primary-600 text-white rounded-br-sm'
                         : 'bg-slate-100 text-slate-800 rounded-bl-sm',
                     ]">
                       <span v-if="msg.is_deleted">Message deleted</span>
@@ -456,7 +456,7 @@ onUnmounted(() => {
                                class="max-w-[200px] rounded-xl object-cover"
                                loading="lazy" />
                           <a v-else :href="msg.attachment_path" target="_blank"
-                             :class="['flex items-center gap-1.5 text-xs underline underline-offset-2', msg.sender_id === authUser.id ? 'text-indigo-100' : 'text-indigo-600']">
+                             :class="['flex items-center gap-1.5 text-xs underline underline-offset-2', msg.sender_id === authUser.id ? 'text-primary-100' : 'text-primary-600']">
                             <PaperClipIcon class="h-3.5 w-3.5" /> Attachment
                           </a>
                         </div>
@@ -480,7 +480,7 @@ onUnmounted(() => {
                     <!-- DM status ticks -->
                     <template v-if="msg.sender_id === authUser.id && activeConversation.type === 'direct' && !msg.is_deleted">
                       <!-- Double blue: seen -->
-                      <span v-if="msgStatus(msg) === 'seen'" class="flex text-indigo-500" title="Seen">
+                      <span v-if="msgStatus(msg) === 'seen'" class="flex text-primary-500" title="Seen">
                         <CheckIcon class="h-3 w-3 -mr-1.5" />
                         <CheckIcon class="h-3 w-3" />
                       </span>
@@ -493,7 +493,7 @@ onUnmounted(() => {
                     <!-- Group: seen by count -->
                     <span v-if="msg.sender_id === authUser.id && activeConversation.type === 'group' && !msg.is_deleted && !msg._pending && msg.seen_by_count > 0"
                           class="text-[10px] text-slate-400 flex items-center gap-0.5">
-                      <CheckIcon class="h-3 w-3 text-indigo-400" />
+                      <CheckIcon class="h-3 w-3 text-primary-400" />
                       {{ msg.seen_by_count }}
                     </span>
                   </div>
@@ -528,11 +528,11 @@ onUnmounted(() => {
 
               <textarea v-model="messageInput" @keydown="handleKeydown"
                         placeholder="Type a message…" rows="1"
-                        class="flex-1 resize-none rounded-xl border border-slate-200 bg-slate-50 px-3.5 py-2.5 text-sm text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:bg-white transition-colors max-h-32 overflow-y-auto"
+                        class="flex-1 resize-none rounded-xl border border-slate-200 bg-slate-50 px-3.5 py-2.5 text-sm text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:bg-white transition-colors max-h-32 overflow-y-auto"
                         style="field-sizing: content" />
 
               <button type="button" @click="sendMessage" :disabled="!canSend"
-                      :class="['shrink-0 flex items-center justify-center h-10 w-10 rounded-xl transition-all', canSend ? 'bg-indigo-600 hover:bg-indigo-700 text-white shadow-sm active:scale-95' : 'bg-slate-100 text-slate-300 cursor-not-allowed']">
+                      :class="['shrink-0 flex items-center justify-center h-10 w-10 rounded-xl transition-all', canSend ? 'bg-primary-600 hover:bg-primary-700 text-white shadow-sm active:scale-95' : 'bg-slate-100 text-slate-300 cursor-not-allowed']">
                 <PaperAirplaneIcon class="h-4 w-4" />
               </button>
             </div>
@@ -582,11 +582,11 @@ onUnmounted(() => {
             <!-- DM / Group tabs -->
             <div class="flex border-b border-slate-100 shrink-0">
               <button @click="newChatMode = 'dm'"
-                      :class="['flex-1 py-2.5 text-xs font-medium transition-colors', newChatMode === 'dm' ? 'text-indigo-600 border-b-2 border-indigo-500' : 'text-slate-400 hover:text-slate-600']">
+                      :class="['flex-1 py-2.5 text-xs font-medium transition-colors', newChatMode === 'dm' ? 'text-primary-600 border-b-2 border-primary-500' : 'text-slate-400 hover:text-slate-600']">
                 Direct Message
               </button>
               <button @click="newChatMode = 'group'"
-                      :class="['flex-1 py-2.5 text-xs font-medium flex items-center justify-center gap-1.5 transition-colors', newChatMode === 'group' ? 'text-indigo-600 border-b-2 border-indigo-500' : 'text-slate-400 hover:text-slate-600']">
+                      :class="['flex-1 py-2.5 text-xs font-medium flex items-center justify-center gap-1.5 transition-colors', newChatMode === 'group' ? 'text-primary-600 border-b-2 border-primary-500' : 'text-slate-400 hover:text-slate-600']">
                 <UserGroupIcon class="h-3.5 w-3.5" /> Group Chat
               </button>
             </div>
@@ -594,7 +594,7 @@ onUnmounted(() => {
             <!-- Group name (group mode only) -->
             <div v-if="newChatMode === 'group'" class="px-4 pt-3 pb-0 shrink-0">
               <input v-model="groupName" type="text" placeholder="Group name (required)"
-                     class="w-full rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:bg-white" />
+                     class="w-full rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500 focus:bg-white" />
               <p v-if="selectedGroupUsers.length > 0" class="mt-1.5 text-xs text-slate-500">
                 {{ selectedGroupUsers.length }} selected: {{ selectedGroupUsers.map(u => u.name.split(' ')[0]).join(', ') }}
               </p>
@@ -609,14 +609,14 @@ onUnmounted(() => {
                        @input="searchUsers($event.target.value)"
                        type="text"
                        placeholder="Search people…"
-                       class="w-full rounded-xl border border-slate-200 bg-slate-50 pl-9 pr-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:bg-white" />
+                       class="w-full rounded-xl border border-slate-200 bg-slate-50 pl-9 pr-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500 focus:bg-white" />
               </div>
             </div>
 
             <!-- User list -->
             <div class="flex-1 overflow-y-auto">
               <div v-if="searchingUsers" class="flex justify-center py-10">
-                <svg class="animate-spin h-5 w-5 text-indigo-400" fill="none" viewBox="0 0 24 24">
+                <svg class="animate-spin h-5 w-5 text-primary-400" fill="none" viewBox="0 0 24 24">
                   <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/>
                   <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/>
                 </svg>
@@ -625,15 +625,15 @@ onUnmounted(() => {
               <ul v-else-if="userSearchResults.length" class="divide-y divide-slate-50 py-1">
                 <li v-for="u in userSearchResults" :key="u.id">
                   <button @click="newChatMode === 'dm' ? (async () => { showNewChat = false; showSidebar = false; await startDM(u.id) })() : toggleGroupUser(u)"
-                          :class="['flex items-center gap-3 w-full px-4 py-3 text-left transition-colors', isGroupSelected(u.id) ? 'bg-indigo-50' : 'hover:bg-indigo-50']">
+                          :class="['flex items-center gap-3 w-full px-4 py-3 text-left transition-colors', isGroupSelected(u.id) ? 'bg-primary-50' : 'hover:bg-primary-50']">
                     <div class="relative shrink-0">
                       <img v-if="u.avatar" :src="u.avatar" class="h-10 w-10 rounded-full object-cover" />
-                      <div v-else class="flex h-10 w-10 items-center justify-center rounded-full bg-indigo-100 text-indigo-600 font-bold text-sm">
+                      <div v-else class="flex h-10 w-10 items-center justify-center rounded-full bg-primary-100 text-primary-600 font-bold text-sm">
                         {{ initials(u.name) }}
                       </div>
                       <!-- Checkmark for group selection -->
                       <div v-if="newChatMode === 'group' && isGroupSelected(u.id)"
-                           class="absolute inset-0 flex items-center justify-center rounded-full bg-indigo-600/80">
+                           class="absolute inset-0 flex items-center justify-center rounded-full bg-primary-600/80">
                         <CheckOutline class="h-5 w-5 text-white" />
                       </div>
                     </div>
@@ -641,7 +641,7 @@ onUnmounted(() => {
                       <p class="text-sm font-medium text-slate-800 truncate">{{ u.name }}</p>
                       <p class="text-xs text-slate-400 truncate">{{ u.position ?? 'Staff' }}</p>
                     </div>
-                    <span v-if="newChatMode === 'dm'" class="shrink-0 text-indigo-400 text-xs font-medium opacity-0 group-hover:opacity-100">Message →</span>
+                    <span v-if="newChatMode === 'dm'" class="shrink-0 text-primary-400 text-xs font-medium opacity-0 group-hover:opacity-100">Message →</span>
                   </button>
                 </li>
               </ul>
@@ -656,7 +656,7 @@ onUnmounted(() => {
             <div v-if="newChatMode === 'group'" class="px-5 py-3 border-t border-slate-100 shrink-0">
               <button @click="createGroup"
                       :disabled="!groupName.trim() || selectedGroupUsers.length < 1"
-                      class="w-full rounded-xl bg-indigo-600 hover:bg-indigo-700 disabled:opacity-40 text-white py-2.5 text-sm font-medium transition-colors">
+                      class="w-full rounded-xl bg-primary-600 hover:bg-primary-700 disabled:opacity-40 text-white py-2.5 text-sm font-medium transition-colors">
                 Create Group ({{ selectedGroupUsers.length }} selected)
               </button>
             </div>

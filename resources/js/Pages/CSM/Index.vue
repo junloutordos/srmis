@@ -85,16 +85,16 @@ const moduleOptions = Object.entries(props.moduleLabels).map(([value, label]) =>
         <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
           <input v-model="search" type="text" placeholder="Search…"
             @keydown.enter="applyFilters"
-            class="rounded-lg border border-slate-200 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-400 col-span-2 sm:col-span-1" />
+            class="rounded-lg border border-slate-200 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary-400 col-span-2 sm:col-span-1" />
 
           <select v-model="module" @change="applyFilters"
-            class="rounded-lg border border-slate-200 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-400">
+            class="rounded-lg border border-slate-200 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary-400">
             <option value="">All Modules</option>
             <option v-for="opt in moduleOptions" :key="opt.value" :value="opt.value">{{ opt.label }}</option>
           </select>
 
           <select v-model="clientType" @change="applyFilters"
-            class="rounded-lg border border-slate-200 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-400">
+            class="rounded-lg border border-slate-200 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary-400">
             <option value="">All Client Types</option>
             <option value="citizen">Citizen</option>
             <option value="business">Business</option>
@@ -102,13 +102,13 @@ const moduleOptions = Object.entries(props.moduleLabels).map(([value, label]) =>
           </select>
 
           <input v-model="month" type="month" @change="applyFilters"
-            class="rounded-lg border border-slate-200 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-400" />
+            class="rounded-lg border border-slate-200 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary-400" />
 
           <input v-model="dateFrom" type="date" placeholder="From" @change="applyFilters"
-            class="rounded-lg border border-slate-200 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-400" />
+            class="rounded-lg border border-slate-200 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary-400" />
 
           <input v-model="dateTo" type="date" placeholder="To" @change="applyFilters"
-            class="rounded-lg border border-slate-200 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-400" />
+            class="rounded-lg border border-slate-200 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary-400" />
         </div>
       </div>
 
@@ -134,7 +134,7 @@ const moduleOptions = Object.entries(props.moduleLabels).map(([value, label]) =>
             <tr v-for="r in responses.data" :key="r.id" class="hover:bg-slate-50/60">
               <td class="px-4 py-2.5 text-slate-600 whitespace-nowrap text-xs">{{ fmtDate(r.created_at) }}</td>
               <td class="px-4 py-2.5">
-                <span class="inline-flex items-center px-2 py-0.5 rounded-full bg-indigo-50 text-indigo-700 text-[11px] font-medium whitespace-nowrap">
+                <span class="inline-flex items-center px-2 py-0.5 rounded-full bg-primary-50 text-primary-700 text-[11px] font-medium whitespace-nowrap">
                   {{ r.module_label }}
                 </span>
               </td>
@@ -152,7 +152,7 @@ const moduleOptions = Object.entries(props.moduleLabels).map(([value, label]) =>
               </td>
               <td class="px-4 py-2.5">
                 <a :href="route('csm.show', r.id)"
-                  class="inline-flex items-center gap-1 text-indigo-600 hover:text-indigo-700 text-xs font-medium">
+                  class="inline-flex items-center gap-1 text-primary-600 hover:text-primary-700 text-xs font-medium">
                   <EyeIcon class="h-3.5 w-3.5" /> View
                 </a>
               </td>

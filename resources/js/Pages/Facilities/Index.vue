@@ -105,7 +105,7 @@ const destroy = (f) => {
           <p class="text-sm text-slate-500 mt-0.5">Manage venues and facilities</p>
         </div>
         <button v-if="page.props.auth?.user?.role?.name === 'Administrator'" @click.prevent="openCreate"
-                class="inline-flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors shadow-sm">
+                class="inline-flex items-center gap-2 bg-primary-600 hover:bg-primary-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors shadow-sm">
           + New Facility
         </button>
       </div>
@@ -118,7 +118,7 @@ const destroy = (f) => {
             v-model="searchQuery"
             type="text"
             placeholder="Search facilities…"
-            class="w-full sm:w-72 rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-400"
+            class="w-full sm:w-72 rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-400"
           />
         </div>
 
@@ -177,7 +177,7 @@ const destroy = (f) => {
               </div>
               <div class="flex flex-col items-end gap-2">
                 <button v-if="page.props.auth?.user?.role?.name === 'Administrator'" @click.prevent="openEdit(f)"
-                        class="inline-flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white px-3 py-1.5 rounded-lg text-xs font-medium transition-colors">Edit</button>
+                        class="inline-flex items-center gap-2 bg-primary-600 hover:bg-primary-700 text-white px-3 py-1.5 rounded-lg text-xs font-medium transition-colors">Edit</button>
                 <button v-if="page.props.auth?.user?.role?.name === 'Administrator'" @click.prevent="destroy(f)"
                         class="inline-flex items-center gap-2 bg-red-600 hover:bg-red-700 text-white px-3 py-1.5 rounded-lg text-xs font-medium transition-colors">Delete</button>
               </div>
@@ -211,12 +211,12 @@ const destroy = (f) => {
         <div class="px-6 py-5 space-y-4">
           <div>
             <label class="block text-xs font-medium text-slate-600 mb-1">Name</label>
-            <input v-model="form.name" class="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-400" />
+            <input v-model="form.name" class="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-400" />
             <p v-if="form.errors.name" class="text-red-600 text-xs mt-1">{{ form.errors.name }}</p>
           </div>
           <div>
             <label class="block text-xs font-medium text-slate-600 mb-1">Location</label>
-            <select v-model="form.location" class="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-400">
+            <select v-model="form.location" class="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-400">
               <option value="">Select building</option>
               <option v-for="b in props.buildings" :key="b.id" :value="b.name">{{ b.name }}</option>
             </select>
@@ -224,18 +224,18 @@ const destroy = (f) => {
           </div>
           <div>
             <label class="block text-xs font-medium text-slate-600 mb-1">Capacity</label>
-            <input type="number" min="0" v-model.number="form.capacity" class="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-400" />
+            <input type="number" min="0" v-model.number="form.capacity" class="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-400" />
             <p v-if="form.errors.capacity" class="text-red-600 text-xs mt-1">{{ form.errors.capacity }}</p>
           </div>
           <div>
             <label class="block text-xs font-medium text-slate-600 mb-1">Description</label>
-            <input v-model="form.description" class="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-400" />
+            <input v-model="form.description" class="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-400" />
             <p v-if="form.errors.description" class="text-red-600 text-xs mt-1">{{ form.errors.description }}</p>
           </div>
         </div>
         <div class="px-6 py-4 border-t border-slate-100 flex justify-end gap-2">
           <button @click.prevent="showForm = false" class="inline-flex items-center gap-2 bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 px-4 py-2 rounded-lg text-sm font-medium transition-colors shadow-sm">Cancel</button>
-          <button @click.prevent="submit" :disabled="form.processing" class="inline-flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors shadow-sm disabled:opacity-60">Save</button>
+          <button @click.prevent="submit" :disabled="form.processing" class="inline-flex items-center gap-2 bg-primary-600 hover:bg-primary-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors shadow-sm disabled:opacity-60">Save</button>
         </div>
       </div>
     </div>

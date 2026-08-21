@@ -98,12 +98,12 @@ function skipStep() {
 <template>
   <Head title="STRIDE Setup" />
 
-  <div class="min-h-screen bg-gradient-to-br from-indigo-950 via-indigo-900 to-blue-800 px-4 py-10">
+  <div class="min-h-screen bg-gradient-to-br from-primary-950 via-primary-900 to-blue-800 px-4 py-10">
     <div class="mx-auto max-w-3xl">
       <div class="text-center mb-8">
         <img src="/images/pshslogo.png" alt="PSHS Logo" class="mx-auto h-14 w-14 object-contain" />
         <h1 class="mt-3 text-2xl font-bold text-white">STRIDE First-Run Setup</h1>
-        <p class="text-sm text-indigo-200">Configure this instance for the OED and the 16 PSHS campuses.</p>
+        <p class="text-sm text-primary-200">Configure this instance for the OED and the 16 PSHS campuses.</p>
       </div>
 
       <!-- Step indicator -->
@@ -112,10 +112,10 @@ function skipStep() {
           <span
             :class="[
               'flex h-7 w-7 items-center justify-center rounded-full text-xs font-bold',
-              i < current ? 'bg-emerald-500 text-white' : i === current ? 'bg-white text-indigo-900' : 'bg-white/20 text-white/70',
+              i < current ? 'bg-emerald-500 text-white' : i === current ? 'bg-white text-primary-900' : 'bg-white/20 text-white/70',
             ]"
           >{{ i + 1 }}</span>
-          <span :class="['text-xs', i === current ? 'text-white font-semibold' : 'text-indigo-200/70']">{{ s.label }}</span>
+          <span :class="['text-xs', i === current ? 'text-white font-semibold' : 'text-primary-200/70']">{{ s.label }}</span>
         </li>
       </ol>
 
@@ -164,7 +164,7 @@ function skipStep() {
           </p>
           <label class="block text-sm font-medium text-slate-700 mt-4 mb-1">Domain</label>
           <input v-model="domain" type="text" placeholder="stride.pshs.edu.ph"
-            class="rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 w-full" />
+            class="rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500 w-full" />
         </div>
 
         <!-- Step 3: S3 -->
@@ -177,19 +177,19 @@ function skipStep() {
           <div class="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-2">
             <div>
               <label class="block text-sm font-medium text-slate-700 mb-1">Access key ID</label>
-              <input v-model="storage.key" type="text" class="rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 w-full" />
+              <input v-model="storage.key" type="text" class="rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500 w-full" />
             </div>
             <div>
               <label class="block text-sm font-medium text-slate-700 mb-1">Secret access key</label>
-              <input v-model="storage.secret" type="password" class="rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 w-full" />
+              <input v-model="storage.secret" type="password" class="rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500 w-full" />
             </div>
             <div>
               <label class="block text-sm font-medium text-slate-700 mb-1">Region</label>
-              <input v-model="storage.region" type="text" class="rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 w-full" />
+              <input v-model="storage.region" type="text" class="rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500 w-full" />
             </div>
             <div>
               <label class="block text-sm font-medium text-slate-700 mb-1">Bucket</label>
-              <input v-model="storage.bucket" type="text" placeholder="stride-storage" class="rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 w-full" />
+              <input v-model="storage.bucket" type="text" placeholder="stride-storage" class="rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500 w-full" />
             </div>
           </div>
         </div>
@@ -204,27 +204,27 @@ function skipStep() {
           <div class="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-2">
             <div>
               <label class="block text-sm font-medium text-slate-700 mb-1">App ID</label>
-              <input v-model="sockets.app_id" type="text" class="rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 w-full" />
+              <input v-model="sockets.app_id" type="text" class="rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500 w-full" />
             </div>
             <div>
               <label class="block text-sm font-medium text-slate-700 mb-1">App key</label>
-              <input v-model="sockets.app_key" type="text" class="rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 w-full" />
+              <input v-model="sockets.app_key" type="text" class="rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500 w-full" />
             </div>
             <div>
               <label class="block text-sm font-medium text-slate-700 mb-1">App secret</label>
-              <input v-model="sockets.app_secret" type="password" class="rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 w-full" />
+              <input v-model="sockets.app_secret" type="password" class="rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500 w-full" />
             </div>
             <div>
               <label class="block text-sm font-medium text-slate-700 mb-1">Host</label>
-              <input v-model="sockets.host" type="text" placeholder="soketi.stride.pshs.edu.ph" class="rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 w-full" />
+              <input v-model="sockets.host" type="text" placeholder="soketi.stride.pshs.edu.ph" class="rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500 w-full" />
             </div>
             <div>
               <label class="block text-sm font-medium text-slate-700 mb-1">Port</label>
-              <input v-model.number="sockets.port" type="number" class="rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 w-full" />
+              <input v-model.number="sockets.port" type="number" class="rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500 w-full" />
             </div>
             <div>
               <label class="block text-sm font-medium text-slate-700 mb-1">Scheme</label>
-              <select v-model="sockets.scheme" class="rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 w-full">
+              <select v-model="sockets.scheme" class="rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500 w-full">
                 <option value="https">https</option>
                 <option value="http">http</option>
               </select>
@@ -242,20 +242,20 @@ function skipStep() {
           <div class="mt-4 space-y-3">
             <div>
               <label class="block text-sm font-medium text-slate-700 mb-1">Full name</label>
-              <input v-model="superadmin.name" type="text" class="rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 w-full" />
+              <input v-model="superadmin.name" type="text" class="rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500 w-full" />
             </div>
             <div>
               <label class="block text-sm font-medium text-slate-700 mb-1">Email</label>
-              <input v-model="superadmin.email" type="email" class="rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 w-full" />
+              <input v-model="superadmin.email" type="email" class="rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500 w-full" />
             </div>
             <div class="grid grid-cols-1 gap-3 sm:grid-cols-2">
               <div>
                 <label class="block text-sm font-medium text-slate-700 mb-1">Password (min 12 chars)</label>
-                <input v-model="superadmin.password" type="password" class="rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 w-full" />
+                <input v-model="superadmin.password" type="password" class="rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500 w-full" />
               </div>
               <div>
                 <label class="block text-sm font-medium text-slate-700 mb-1">Confirm password</label>
-                <input v-model="superadmin.password_confirmation" type="password" class="rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 w-full" />
+                <input v-model="superadmin.password_confirmation" type="password" class="rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500 w-full" />
               </div>
             </div>
           </div>
@@ -274,7 +274,7 @@ function skipStep() {
           <div class="mt-4 max-h-96 overflow-y-auto rounded-lg border border-slate-200 divide-y divide-slate-100">
             <div v-for="t in tenantRows" :key="t.slug" class="px-4 py-3">
               <label class="flex items-center gap-3">
-                <input v-model="t.selected" type="checkbox" class="rounded border-slate-300 text-indigo-600 focus:ring-indigo-500" />
+                <input v-model="t.selected" type="checkbox" class="rounded border-slate-300 text-primary-600 focus:ring-primary-500" />
                 <span class="flex-1">
                   <span class="block text-sm font-medium text-slate-800">{{ t.name }}</span>
                   <span class="block text-xs text-slate-400 font-mono">{{ t.code }} · @{{ t.slug === 'oed' ? 'pshssystem.edu.ph' : t.slug + '.pshs.edu.ph' }} · srmis_{{ t.slug }}</span>
@@ -282,7 +282,7 @@ function skipStep() {
               </label>
               <div v-if="t.selected" class="mt-2 ml-7 flex flex-wrap gap-x-4 gap-y-1">
                 <label v-for="(label, key) in modules" :key="key" class="flex items-center gap-1.5 text-xs text-slate-600">
-                  <input v-model="t.modules[key]" type="checkbox" class="rounded border-slate-300 text-indigo-600 focus:ring-indigo-500 h-3.5 w-3.5" />
+                  <input v-model="t.modules[key]" type="checkbox" class="rounded border-slate-300 text-primary-600 focus:ring-primary-500 h-3.5 w-3.5" />
                   {{ key }}
                 </label>
               </div>
@@ -311,7 +311,7 @@ function skipStep() {
             <button
               @click="runStep"
               :disabled="busy"
-              class="bg-indigo-600 hover:bg-indigo-700 text-white px-5 py-2 rounded-lg text-sm font-medium disabled:opacity-60"
+              class="bg-primary-600 hover:bg-primary-700 text-white px-5 py-2 rounded-lg text-sm font-medium disabled:opacity-60"
             >
               {{ busy ? 'Working…' : steps[current].key === 'tenants' ? `Provision ${selectedCount} campus(es) & finish` : steps[current].key === 'database' ? 'Check & migrate' : 'Save & continue' }}
             </button>

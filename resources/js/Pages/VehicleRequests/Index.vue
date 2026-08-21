@@ -138,7 +138,7 @@ async function handleNewRequest() {
         <h1 class="text-xl font-semibold text-slate-800">Vehicle Requests</h1>
         <div class="flex items-center gap-2">
           <button v-if="!hasRole('GSU Head')" @click.prevent="handleNewRequest()"
-                  class="inline-flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors shadow-sm">
+                  class="inline-flex items-center gap-2 bg-primary-600 hover:bg-primary-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors shadow-sm">
             + New Request
           </button>
           <button @click.prevent="openCalendar()"
@@ -151,7 +151,7 @@ async function handleNewRequest() {
       <!-- Filter bar -->
       <div class="bg-white rounded-xl border border-slate-100 shadow-sm p-4 mb-4 flex flex-wrap items-center gap-3">
         <input v-model="searchQuery" type="text" placeholder="Search vehicle requests..."
-               class="rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-400 w-full sm:w-64" />
+               class="rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-400 w-full sm:w-64" />
       </div>
 
       <!-- Table card -->
@@ -195,7 +195,7 @@ async function handleNewRequest() {
                   <div class="flex items-center gap-1 justify-center">
                     <button v-if="roleName === 'Administrator' && req.status !== 'Approved' && req.status !== 'Declined' && req.status !== 'OCD Approved'" @click.prevent="openModal(req)" class="p-1.5 rounded-lg hover:bg-slate-100 text-slate-500 hover:text-slate-700 transition-colors" title="Edit"><PencilSquareIcon class="w-4 h-4" /></button>
                     <button v-if="roleName === 'Administrator' && req.status !== 'Approved' && req.status !== 'Declined' && req.status !== 'OCD Approved'" @click.prevent="destroy(req)" class="p-1.5 rounded-lg hover:bg-slate-100 text-slate-500 hover:text-red-600 transition-colors" title="Delete"><TrashIcon class="w-4 h-4" /></button>
-                    <button v-if="hasAnyRole('Administrator','GSU Head') && req.status === 'Approved' && !req.driver" @click.prevent="openAssignDriverModal(req)" class="p-1.5 rounded-lg hover:bg-slate-100 text-slate-500 hover:text-indigo-600 transition-colors" title="Assign Driver"><UserIcon class="w-4 h-4" /></button>
+                    <button v-if="hasAnyRole('Administrator','GSU Head') && req.status === 'Approved' && !req.driver" @click.prevent="openAssignDriverModal(req)" class="p-1.5 rounded-lg hover:bg-slate-100 text-slate-500 hover:text-primary-600 transition-colors" title="Assign Driver"><UserIcon class="w-4 h-4" /></button>
                     <button v-if="hasAnyRole('Administrator','GSU Head') && (req.status === 'OCD Approved' || req.status === 'Completed')" @click.prevent="openPrint(req)" class="p-1.5 rounded-lg hover:bg-slate-100 text-slate-500 hover:text-slate-700 transition-colors" title="Print"><PrinterIcon class="w-4 h-4" /></button>
                     <button v-if="req.status === 'OCD Approved' && req.requestor_id === page.props.auth.user.id" @click.prevent="openCsmModal(req)" class="inline-flex items-center gap-1.5 bg-emerald-600 hover:bg-emerald-700 text-white px-3 py-1 rounded-lg text-xs font-medium transition-colors shadow-sm">Confirm &amp; Rate</button>
                   </div>
@@ -238,7 +238,7 @@ async function handleNewRequest() {
               <div class="mt-1"><strong>Status:</strong> {{ req.status }}</div>
             </div>
             <div class="mt-3 flex items-center gap-2">
-              <button v-if="roleName === 'Administrator' && req.status !== 'Approved' && req.status !== 'Declined' && req.status !== 'OCD Approved'" @click.prevent="openModal(req)" class="flex-1 inline-flex items-center justify-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white px-3 py-2 rounded-lg text-sm font-medium transition-colors shadow-sm"><PencilSquareIcon class="w-4 h-4" /> Edit</button>
+              <button v-if="roleName === 'Administrator' && req.status !== 'Approved' && req.status !== 'Declined' && req.status !== 'OCD Approved'" @click.prevent="openModal(req)" class="flex-1 inline-flex items-center justify-center gap-2 bg-primary-600 hover:bg-primary-700 text-white px-3 py-2 rounded-lg text-sm font-medium transition-colors shadow-sm"><PencilSquareIcon class="w-4 h-4" /> Edit</button>
               <button v-if="roleName === 'Administrator' && req.status !== 'Approved' && req.status !== 'Declined' && req.status !== 'OCD Approved'" @click.prevent="destroy(req)" class="inline-flex items-center gap-2 bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 px-3 py-2 rounded-lg text-sm font-medium transition-colors shadow-sm"><TrashIcon class="w-4 h-4" /></button>
               <button v-if="hasAnyRole('Administrator','GSU Head') && req.status === 'Approved' && !req.driver" @click.prevent="openAssignDriverModal(req)" class="inline-flex items-center gap-2 bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 px-3 py-2 rounded-lg text-sm font-medium transition-colors shadow-sm"><UserIcon class="w-4 h-4" /> Assign</button>
               <button v-if="hasAnyRole('Administrator','GSU Head') && (req.status === 'OCD Approved' || req.status === 'Completed')" @click.prevent="openPrint(req)" class="inline-flex items-center gap-2 bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 px-3 py-2 rounded-lg text-sm font-medium transition-colors shadow-sm"><PrinterIcon class="w-4 h-4" /> Print</button>
@@ -263,9 +263,9 @@ async function handleNewRequest() {
               type="month"
               :value="calendarMonthInput"
               @change="jumpToMonth($event.target.value)"
-              class="rounded-lg border border-slate-200 px-2 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-400"
+              class="rounded-lg border border-slate-200 px-2 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary-400"
             />
-            <button @click.prevent="fetchBookings" class="inline-flex items-center gap-1.5 bg-indigo-600 hover:bg-indigo-700 text-white px-3 py-1.5 rounded-lg text-sm font-medium transition-colors shadow-sm">
+            <button @click.prevent="fetchBookings" class="inline-flex items-center gap-1.5 bg-primary-600 hover:bg-primary-700 text-white px-3 py-1.5 rounded-lg text-sm font-medium transition-colors shadow-sm">
               <svg class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0 3.181 3.183a8.25 8.25 0 0 0 13.803-3.7M4.031 9.865a8.25 8.25 0 0 1 13.803-3.7l3.181 3.182m0-4.991v4.99" /></svg>
               Refresh
             </button>
@@ -309,14 +309,14 @@ async function handleNewRequest() {
           <div v-else class="space-y-4">
             <div>
               <label class="block text-xs font-medium text-slate-600 mb-1">Vehicle (change if needed)</label>
-              <select v-model="selectedVehicleId" class="rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-400 w-full">
+              <select v-model="selectedVehicleId" class="rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-400 w-full">
                 <option value="">Keep requested vehicle</option>
                 <option v-for="v in props.vehicles" :key="v.id" :value="v.id">{{ v.name }}</option>
               </select>
             </div>
             <div>
               <label class="block text-xs font-medium text-slate-600 mb-1">Driver</label>
-              <select v-model="selectedDriverId" class="rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-400 w-full">
+              <select v-model="selectedDriverId" class="rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-400 w-full">
                 <option value="">Select driver</option>
                 <option v-for="d in drivers" :key="d.id" :value="d.id">{{ d.name }}{{ d.position ? ' — ' + d.position : '' }}</option>
               </select>
@@ -325,7 +325,7 @@ async function handleNewRequest() {
         </div>
         <div class="px-6 py-4 border-t border-slate-100 flex justify-end gap-2">
           <button @click.prevent="closeAssignDriverModal" class="inline-flex items-center gap-2 bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 px-4 py-2 rounded-lg text-sm font-medium transition-colors shadow-sm">Cancel</button>
-          <button @click.prevent="assignDriver" :disabled="assignLoading || !selectedDriverId" class="inline-flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors shadow-sm disabled:opacity-50">Assign</button>
+          <button @click.prevent="assignDriver" :disabled="assignLoading || !selectedDriverId" class="inline-flex items-center gap-2 bg-primary-600 hover:bg-primary-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors shadow-sm disabled:opacity-50">Assign</button>
         </div>
       </div>
     </div>
@@ -342,7 +342,7 @@ async function handleNewRequest() {
           <div>
             <label class="block text-xs font-medium text-slate-600 mb-1">Purpose <span class="text-red-500">*</span></label>
             <input v-model="form.purpose" @input="() => validateField('purpose')" type="text"
-                   :class="['rounded-lg border bg-white px-3 py-2 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-400 w-full', fieldErrors.purpose ? 'border-red-400' : 'border-slate-200']" />
+                   :class="['rounded-lg border bg-white px-3 py-2 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-400 w-full', fieldErrors.purpose ? 'border-red-400' : 'border-slate-200']" />
             <p v-if="fieldErrors.purpose" class="text-red-500 text-xs mt-1">{{ fieldErrors.purpose }}</p>
             <p v-else-if="form.errors.purpose" class="text-red-500 text-xs mt-1">{{ form.errors.purpose }}</p>
           </div>
@@ -350,7 +350,7 @@ async function handleNewRequest() {
           <div>
             <label class="block text-xs font-medium text-slate-600 mb-1">Destination <span class="text-red-500">*</span></label>
             <input v-model="form.destination" @input="() => validateField('destination')" type="text"
-                   :class="['rounded-lg border bg-white px-3 py-2 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-400 w-full', fieldErrors.destination ? 'border-red-400' : 'border-slate-200']" />
+                   :class="['rounded-lg border bg-white px-3 py-2 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-400 w-full', fieldErrors.destination ? 'border-red-400' : 'border-slate-200']" />
             <p v-if="fieldErrors.destination" class="text-red-500 text-xs mt-1">{{ fieldErrors.destination }}</p>
             <p v-else-if="form.errors.destination" class="text-red-500 text-xs mt-1">{{ form.errors.destination }}</p>
           </div>
@@ -359,13 +359,13 @@ async function handleNewRequest() {
             <div>
               <label class="block text-xs font-medium text-slate-600 mb-1">Time of Departure <span class="text-red-500">*</span></label>
               <input v-model="form.time_of_departure" @input="() => validateField('time_of_departure')" type="time"
-                     :class="['rounded-lg border bg-white px-3 py-2 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-400 w-full', fieldErrors.time_of_departure ? 'border-red-400' : 'border-slate-200']" />
+                     :class="['rounded-lg border bg-white px-3 py-2 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-400 w-full', fieldErrors.time_of_departure ? 'border-red-400' : 'border-slate-200']" />
               <p v-if="fieldErrors.time_of_departure" class="text-red-500 text-xs mt-1">{{ fieldErrors.time_of_departure }}</p>
             </div>
             <div>
               <label class="block text-xs font-medium text-slate-600 mb-1">Estimated Time of Arrival <span class="text-red-500">*</span></label>
               <input v-model="form.eta" @input="() => validateField('eta')" type="time"
-                     :class="['rounded-lg border bg-white px-3 py-2 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-400 w-full', fieldErrors.eta ? 'border-red-400' : 'border-slate-200']" />
+                     :class="['rounded-lg border bg-white px-3 py-2 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-400 w-full', fieldErrors.eta ? 'border-red-400' : 'border-slate-200']" />
               <p v-if="fieldErrors.eta" class="text-red-500 text-xs mt-1">{{ fieldErrors.eta }}</p>
             </div>
           </div>
@@ -374,9 +374,9 @@ async function handleNewRequest() {
             <label class="block text-xs font-medium text-slate-600 mb-1">Date(s) Needed <span class="text-red-500">*</span></label>
             <div class="mt-1 flex flex-col sm:flex-row sm:items-start gap-2">
               <input v-model="dateInput" type="date"
-                     class="rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-400" />
+                     class="rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-400" />
               <button @click.prevent="addDate"
-                      class="inline-flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors shadow-sm">Add</button>
+                      class="inline-flex items-center gap-2 bg-primary-600 hover:bg-primary-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors shadow-sm">Add</button>
             </div>
             <p v-if="fieldErrors.date_needed" class="text-red-500 text-xs mt-1">{{ fieldErrors.date_needed }}</p>
             <ul class="mt-2 list-disc pl-5 text-sm text-slate-700">
@@ -391,7 +391,7 @@ async function handleNewRequest() {
           <div>
             <label class="block text-xs font-medium text-slate-600 mb-1">Vehicle Type <span class="text-red-500">*</span></label>
             <select v-model="form.vehicle_type" @change="() => validateField('vehicle_type')"
-                    :class="['rounded-lg border bg-white px-3 py-2 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-400 w-full', fieldErrors.vehicle_type ? 'border-red-400' : 'border-slate-200']">
+                    :class="['rounded-lg border bg-white px-3 py-2 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-400 w-full', fieldErrors.vehicle_type ? 'border-red-400' : 'border-slate-200']">
               <option value="">Select vehicle</option>
               <option v-for="v in props.vehicles" :key="v.id" :value="v.name">{{ v.name }}</option>
             </select>
@@ -401,7 +401,7 @@ async function handleNewRequest() {
           <div>
             <label class="block text-xs font-medium text-slate-600 mb-1">Division Chief (Approver) <span class="text-red-500">*</span></label>
             <select v-model="form.division_chief_id" @change="() => validateField('division_chief_id')"
-                    :class="['rounded-lg border bg-white px-3 py-2 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-400 w-full', fieldErrors.division_chief_id ? 'border-red-400' : 'border-slate-200']">
+                    :class="['rounded-lg border bg-white px-3 py-2 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-400 w-full', fieldErrors.division_chief_id ? 'border-red-400' : 'border-slate-200']">
               <option value="">Select division chief</option>
               <option v-for="d in props.divisionChiefs" :key="d.id" :value="d.id">{{ d.name }}</option>
             </select>
@@ -411,14 +411,14 @@ async function handleNewRequest() {
           <div>
             <label class="block text-xs font-medium text-slate-600 mb-1">Passengers <span class="text-red-500">*</span></label>
             <input v-model.number="form.passengers" @input="() => validateField('passengers')" type="number" min="1"
-                   :class="['rounded-lg border bg-white px-3 py-2 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-400 w-24', fieldErrors.passengers ? 'border-red-400' : 'border-slate-200']" />
+                   :class="['rounded-lg border bg-white px-3 py-2 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-400 w-24', fieldErrors.passengers ? 'border-red-400' : 'border-slate-200']" />
             <p v-if="fieldErrors.passengers" class="text-red-500 text-xs mt-1">{{ fieldErrors.passengers }}</p>
           </div>
         </div>
         <div class="px-6 py-4 border-t border-slate-100 flex justify-end gap-2">
           <button @click.prevent="closeModal" class="inline-flex items-center gap-2 bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 px-4 py-2 rounded-lg text-sm font-medium transition-colors shadow-sm">Cancel</button>
           <button @click.prevent="editingRequest ? submit() : openPinModal()" :disabled="form.processing"
-                  class="inline-flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors shadow-sm disabled:opacity-60">
+                  class="inline-flex items-center gap-2 bg-primary-600 hover:bg-primary-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors shadow-sm disabled:opacity-60">
             <span v-if="form.processing" class="inline-flex items-center">
               <svg class="animate-spin mr-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                 <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>

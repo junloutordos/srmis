@@ -14,7 +14,7 @@
           <p class="text-sm text-slate-500 mt-0.5">Manage campus buildings</p>
         </div>
         <button @click.prevent="openModal()"
-          class="inline-flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors shadow-sm">
+          class="inline-flex items-center gap-2 bg-primary-600 hover:bg-primary-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors shadow-sm">
           + New Building
         </button>
       </div>
@@ -24,7 +24,7 @@
         <!-- Search -->
         <div class="px-5 py-4 border-b border-slate-100">
           <input v-model="searchQuery" type="text" placeholder="Search buildings..."
-            class="w-full sm:w-80 rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-400" />
+            class="w-full sm:w-80 rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-400" />
         </div>
 
         <div class="overflow-x-auto" v-if="!isMobile">
@@ -55,7 +55,7 @@
                       <EyeIcon class="h-4 w-4" />
                     </button>
                     <button @click.prevent="openRooms(b)"
-                      class="p-1.5 rounded-lg hover:bg-indigo-50 text-indigo-500 hover:text-indigo-700 transition-colors" title="Rooms">
+                      class="p-1.5 rounded-lg hover:bg-primary-50 text-primary-500 hover:text-primary-700 transition-colors" title="Rooms">
                       <Squares2X2Icon class="h-4 w-4" />
                     </button>
                     <button @click.prevent="openModal(b)"
@@ -90,7 +90,7 @@
                 <button @click.prevent="viewRemarks(b)"
                   class="inline-flex items-center gap-1 bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 px-3 py-1 rounded-lg text-xs font-medium transition-colors">View</button>
                 <button @click.prevent="openModal(b)"
-                  class="inline-flex items-center gap-1 bg-indigo-600 hover:bg-indigo-700 text-white px-3 py-1 rounded-lg text-xs font-medium transition-colors">Edit</button>
+                  class="inline-flex items-center gap-1 bg-primary-600 hover:bg-primary-700 text-white px-3 py-1 rounded-lg text-xs font-medium transition-colors">Edit</button>
                 <button @click.prevent="destroy(b)" :disabled="isDeleting"
                   class="inline-flex items-center gap-1 bg-red-600 hover:bg-red-700 text-white px-3 py-1 rounded-lg text-xs font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed">Delete</button>
               </div>
@@ -127,7 +127,7 @@
           <div class="px-6 py-5 whitespace-pre-wrap text-sm text-slate-700">{{ currentRemarks }}</div>
           <div class="px-6 py-4 border-t border-slate-100 flex justify-end">
             <button @click="closeRemarks"
-              class="inline-flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors shadow-sm">
+              class="inline-flex items-center gap-2 bg-primary-600 hover:bg-primary-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors shadow-sm">
               Close
             </button>
           </div>
@@ -160,7 +160,7 @@
           </div>
           <div class="px-6 py-4 border-t border-slate-100 flex justify-end">
             <button @click="closeRooms"
-              class="inline-flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors shadow-sm">
+              class="inline-flex items-center gap-2 bg-primary-600 hover:bg-primary-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors shadow-sm">
               Close
             </button>
           </div>
@@ -181,23 +181,23 @@
               <div class="sm:col-span-2">
                 <label class="block text-xs font-medium text-slate-600 mb-1">Name <span class="text-red-500">*</span></label>
                 <input v-model="form.name" type="text"
-                  class="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-400"
+                  class="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-400"
                   required />
               </div>
               <div>
                 <label class="block text-xs font-medium text-slate-600 mb-1">Code</label>
                 <input v-model="form.code" type="text"
-                  class="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-400" />
+                  class="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-400" />
               </div>
               <div>
                 <label class="block text-xs font-medium text-slate-600 mb-1">No of Rooms</label>
                 <input v-model="form.no_of_rooms" type="number" min="0"
-                  class="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-400" />
+                  class="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-400" />
               </div>
               <div class="sm:col-span-2">
                 <label class="block text-xs font-medium text-slate-600 mb-1">Building Use</label>
                 <select v-model="form.building_use" multiple
-                  class="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-400">
+                  class="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-400">
                   <option value="Classrooms">Classrooms</option>
                   <option value="Laboratories">Laboratories</option>
                   <option value="Admin">Admin</option>
@@ -209,27 +209,27 @@
               <div>
                 <label class="block text-xs font-medium text-slate-600 mb-1">Number of Floors</label>
                 <input v-model="form.number_of_floors" type="number" min="0"
-                  class="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-400" />
+                  class="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-400" />
               </div>
               <div>
                 <label class="block text-xs font-medium text-slate-600 mb-1">Year Constructed</label>
                 <input v-model="form.year_constructed" type="number" min="1800" :max="new Date().getFullYear()+1"
-                  class="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-400" />
+                  class="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-400" />
               </div>
               <div>
                 <label class="block text-xs font-medium text-slate-600 mb-1">Year Completed</label>
                 <input v-model="form.year_completed" type="number" min="1800" :max="new Date().getFullYear()+1"
-                  class="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-400" />
+                  class="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-400" />
               </div>
               <div>
                 <label class="block text-xs font-medium text-slate-600 mb-1">Amount</label>
                 <input v-model="form.amount" type="number" min="0" step="0.01"
-                  class="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-400" />
+                  class="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-400" />
               </div>
               <div class="sm:col-span-2">
                 <label class="block text-xs font-medium text-slate-600 mb-1">Remarks</label>
                 <textarea v-model="form.remarks" rows="3"
-                  class="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-400"></textarea>
+                  class="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-400"></textarea>
               </div>
             </div>
             <div class="flex justify-end gap-2 pt-4 mt-2 border-t border-slate-100">
@@ -238,7 +238,7 @@
                 Cancel
               </button>
               <button type="submit" :disabled="form.processing"
-                class="inline-flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors shadow-sm disabled:opacity-50 disabled:cursor-not-allowed">
+                class="inline-flex items-center gap-2 bg-primary-600 hover:bg-primary-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors shadow-sm disabled:opacity-50 disabled:cursor-not-allowed">
                 {{ form.processing ? 'Saving…' : 'Save' }}
               </button>
             </div>

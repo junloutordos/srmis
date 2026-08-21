@@ -29,7 +29,7 @@
               <p class="text-xs font-medium text-slate-600 mb-1.5">Client type:</p>
               <div class="flex flex-wrap gap-4">
                 <label v-for="opt in clientTypes" :key="opt.value" class="flex items-center gap-1.5 text-sm text-slate-700 cursor-pointer">
-                  <input type="radio" v-model="form.client_type" :value="opt.value" class="text-indigo-600" />
+                  <input type="radio" v-model="form.client_type" :value="opt.value" class="text-primary-600" />
                   {{ opt.label }}
                 </label>
               </div>
@@ -41,22 +41,22 @@
                 <p class="text-xs font-medium text-slate-600 mb-1.5">Sex:</p>
                 <div class="flex gap-3">
                   <label class="flex items-center gap-1.5 text-sm text-slate-700 cursor-pointer">
-                    <input type="radio" v-model="form.sex" value="male" class="text-indigo-600" /> Male
+                    <input type="radio" v-model="form.sex" value="male" class="text-primary-600" /> Male
                   </label>
                   <label class="flex items-center gap-1.5 text-sm text-slate-700 cursor-pointer">
-                    <input type="radio" v-model="form.sex" value="female" class="text-indigo-600" /> Female
+                    <input type="radio" v-model="form.sex" value="female" class="text-primary-600" /> Female
                   </label>
                 </div>
               </div>
               <div>
                 <label class="block text-xs font-medium text-slate-600 mb-1">Age:</label>
                 <input v-model.number="form.age" type="number" min="1" max="120" placeholder="Optional"
-                  class="w-full rounded-lg border border-slate-200 px-2 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-400" />
+                  class="w-full rounded-lg border border-slate-200 px-2 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary-400" />
               </div>
               <div>
                 <label class="block text-xs font-medium text-slate-600 mb-1">Region of Residence:</label>
                 <input v-model="form.region_of_residence" type="text"
-                  class="w-full rounded-lg border border-slate-200 px-2 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-400" />
+                  class="w-full rounded-lg border border-slate-200 px-2 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary-400" />
               </div>
             </div>
 
@@ -80,13 +80,13 @@
             <h3 class="text-xs font-bold text-slate-700 uppercase tracking-wide border-b border-slate-100 pb-1">Service Availed <span class="text-slate-400 font-normal normal-case">(please check)</span></h3>
             <div class="grid grid-cols-2 gap-x-4 gap-y-1.5">
               <label v-for="svc in serviceOptions" :key="svc.value" class="flex items-start gap-2 text-sm text-slate-700 cursor-pointer">
-                <input type="checkbox" v-model="form.service_availed" :value="svc.value" class="mt-0.5 text-indigo-600 rounded" />
+                <input type="checkbox" v-model="form.service_availed" :value="svc.value" class="mt-0.5 text-primary-600 rounded" />
                 <span>{{ svc.label }}</span>
               </label>
               <!-- Others with dynamic text -->
               <div class="flex items-start gap-2">
-                <input type="checkbox" v-model="form.service_availed" value="others" class="mt-0.5 text-indigo-600 rounded" />
-                <span class="text-sm text-slate-700">Others: <span class="font-medium text-indigo-700">{{ serviceOtherLabel }}</span></span>
+                <input type="checkbox" v-model="form.service_availed" value="others" class="mt-0.5 text-primary-600 rounded" />
+                <span class="text-sm text-slate-700">Others: <span class="font-medium text-primary-700">{{ serviceOtherLabel }}</span></span>
               </div>
             </div>
           </div>
@@ -99,7 +99,7 @@
               <p class="text-xs font-medium text-slate-700 mb-1.5">CC1: Which of the following best describes your awareness of a CC?</p>
               <div class="space-y-1">
                 <label v-for="opt in cc1Options" :key="opt.value" class="flex items-start gap-2 text-sm text-slate-700 cursor-pointer">
-                  <input type="radio" v-model="form.cc1" :value="opt.value" class="mt-0.5 text-indigo-600" />
+                  <input type="radio" v-model="form.cc1" :value="opt.value" class="mt-0.5 text-primary-600" />
                   <span>{{ opt.label }}</span>
                 </label>
               </div>
@@ -110,7 +110,7 @@
                 <p class="text-xs font-medium text-slate-700 mb-1.5">CC2: If aware of CC, would you say the CC of this office was…?</p>
                 <div class="flex flex-wrap gap-4">
                   <label v-for="opt in cc2Options" :key="opt.value" class="flex items-center gap-1.5 text-sm text-slate-700 cursor-pointer">
-                    <input type="radio" v-model="form.cc2" :value="opt.value" class="text-indigo-600" />
+                    <input type="radio" v-model="form.cc2" :value="opt.value" class="text-primary-600" />
                     {{ opt.label }}
                   </label>
                 </div>
@@ -119,7 +119,7 @@
                 <p class="text-xs font-medium text-slate-700 mb-1.5">CC3: How much did the CC help you in your transaction?</p>
                 <div class="flex flex-wrap gap-4">
                   <label v-for="opt in cc3Options" :key="opt.value" class="flex items-center gap-1.5 text-sm text-slate-700 cursor-pointer">
-                    <input type="radio" v-model="form.cc3" :value="opt.value" class="text-indigo-600" />
+                    <input type="radio" v-model="form.cc3" :value="opt.value" class="text-primary-600" />
                     {{ opt.label }}
                   </label>
                 </div>
@@ -149,7 +149,7 @@
                     </td>
                     <td v-for="col in sqdColumns" :key="col.value" class="px-2 py-2 text-center">
                       <input type="radio" :name="item.key" v-model="form[item.key]" :value="col.value"
-                        class="text-indigo-600 cursor-pointer" />
+                        class="text-primary-600 cursor-pointer" />
                     </td>
                   </tr>
                 </tbody>
@@ -164,7 +164,7 @@
               Suggestions on how we can further improve our services <span class="text-slate-400">(optional)</span>:
             </label>
             <textarea v-model="form.suggestions" rows="3"
-              class="w-full rounded-lg border border-slate-200 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-400 resize-none" />
+              class="w-full rounded-lg border border-slate-200 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary-400 resize-none" />
           </div>
 
           <!-- Actions -->
@@ -174,7 +174,7 @@
               Cancel
             </button>
             <button type="submit" :disabled="submitting"
-              class="inline-flex items-center gap-2 px-5 py-2 text-sm bg-indigo-600 hover:bg-indigo-700 disabled:opacity-50 text-white rounded-lg font-medium transition-colors">
+              class="inline-flex items-center gap-2 px-5 py-2 text-sm bg-primary-600 hover:bg-primary-700 disabled:opacity-50 text-white rounded-lg font-medium transition-colors">
               {{ submitting ? 'Submitting…' : 'Submit Survey' }}
             </button>
           </div>

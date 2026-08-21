@@ -381,7 +381,7 @@ function groupedPerms(permissions) {
     <div class="flex gap-1 mb-6 bg-white border border-slate-200 rounded-xl p-1 w-fit shadow-sm">
       <button v-for="t in tabs" :key="t.key" @click="switchTab(t.key)"
         class="px-4 py-1.5 rounded-lg text-sm font-medium transition-colors"
-        :class="activeTab === t.key ? 'bg-indigo-600 text-white shadow-sm' : 'text-slate-600 hover:bg-slate-100'">
+        :class="activeTab === t.key ? 'bg-primary-600 text-white shadow-sm' : 'text-slate-600 hover:bg-slate-100'">
         {{ t.label }}
       </button>
     </div>
@@ -394,7 +394,7 @@ function groupedPerms(permissions) {
           <p class="text-sm text-slate-500 mt-0.5">Define roles and assign permissions to each role.</p>
         </div>
         <button @click="openCreateRole"
-          class="inline-flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors shadow-sm">
+          class="inline-flex items-center gap-2 bg-primary-600 hover:bg-primary-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors shadow-sm">
           <PlusIcon class="w-4 h-4" /> New Role
         </button>
       </div>
@@ -410,12 +410,12 @@ function groupedPerms(permissions) {
 
         <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
           <div v-for="role in rolesFiltered" :key="role.id"
-            class="bg-white rounded-xl border border-slate-200 shadow-sm flex flex-col group hover:border-indigo-300 transition-colors">
+            class="bg-white rounded-xl border border-slate-200 shadow-sm flex flex-col group hover:border-primary-300 transition-colors">
             <div class="px-4 pt-4 pb-3 border-b border-slate-100">
               <div class="flex items-start justify-between gap-2">
                 <div>
                   <div class="flex items-center gap-2">
-                    <ShieldCheckIcon class="w-4 h-4 text-indigo-500 shrink-0" />
+                    <ShieldCheckIcon class="w-4 h-4 text-primary-500 shrink-0" />
                     <span class="font-semibold text-slate-800">{{ role.name }}</span>
                     <span v-if="role.name === 'Administrator'"
                       class="text-[10px] font-semibold bg-amber-100 text-amber-700 px-1.5 py-0.5 rounded-full">Super</span>
@@ -447,7 +447,7 @@ function groupedPerms(permissions) {
                 </span>
               </div>
               <button @click="openPermissions(role)"
-                class="inline-flex items-center gap-1.5 text-xs font-medium text-indigo-600 hover:text-indigo-800 transition-colors">
+                class="inline-flex items-center gap-1.5 text-xs font-medium text-primary-600 hover:text-primary-800 transition-colors">
                 <ShieldCheckIcon class="w-3.5 h-3.5" />
                 Edit Permissions
               </button>
@@ -475,18 +475,18 @@ function groupedPerms(permissions) {
                 <div>
                   <label class="block text-xs font-medium text-slate-600 mb-1">Role Name <span class="text-red-500">*</span></label>
                   <input v-model="roleForm.name" type="text" required maxlength="100" placeholder="e.g. Librarian"
-                    class="w-full rounded-lg border border-slate-200 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500" />
+                    class="w-full rounded-lg border border-slate-200 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500" />
                 </div>
                 <div>
                   <label class="block text-xs font-medium text-slate-600 mb-1">Description</label>
                   <input v-model="roleForm.description" type="text" maxlength="255" placeholder="Brief description of this role"
-                    class="w-full rounded-lg border border-slate-200 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500" />
+                    class="w-full rounded-lg border border-slate-200 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500" />
                 </div>
                 <div class="flex justify-end gap-2 pt-1">
                   <button type="button" @click="showRoleModal = false"
                     class="px-4 py-2 rounded-lg border border-slate-200 text-sm text-slate-600 hover:bg-slate-50">Cancel</button>
                   <button type="submit" :disabled="roleSaving"
-                    class="px-4 py-2 rounded-lg bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-medium disabled:opacity-60">
+                    class="px-4 py-2 rounded-lg bg-primary-600 hover:bg-primary-700 text-white text-sm font-medium disabled:opacity-60">
                     {{ roleSaving ? 'Saving…' : (roleModalMode === 'create' ? 'Create Role' : 'Save Changes') }}
                   </button>
                 </div>
@@ -503,7 +503,7 @@ function groupedPerms(permissions) {
             <div class="px-6 py-4 border-b border-slate-100 flex items-center justify-between shrink-0">
               <div>
                 <h2 class="text-base font-semibold text-slate-800">
-                  Permissions — <span class="text-indigo-600">{{ editingRole?.name }}</span>
+                  Permissions — <span class="text-primary-600">{{ editingRole?.name }}</span>
                 </h2>
                 <p class="text-xs text-slate-400 mt-0.5">{{ rolePerms.length }} of {{ roleTotalPerms }} permissions selected</p>
               </div>
@@ -511,7 +511,7 @@ function groupedPerms(permissions) {
                 <div class="relative">
                   <MagnifyingGlassIcon class="absolute left-2.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-slate-400" />
                   <input v-model="rolePermSearch" type="text" placeholder="Filter…"
-                    class="pl-8 pr-3 py-1.5 rounded-lg border border-slate-200 text-xs focus:outline-none focus:ring-2 focus:ring-indigo-400 w-40" />
+                    class="pl-8 pr-3 py-1.5 rounded-lg border border-slate-200 text-xs focus:outline-none focus:ring-2 focus:ring-primary-400 w-40" />
                 </div>
                 <button @click="showPermModal = false" class="p-1.5 rounded-lg hover:bg-slate-100 text-slate-400 hover:text-slate-700">
                   <XMarkIcon class="w-4 h-4" />
@@ -533,7 +533,7 @@ function groupedPerms(permissions) {
                     :indeterminate.prop="moduleIndeterminate(group)"
                     :disabled="editingRole?.name === 'Administrator'"
                     @change="toggleModule(group)"
-                    class="rounded border-slate-300 text-indigo-600 focus:ring-indigo-500 w-4 h-4 disabled:opacity-50" />
+                    class="rounded border-slate-300 text-primary-600 focus:ring-primary-500 w-4 h-4 disabled:opacity-50" />
                   <span class="text-xs font-bold uppercase tracking-widest text-slate-700">{{ group.module }}</span>
                   <span class="text-xs text-slate-400 font-normal ml-1">
                     ({{ group.permissions.filter(p => rolePerms.includes(p.id)).length }}/{{ group.permissions.length }})
@@ -542,12 +542,12 @@ function groupedPerms(permissions) {
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-1.5 pl-6">
                   <label v-for="perm in group.permissions" :key="perm.id"
                     class="flex items-start gap-2 cursor-pointer p-2 rounded-lg hover:bg-slate-50 transition-colors"
-                    :class="{ 'bg-indigo-50/60 border border-indigo-100': rolePerms.includes(perm.id) }">
+                    :class="{ 'bg-primary-50/60 border border-primary-100': rolePerms.includes(perm.id) }">
                     <input type="checkbox"
                       :checked="rolePerms.includes(perm.id)"
                       :disabled="editingRole?.name === 'Administrator'"
                       @change="togglePerm(perm.id)"
-                      class="rounded border-slate-300 text-indigo-600 focus:ring-indigo-500 w-4 h-4 mt-0.5 shrink-0 disabled:opacity-50" />
+                      class="rounded border-slate-300 text-primary-600 focus:ring-primary-500 w-4 h-4 mt-0.5 shrink-0 disabled:opacity-50" />
                     <div class="min-w-0">
                       <div class="text-xs text-slate-700 font-medium leading-tight">{{ perm.description || perm.name }}</div>
                       <div class="text-[10px] font-mono text-slate-400 mt-0.5">{{ perm.name }}</div>
@@ -560,7 +560,7 @@ function groupedPerms(permissions) {
             </div>
 
             <div class="px-6 py-4 border-t border-slate-100 flex items-center justify-between shrink-0">
-              <button v-if="editingRole?.name !== 'Administrator'" @click="selectAllPerms" class="text-xs text-slate-500 hover:text-indigo-600 transition-colors">
+              <button v-if="editingRole?.name !== 'Administrator'" @click="selectAllPerms" class="text-xs text-slate-500 hover:text-primary-600 transition-colors">
                 {{ rolePerms.length === roleTotalPerms ? 'Deselect all' : 'Select all' }}
               </button>
               <span v-else></span>
@@ -568,7 +568,7 @@ function groupedPerms(permissions) {
                 <button @click="showPermModal = false"
                   class="px-4 py-2 rounded-lg border border-slate-200 text-sm text-slate-600 hover:bg-slate-50">Cancel</button>
                 <button v-if="editingRole?.name !== 'Administrator'" @click="savePermissions" :disabled="syncingPerms"
-                  class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-medium disabled:opacity-60">
+                  class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-primary-600 hover:bg-primary-700 text-white text-sm font-medium disabled:opacity-60">
                   <span v-if="syncingPerms" class="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></span>
                   {{ syncingPerms ? 'Saving…' : 'Save Permissions' }}
                 </button>
@@ -594,7 +594,7 @@ function groupedPerms(permissions) {
             <InformationCircleIcon class="w-4 h-4" /> Naming Guide
           </button>
           <button @click="openCreatePerm"
-            class="inline-flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors shadow-sm">
+            class="inline-flex items-center gap-2 bg-primary-600 hover:bg-primary-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors shadow-sm">
             <PlusIcon class="w-4 h-4" /> New Permission
           </button>
         </div>
@@ -654,8 +654,8 @@ function groupedPerms(permissions) {
         <div v-for="group in permsFiltered" :key="group.module" class="bg-white rounded-xl border border-slate-100 shadow-sm overflow-hidden">
           <div class="px-5 py-3 border-b border-slate-100 bg-slate-50/60 flex items-center justify-between">
             <div class="flex items-center gap-2">
-              <KeyIcon class="w-4 h-4 text-indigo-400" />
-              <h2 class="text-xs font-semibold uppercase tracking-wider text-indigo-600">{{ group.module }}</h2>
+              <KeyIcon class="w-4 h-4 text-primary-400" />
+              <h2 class="text-xs font-semibold uppercase tracking-wider text-primary-600">{{ group.module }}</h2>
             </div>
             <span class="text-[11px] text-slate-400">{{ group.permissions.length }} permission(s)</span>
           </div>
@@ -672,7 +672,7 @@ function groupedPerms(permissions) {
               <tbody class="divide-y divide-slate-100">
                 <tr v-for="perm in group.permissions" :key="perm.id" class="hover:bg-slate-50/60">
                   <td class="px-4 py-3">
-                    <code class="font-mono text-indigo-700 text-xs bg-indigo-50 px-2 py-0.5 rounded">{{ perm.name }}</code>
+                    <code class="font-mono text-primary-700 text-xs bg-primary-50 px-2 py-0.5 rounded">{{ perm.name }}</code>
                   </td>
                   <td class="px-4 py-3 text-slate-500 text-sm">{{ perm.description ?? '—' }}</td>
                   <td class="px-4 py-3 text-center">
@@ -715,14 +715,14 @@ function groupedPerms(permissions) {
                 <input v-model="permForm.name" type="text" required maxlength="100"
                   pattern="[a-z0-9._\-]+"
                   placeholder="e.g. hr.dtr.view or payroll.manage"
-                  class="rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-800 font-mono placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-400 w-full" />
+                  class="rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-800 font-mono placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-400 w-full" />
                 <p class="text-[11px] text-slate-400 mt-1">This key is used in routes: <code class="font-mono">middleware('permission:{{ permForm.name || "…" }}')</code></p>
               </div>
               <div>
                 <label class="block text-xs font-medium text-slate-600 mb-1">Module <span class="text-slate-400 font-normal">(groups this permission)</span></label>
                 <input v-model="permForm.module" list="module-list" type="text" required maxlength="50"
                   placeholder="e.g. hr · ipcr · payroll"
-                  class="rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-400 w-full" />
+                  class="rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-400 w-full" />
                 <datalist id="module-list">
                   <option v-for="m in permModuleList" :key="m" :value="m" />
                 </datalist>
@@ -732,13 +732,13 @@ function groupedPerms(permissions) {
                 <label class="block text-xs font-medium text-slate-600 mb-1">Description <span class="text-slate-400 font-normal">(shown to admins)</span></label>
                 <input v-model="permForm.description" type="text" maxlength="255"
                   placeholder="e.g. View HR Daily Time Records"
-                  class="rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-400 w-full" />
+                  class="rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-400 w-full" />
               </div>
               <div class="flex justify-end gap-2 pt-2">
                 <button type="button" @click="showPermCrudModal = false"
                   class="inline-flex items-center gap-2 bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 px-4 py-2 rounded-lg text-sm font-medium transition-colors shadow-sm">Cancel</button>
                 <button type="submit" :disabled="permSaving"
-                  class="inline-flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors shadow-sm disabled:opacity-60">
+                  class="inline-flex items-center gap-2 bg-primary-600 hover:bg-primary-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors shadow-sm disabled:opacity-60">
                   {{ permSaving ? 'Saving…' : 'Save' }}
                 </button>
               </div>
@@ -764,7 +764,7 @@ function groupedPerms(permissions) {
                 class="flex-1 border-none outline-none text-sm text-slate-800 placeholder-slate-400 bg-transparent" />
             </div>
             <select v-model="filterRole" @change="onFilterChange"
-              class="rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-400">
+              class="rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-400">
               <option value="">All roles</option>
               <option v-for="r in assignAllRoles" :key="r.id" :value="r.name">{{ r.name }}</option>
             </select>
@@ -786,8 +786,8 @@ function groupedPerms(permissions) {
                 <tbody class="divide-y divide-slate-100">
                   <tr v-for="user in assignUsers" :key="user.id"
                     @click="selectUser(user)"
-                    class="hover:bg-indigo-50/40 cursor-pointer transition-colors"
-                    :class="{ 'bg-indigo-50 ring-1 ring-inset ring-indigo-200': selected?.id === user.id }">
+                    class="hover:bg-primary-50/40 cursor-pointer transition-colors"
+                    :class="{ 'bg-primary-50 ring-1 ring-inset ring-primary-200': selected?.id === user.id }">
                     <td class="px-4 py-3">
                       <div class="font-medium text-slate-800">{{ user.name }}</div>
                       <div class="text-xs text-slate-400">{{ user.email }}</div>
@@ -796,7 +796,7 @@ function groupedPerms(permissions) {
                     <td class="px-4 py-3 text-slate-600 max-w-[200px]">
                       <div class="flex flex-wrap gap-1">
                         <span v-for="r in (user.roles ?? [])" :key="r.id"
-                          class="inline-flex items-center px-1.5 py-0.5 rounded text-[11px] font-medium bg-indigo-50 text-indigo-700">
+                          class="inline-flex items-center px-1.5 py-0.5 rounded text-[11px] font-medium bg-primary-50 text-primary-700">
                           {{ r.name }}
                         </span>
                         <span v-if="!(user.roles?.length)" class="text-slate-400 text-xs">—</span>
@@ -845,17 +845,17 @@ function groupedPerms(permissions) {
             <div class="space-y-1 mb-4">
               <label v-for="role in assignAllRoles" :key="role.id"
                 class="flex items-center gap-2.5 cursor-pointer group rounded-lg px-2 py-1.5 transition-colors"
-                :class="userRoles.includes(role.id) ? 'bg-indigo-50' : 'hover:bg-slate-50'"
+                :class="userRoles.includes(role.id) ? 'bg-primary-50' : 'hover:bg-slate-50'"
                 @mouseenter="hoveredRole = role.id"
                 @mouseleave="hoveredRole = null">
                 <input type="checkbox"
                   :checked="userRoles.includes(role.id)"
                   @change="toggleRole(role.id)"
-                  class="rounded border-slate-300 text-indigo-600 focus:ring-indigo-500 shrink-0" />
+                  class="rounded border-slate-300 text-primary-600 focus:ring-primary-500 shrink-0" />
                 <div class="min-w-0 flex-1">
                   <div class="flex items-center gap-1.5">
-                    <ShieldCheckIcon class="w-3.5 h-3.5 text-indigo-400 shrink-0" />
-                    <span class="text-sm font-medium text-slate-700 truncate group-hover:text-indigo-700 transition-colors">{{ role.name }}</span>
+                    <ShieldCheckIcon class="w-3.5 h-3.5 text-primary-400 shrink-0" />
+                    <span class="text-sm font-medium text-slate-700 truncate group-hover:text-primary-700 transition-colors">{{ role.name }}</span>
                     <span v-if="role.name === 'Administrator'"
                       class="text-[10px] font-semibold bg-amber-100 text-amber-700 px-1.5 py-0.5 rounded-full shrink-0">Super</span>
                   </div>
@@ -865,7 +865,7 @@ function groupedPerms(permissions) {
             </div>
 
             <button @click="saveRoles" :disabled="assignSyncing"
-              class="w-full inline-flex items-center justify-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors shadow-sm disabled:opacity-60">
+              class="w-full inline-flex items-center justify-center gap-2 bg-primary-600 hover:bg-primary-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors shadow-sm disabled:opacity-60">
               <CheckIcon class="w-4 h-4" />
               {{ assignSyncing ? 'Saving…' : 'Save Roles' }}
             </button>
@@ -874,10 +874,10 @@ function groupedPerms(permissions) {
           <Transition enter-active-class="transition-all duration-150" enter-from-class="opacity-0 translate-x-2" enter-to-class="opacity-100 translate-x-0"
             leave-active-class="transition-all duration-100" leave-from-class="opacity-100" leave-to-class="opacity-0">
             <div v-if="previewRole"
-              class="absolute top-0 right-full mr-3 w-64 bg-white rounded-xl border border-indigo-200 shadow-lg p-4 z-10">
+              class="absolute top-0 right-full mr-3 w-64 bg-white rounded-xl border border-primary-200 shadow-lg p-4 z-10">
               <div class="flex items-center gap-2 mb-3">
-                <KeyIcon class="w-4 h-4 text-indigo-500" />
-                <p class="text-xs font-semibold text-indigo-700">{{ previewRole.name }} — Permissions</p>
+                <KeyIcon class="w-4 h-4 text-primary-500" />
+                <p class="text-xs font-semibold text-primary-700">{{ previewRole.name }} — Permissions</p>
               </div>
               <div v-if="previewRole.name === 'Administrator'" class="text-xs text-amber-700 bg-amber-50 border border-amber-200 rounded-lg px-3 py-2">
                 Administrator bypasses all permission checks — has access to everything.
@@ -890,7 +890,7 @@ function groupedPerms(permissions) {
                   <p class="text-[10px] font-semibold uppercase tracking-wider text-slate-400 mb-1">{{ mod }}</p>
                   <div class="flex flex-wrap gap-1">
                     <span v-for="p in perms" :key="p.id"
-                      class="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-mono bg-indigo-50 text-indigo-700 border border-indigo-100"
+                      class="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-mono bg-primary-50 text-primary-700 border border-primary-100"
                       :title="p.description">
                       {{ p.name }}
                     </span>

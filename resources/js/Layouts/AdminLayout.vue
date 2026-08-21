@@ -953,7 +953,7 @@ filteredMenu.value.forEach((item) => {
           />
           <div
             v-else
-            class="w-7 h-7 rounded-full ring-2 ring-gray-200 bg-indigo-100 text-indigo-700 flex items-center justify-center text-xs font-bold select-none"
+            class="w-7 h-7 rounded-full ring-2 ring-gray-200 bg-primary-100 text-primary-700 flex items-center justify-center text-xs font-bold select-none"
           >{{ (user.name ?? '?').charAt(0).toUpperCase() }}</div>
           <div class="hidden md:block text-left">
             <p class="text-sm font-medium text-gray-800 leading-none">{{ user.name }}</p>
@@ -1098,7 +1098,7 @@ filteredMenu.value.forEach((item) => {
         <p class="text-sm text-slate-500 mb-6">Your session has timed out. Please sign in again to continue.</p>
         <a
           :href="route('force-logout')"
-          class="block w-full bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-medium px-4 py-2.5 rounded-lg transition-colors text-center"
+          class="block w-full bg-primary-600 hover:bg-primary-700 text-white text-sm font-medium px-4 py-2.5 rounded-lg transition-colors text-center"
         >
           Sign In Again
         </a>
@@ -1115,8 +1115,8 @@ filteredMenu.value.forEach((item) => {
   <Teleport to="body">
     <div v-if="showSignatureGate" class="fixed inset-0 z-[9999] flex items-center justify-center bg-black/60 backdrop-blur-sm">
       <div class="bg-white rounded-2xl shadow-2xl px-8 py-8 max-w-sm w-full mx-4 text-center">
-        <div class="flex items-center justify-center w-14 h-14 rounded-full bg-indigo-100 mx-auto mb-4">
-          <svg class="w-7 h-7 text-indigo-600" fill="none" viewBox="0 0 24 24" stroke-width="1.8" stroke="currentColor">
+        <div class="flex items-center justify-center w-14 h-14 rounded-full bg-primary-100 mx-auto mb-4">
+          <svg class="w-7 h-7 text-primary-600" fill="none" viewBox="0 0 24 24" stroke-width="1.8" stroke="currentColor">
             <path stroke-linecap="round" stroke-linejoin="round" d="M15.232 5.232l3.536 3.536M9 11l6.293-6.293a1 1 0 011.414 0l2.586 2.586a1 1 0 010 1.414L13 15l-4 1 1-4z" />
             <path stroke-linecap="round" stroke-linejoin="round" d="M5 19h14" />
           </svg>
@@ -1125,7 +1125,7 @@ filteredMenu.value.forEach((item) => {
         <p class="text-sm text-slate-500 mb-6">Before you continue, please upload your electronic signature and set a PIN. You'll use these to sign and approve requests in STRIDE.</p>
         <a
           :href="route('profile.signature')"
-          class="block w-full bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-medium px-4 py-2.5 rounded-lg transition-colors text-center"
+          class="block w-full bg-primary-600 hover:bg-primary-700 text-white text-sm font-medium px-4 py-2.5 rounded-lg transition-colors text-center"
         >
           Set Up Now
         </a>

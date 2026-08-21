@@ -9,7 +9,7 @@
           <p class="text-sm text-slate-500 mt-0.5">Manage campus rooms and spaces</p>
         </div>
         <button @click.prevent="openModal()"
-          class="inline-flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors shadow-sm">
+          class="inline-flex items-center gap-2 bg-primary-600 hover:bg-primary-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors shadow-sm">
           + New Room
         </button>
       </div>
@@ -19,7 +19,7 @@
         <!-- Search -->
         <div class="px-5 py-4 border-b border-slate-100">
           <input v-model="searchQuery" type="text" placeholder="Search rooms..."
-            class="w-full sm:w-80 rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-400" />
+            class="w-full sm:w-80 rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-400" />
         </div>
 
         <div v-if="!isMobile" class="overflow-x-auto">
@@ -85,7 +85,7 @@
               </div>
               <div class="flex flex-col items-end gap-2">
                 <button @click.prevent="openModal(r)"
-                  class="inline-flex items-center gap-1 bg-indigo-600 hover:bg-indigo-700 text-white px-3 py-1 rounded-lg text-xs font-medium transition-colors">Edit</button>
+                  class="inline-flex items-center gap-1 bg-primary-600 hover:bg-primary-700 text-white px-3 py-1 rounded-lg text-xs font-medium transition-colors">Edit</button>
                 <button @click.prevent="destroy(r)" :disabled="isDeleting"
                   class="inline-flex items-center gap-1 bg-red-600 hover:bg-red-700 text-white px-3 py-1 rounded-lg text-xs font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed">Delete</button>
               </div>
@@ -123,18 +123,18 @@
             <div>
               <label class="block text-xs font-medium text-slate-600 mb-1">Name <span class="text-red-500">*</span></label>
               <input v-model="form.name" type="text"
-                class="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-400"
+                class="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-400"
                 required />
             </div>
             <div>
               <label class="block text-xs font-medium text-slate-600 mb-1">Code</label>
               <input v-model="form.code" type="text"
-                class="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-400" />
+                class="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-400" />
             </div>
             <div>
               <label class="block text-xs font-medium text-slate-600 mb-1">Building</label>
               <select v-model="form.building_id"
-                class="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-400">
+                class="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-400">
                 <option value="">Select building</option>
                 <option v-for="b in props.buildings" :key="b.id" :value="b.id">{{ b.name }}</option>
               </select>
@@ -142,7 +142,7 @@
             <div v-if="selectedBuilding && selectedBuilding.number_of_floors > 0">
               <label class="block text-xs font-medium text-slate-600 mb-1">Floor</label>
               <select v-model="form.floor"
-                class="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-400">
+                class="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-400">
                 <option value="">Select floor</option>
                 <option v-for="f in floorOptions" :key="f.value" :value="f.value">{{ f.label }}</option>
               </select>
@@ -150,7 +150,7 @@
             <div>
               <label class="block text-xs font-medium text-slate-600 mb-1">Room Type</label>
               <select v-model="form.room_type"
-                class="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-400">
+                class="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-400">
                 <option value="">Select room type</option>
                 <option value="Classroom">Classroom</option>
                 <option value="Admin">Admin</option>
@@ -164,7 +164,7 @@
             <div v-if="form.room_type === 'Comfort Room'">
               <label class="block text-xs font-medium text-slate-600 mb-1">Comfort Room For</label>
               <select v-model="form.comfort_gender"
-                class="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-400">
+                class="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-400">
                 <option value="">Select</option>
                 <option value="Female">Female</option>
                 <option value="Male">Male</option>
@@ -175,12 +175,12 @@
             <div>
               <label class="block text-xs font-medium text-slate-600 mb-1">Capacity</label>
               <input v-model.number="form.capacity" type="number" min="0"
-                class="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-400" />
+                class="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-400" />
             </div>
             <div v-if="form.room_type === 'Admin'">
               <label class="block text-xs font-medium text-slate-600 mb-1">Occupant (Office)</label>
               <select v-model="form.office_id"
-                class="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-400">
+                class="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-400">
                 <option value="">--</option>
                 <option v-for="o in props.offices" :key="o.id" :value="o.id">{{ o.name }}</option>
               </select>
@@ -188,7 +188,7 @@
             <div>
               <label class="block text-xs font-medium text-slate-600 mb-1">Remarks</label>
               <textarea v-model="form.remarks" rows="3"
-                class="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-400"></textarea>
+                class="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-400"></textarea>
             </div>
 
             <div class="flex justify-end gap-2 pt-2 border-t border-slate-100">
@@ -197,7 +197,7 @@
                 Cancel
               </button>
               <button type="submit" :disabled="form.processing"
-                class="inline-flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors shadow-sm disabled:opacity-50 disabled:cursor-not-allowed">
+                class="inline-flex items-center gap-2 bg-primary-600 hover:bg-primary-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors shadow-sm disabled:opacity-50 disabled:cursor-not-allowed">
                 {{ form.processing ? 'Saving…' : 'Save' }}
               </button>
             </div>

@@ -90,9 +90,9 @@ const serviceAvailed = computed(() => {
       </div>
 
       <!-- Related request -->
-      <div v-if="related" class="bg-indigo-50 border border-indigo-100 rounded-xl px-4 py-3 text-sm">
-        <span class="font-semibold text-indigo-700">{{ related.module }}</span>
-        <span class="text-indigo-500 mx-2">·</span>
+      <div v-if="related" class="bg-primary-50 border border-primary-100 rounded-xl px-4 py-3 text-sm">
+        <span class="font-semibold text-primary-700">{{ related.module }}</span>
+        <span class="text-primary-500 mx-2">·</span>
         <span class="text-slate-700">{{ related.title }}</span>
         <span v-if="related.status" class="ml-2 text-xs text-slate-400">({{ related.status }})</span>
       </div>

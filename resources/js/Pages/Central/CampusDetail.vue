@@ -112,7 +112,7 @@ const pmsMax        = computed(() => maxOfArr(props.detail.pms_statuses || []))
     <!-- Header -->
     <div class="bg-white border-b border-slate-200 px-6 py-4 flex items-center justify-between sticky top-0 z-10">
       <div class="flex items-center gap-3">
-        <BuildingOffice2Icon class="h-6 w-6 text-indigo-500" />
+        <BuildingOffice2Icon class="h-6 w-6 text-primary-500" />
         <div>
           <h1 class="text-lg font-semibold text-slate-800">{{ campus.name }}</h1>
           <p class="text-xs text-slate-400">
@@ -127,7 +127,7 @@ const pmsMax        = computed(() => maxOfArr(props.detail.pms_statuses || []))
           Overview
         </a>
         <button @click="refresh" :disabled="loading"
-          class="inline-flex items-center gap-2 text-sm px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg disabled:opacity-60 transition-colors"
+          class="inline-flex items-center gap-2 text-sm px-4 py-2 bg-primary-600 hover:bg-primary-700 text-white rounded-lg disabled:opacity-60 transition-colors"
         >
           <ArrowPathIcon class="h-4 w-4" :class="{ 'animate-spin': loading }" />
           Refresh
@@ -145,8 +145,8 @@ const pmsMax        = computed(() => maxOfArr(props.detail.pms_statuses || []))
       <!-- Quick stats -->
       <div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
         <div class="bg-white rounded-xl border border-slate-100 shadow-sm p-4 text-center">
-          <CalendarDaysIcon class="h-5 w-5 text-indigo-400 mx-auto mb-1" />
-          <p class="text-2xl font-bold text-indigo-600">{{ (detail.total_all_time ?? 0).toLocaleString() }}</p>
+          <CalendarDaysIcon class="h-5 w-5 text-primary-400 mx-auto mb-1" />
+          <p class="text-2xl font-bold text-primary-600">{{ (detail.total_all_time ?? 0).toLocaleString() }}</p>
           <p class="text-xs text-slate-500 mt-0.5">All-time Requests</p>
         </div>
         <div class="bg-white rounded-xl border border-slate-100 shadow-sm p-4 text-center">
@@ -373,10 +373,10 @@ const pmsMax        = computed(() => maxOfArr(props.detail.pms_statuses || []))
                 <div v-for="row in (detail.emp_categories || [])" :key="row.label">
                   <div class="flex justify-between mb-0.5">
                     <span class="text-xs text-slate-600 truncate max-w-[70%]">{{ row.label }}</span>
-                    <span class="text-xs font-semibold text-indigo-600 tabular-nums">{{ row.count }}</span>
+                    <span class="text-xs font-semibold text-primary-600 tabular-nums">{{ row.count }}</span>
                   </div>
                   <div class="h-1.5 bg-slate-100 rounded-full overflow-hidden">
-                    <div class="h-full bg-indigo-300 rounded-full" :style="{ width: pct(row.count, empCatMax) + '%' }" />
+                    <div class="h-full bg-primary-300 rounded-full" :style="{ width: pct(row.count, empCatMax) + '%' }" />
                   </div>
                 </div>
                 <div v-if="!(detail.emp_categories || []).length" class="text-xs text-slate-400 italic">No data</div>
@@ -388,10 +388,10 @@ const pmsMax        = computed(() => maxOfArr(props.detail.pms_statuses || []))
                 <div v-for="row in (detail.sex_breakdown || [])" :key="row.label">
                   <div class="flex justify-between mb-0.5">
                     <span class="text-xs text-slate-600">{{ row.label }}</span>
-                    <span class="text-xs font-semibold text-indigo-600 tabular-nums">{{ row.count }}</span>
+                    <span class="text-xs font-semibold text-primary-600 tabular-nums">{{ row.count }}</span>
                   </div>
                   <div class="h-1.5 bg-slate-100 rounded-full overflow-hidden">
-                    <div class="h-full bg-indigo-400 rounded-full" :style="{ width: pct(row.count, detail.active_users || 1) + '%' }" />
+                    <div class="h-full bg-primary-400 rounded-full" :style="{ width: pct(row.count, detail.active_users || 1) + '%' }" />
                   </div>
                 </div>
                 <div v-if="!(detail.sex_breakdown || []).length" class="text-xs text-slate-400 italic">No data</div>

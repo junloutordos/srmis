@@ -24,7 +24,7 @@ function formatDate(iso) {
 
         <!-- Header -->
         <div class="flex items-center gap-3 mb-8">
-            <ShieldCheckIcon class="w-8 h-8 text-indigo-600" />
+            <ShieldCheckIcon class="w-8 h-8 text-primary-600" />
             <div>
                 <p class="text-xs font-semibold text-slate-500 uppercase tracking-wide">Philippine Science High School</p>
                 <p class="text-lg font-bold text-slate-800 leading-tight">STRIDE Document Verification</p>

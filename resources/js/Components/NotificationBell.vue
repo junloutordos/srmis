@@ -178,7 +178,7 @@ onUnmounted(() => {
         <!-- Header -->
         <div class="flex items-center justify-between px-4 py-3 border-b border-slate-100">
           <div class="flex items-center gap-2">
-            <BellAlertIcon class="h-4 w-4 text-indigo-500" />
+            <BellAlertIcon class="h-4 w-4 text-primary-500" />
             <span class="text-sm font-semibold text-slate-800">Notifications</span>
             <span v-if="unreadCount > 0"
               class="rounded-full bg-red-100 px-1.5 py-0.5 text-[10px] font-bold text-red-600">
@@ -189,7 +189,7 @@ onUnmounted(() => {
             <button
               v-if="unreadCount > 0"
               @click="markAllRead"
-              class="text-[11px] font-medium text-indigo-600 hover:text-indigo-800"
+              class="text-[11px] font-medium text-primary-600 hover:text-primary-800"
             >Mark all read</button>
             <button @click="open = false" class="text-slate-400 hover:text-slate-600">
               <XMarkIcon class="h-4 w-4" />
@@ -211,13 +211,13 @@ onUnmounted(() => {
             :key="n.id"
             @click="handleClick(n)"
             class="flex gap-3 px-4 py-3 cursor-pointer transition-colors"
-            :class="n.read_at ? 'hover:bg-slate-50' : 'bg-indigo-50/60 hover:bg-indigo-50'"
+            :class="n.read_at ? 'hover:bg-slate-50' : 'bg-primary-50/60 hover:bg-primary-50'"
           >
             <!-- Unread dot -->
             <div class="mt-1.5 shrink-0">
               <span
                 class="block h-2 w-2 rounded-full"
-                :class="n.read_at ? 'bg-slate-200' : 'bg-indigo-500'"
+                :class="n.read_at ? 'bg-slate-200' : 'bg-primary-500'"
               ></span>
             </div>
 
@@ -228,7 +228,7 @@ onUnmounted(() => {
               <p class="text-sm font-medium text-slate-800 leading-snug truncate">
                 {{ n.reference_no }}
               </p>
-              <p class="text-xs text-indigo-600 font-medium mt-0.5">{{ n.status }}</p>
+              <p class="text-xs text-primary-600 font-medium mt-0.5">{{ n.status }}</p>
               <p v-if="n.remarks" class="text-xs text-slate-500 mt-0.5 truncate">{{ n.remarks }}</p>
               <p class="text-[11px] text-slate-400 mt-1">{{ timeAgo(n.created_at) }}</p>
             </div>

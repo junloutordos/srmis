@@ -5,7 +5,7 @@ const props = defineProps({
 
 const colorMap = {
   slate:  'bg-slate-100 text-slate-600',
-  indigo: 'bg-indigo-50 text-indigo-700',
+  indigo: 'bg-primary-50 text-primary-700',
   blue:   'bg-blue-50 text-blue-700',
   green:  'bg-emerald-50 text-emerald-700',
   amber:  'bg-amber-50 text-amber-700',

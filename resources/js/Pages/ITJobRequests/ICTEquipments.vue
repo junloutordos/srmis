@@ -205,7 +205,7 @@ const showAllChecked    = computed({
         <h1 class="text-xl font-semibold text-slate-800">ICT Equipment Inventory</h1>
         <button
           @click="openModal('create')"
-          class="inline-flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors shadow-sm"
+          class="inline-flex items-center gap-2 bg-primary-600 hover:bg-primary-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors shadow-sm"
         >
           + Add Equipment
         </button>
@@ -220,21 +220,21 @@ const showAllChecked    = computed({
               type="text"
               placeholder="Search equipment..."
               @keydown.enter.prevent="applyFilters(true)"
-              class="rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-400 w-64"
+              class="rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-400 w-64"
             />
             <span v-if="isLoading" class="absolute right-3 top-1/2 -translate-y-1/2">
-              <svg class="animate-spin h-4 w-4 text-indigo-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+              <svg class="animate-spin h-4 w-4 text-primary-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                 <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/>
                 <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/>
               </svg>
             </span>
           </div>
-          <button @click="applyFilters(true)" :disabled="isLoading" class="inline-flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors shadow-sm disabled:opacity-50">
+          <button @click="applyFilters(true)" :disabled="isLoading" class="inline-flex items-center gap-2 bg-primary-600 hover:bg-primary-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors shadow-sm disabled:opacity-50">
             Search
           </button>
         </div>
         <div class="flex items-center gap-2 flex-wrap">
-          <select v-model="filterCategory" class="rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-400">
+          <select v-model="filterCategory" class="rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-400">
             <option value="">All Categories</option>
             <option value="CPU/System Unit">CPU/System Unit</option>
             <option value="Monitor">Monitor</option>
@@ -252,7 +252,7 @@ const showAllChecked    = computed({
             <option value="Access Point">Access Point</option>
             <option value="Other">Other</option>
           </select>
-          <select v-model="filterStatus" class="rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-400">
+          <select v-model="filterStatus" class="rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-400">
             <option value="">All Statuses</option>
             <option value="Good Working">Good Working</option>
             <option value="For Repair">For Repair</option>
@@ -264,7 +264,7 @@ const showAllChecked    = computed({
             <input
               type="checkbox"
               v-model="showAllChecked"
-              class="rounded border-slate-300 text-indigo-600 focus:ring-indigo-500"
+              class="rounded border-slate-300 text-primary-600 focus:ring-primary-500"
             />
             Show All
           </label>
@@ -279,7 +279,7 @@ const showAllChecked    = computed({
         <!-- Loading overlay -->
         <div v-if="isLoading" class="relative">
           <div class="absolute inset-0 bg-white/70 flex items-center justify-center z-10 rounded-xl">
-            <div class="flex flex-col items-center gap-2 text-indigo-600">
+            <div class="flex flex-col items-center gap-2 text-primary-600">
               <svg class="animate-spin h-8 w-8" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                 <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/>
                 <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/>
@@ -328,7 +328,7 @@ const showAllChecked    = computed({
                     <button @click="openModal('edit', eq)" class="p-1.5 rounded-lg hover:bg-slate-100 text-slate-500 hover:text-slate-700 transition-colors" title="Edit">
                       <PencilSquareIcon class="w-4 h-4"/>
                     </button>
-                    <button @click="openAddPmsHistory(eq)" class="p-1.5 rounded-lg hover:bg-slate-100 text-slate-500 hover:text-indigo-600 transition-colors" title="Add PMS History">
+                    <button @click="openAddPmsHistory(eq)" class="p-1.5 rounded-lg hover:bg-slate-100 text-slate-500 hover:text-primary-600 transition-colors" title="Add PMS History">
                       <PlusIcon class="w-4 h-4"/>
                     </button>
                     <button @click="openPmsHistory(eq)" class="p-1.5 rounded-lg hover:bg-slate-100 text-slate-500 hover:text-emerald-600 transition-colors" title="PMS History">
@@ -414,7 +414,7 @@ const showAllChecked    = computed({
               <!-- Equipment Category -->
               <div class="col-span-2">
                 <label class="block text-xs font-medium text-slate-600 mb-1">Equipment Category <span class="text-red-500">*</span></label>
-                <select v-model="form.category" class="rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-400 w-full" required>
+                <select v-model="form.category" class="rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-400 w-full" required>
                   <option value="">Please select category</option>
                   <option value="CPU/System Unit">CPU/System Unit</option>
                   <option value="Monitor">Monitor</option>
@@ -437,7 +437,7 @@ const showAllChecked    = computed({
               <!-- Owner (Dropdown) -->
               <div>
                 <label class="block text-xs font-medium text-slate-600 mb-1">Owner <span class="text-red-500">*</span></label>
-                <select v-model="form.owner_id" class="rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-400 w-full" required>
+                <select v-model="form.owner_id" class="rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-400 w-full" required>
                   <option value="">Select Owner</option>
                   <option v-for="user in props.users" :key="user.id" :value="user.id">
                     {{ user.name }}
@@ -448,37 +448,37 @@ const showAllChecked    = computed({
               <!-- Property No -->
               <div>
                 <label class="block text-xs font-medium text-slate-600 mb-1">Property No</label>
-                <input v-model="form.property_no" type="text" class="rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-400 w-full" />
+                <input v-model="form.property_no" type="text" class="rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-400 w-full" />
               </div>
 
               <!-- Serial No -->
               <div class="col-span-2">
                 <label class="block text-xs font-medium text-slate-600 mb-1">Serial No <span class="text-red-500">*</span></label>
-                <input v-model="form.serial_no" type="text" class="rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-400 w-full" required />
+                <input v-model="form.serial_no" type="text" class="rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-400 w-full" required />
               </div>
 
               <!-- Device Description -->
               <div class="col-span-2">
                 <label class="block text-xs font-medium text-slate-600 mb-1">Device Description / Model <span class="text-red-500">*</span></label>
-                <input v-model="form.description" type="text" class="rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-400 w-full" required />
+                <input v-model="form.description" type="text" class="rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-400 w-full" required />
               </div>
 
               <!-- Date Acquired -->
               <div>
                 <label class="block text-xs font-medium text-slate-600 mb-1">Date Acquired</label>
-                <input v-model="form.date_acquired" type="date" class="rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-400 w-full" />
+                <input v-model="form.date_acquired" type="date" class="rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-400 w-full" />
               </div>
 
               <!-- Amount -->
               <div>
                 <label class="block text-xs font-medium text-slate-600 mb-1">Amount</label>
-                <input v-model="form.amount" type="number" step="0.01" class="rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-400 w-full" />
+                <input v-model="form.amount" type="number" step="0.01" class="rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-400 w-full" />
               </div>
 
               <!-- Equipment Status -->
               <div>
                 <label class="block text-xs font-medium text-slate-600 mb-1">Equipment Status <span class="text-red-500">*</span></label>
-                <select v-model="form.status" class="rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-400 w-full" required>
+                <select v-model="form.status" class="rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-400 w-full" required>
                   <option value="">Select Status</option>
                   <option value="Good Working">Good Working</option>
                   <option value="For Repair">For Repair</option>
@@ -493,7 +493,7 @@ const showAllChecked    = computed({
                 </label>
                 <select
                   v-model="form.room_id"
-                  class="rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-400 w-full"
+                  class="rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-400 w-full"
                   required
                 >
                   <option value="">Select location</option>
@@ -507,13 +507,13 @@ const showAllChecked    = computed({
               <!-- Remarks -->
               <div class="col-span-2">
                 <label class="block text-xs font-medium text-slate-600 mb-1">Remarks</label>
-                <textarea v-model="form.remarks" rows="2" class="rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-400 w-full"></textarea>
+                <textarea v-model="form.remarks" rows="2" class="rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-400 w-full"></textarea>
               </div>
 
               <!-- Buttons -->
               <div class="col-span-2 flex justify-end gap-2 pt-2">
                 <button type="button" @click="closeModal" class="inline-flex items-center gap-2 bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 px-4 py-2 rounded-lg text-sm font-medium transition-colors shadow-sm">Cancel</button>
-                <button type="submit" class="inline-flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors shadow-sm">Save</button>
+                <button type="submit" class="inline-flex items-center gap-2 bg-primary-600 hover:bg-primary-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors shadow-sm">Save</button>
               </div>
             </form>
           </div>
@@ -570,7 +570,7 @@ const showAllChecked    = computed({
           </div>
           <!-- Print button -->
           <div class="px-6 py-4 border-t border-slate-100 flex justify-end">
-            <button @click="printPmsHistory" title="Print History" class="inline-flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors shadow-sm">
+            <button @click="printPmsHistory" title="Print History" class="inline-flex items-center gap-2 bg-primary-600 hover:bg-primary-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors shadow-sm">
               <PrinterIcon class="w-4 h-4" /> Print History
             </button>
           </div>
@@ -603,7 +603,7 @@ const showAllChecked    = computed({
                   <input
                     v-model="pmsForm.pms_date"
                     type="date"
-                    class="rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-400 w-full"
+                    class="rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-400 w-full"
                     :class="{ 'border-red-500': pmsFormErrors.pms_date }"
                   />
                   <div v-if="pmsFormErrors.pms_date" class="text-red-500 text-xs mt-1">{{ pmsFormErrors.pms_date }}</div>
@@ -613,7 +613,7 @@ const showAllChecked    = computed({
                   <label class="block text-xs font-medium text-slate-600 mb-1">Type</label>
                   <select
                     v-model="pmsForm.type"
-                    class="rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-400 w-full"
+                    class="rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-400 w-full"
                     :class="{ 'border-red-500': pmsFormErrors.type }"
                   >
                     <option value="PMS">PMS</option>
@@ -628,7 +628,7 @@ const showAllChecked    = computed({
                 <textarea
                   v-model="pmsForm.description"
                   rows="3"
-                  class="rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-400 w-full"
+                  class="rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-400 w-full"
                   placeholder="List of checked items or repair details"
                   :class="{ 'border-red-500': pmsFormErrors.description }"
                 ></textarea>
@@ -642,7 +642,7 @@ const showAllChecked    = computed({
                   type="number"
                   step="0.01"
                   min="0"
-                  class="rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-400 w-full"
+                  class="rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-400 w-full"
                   :class="{ 'border-red-500': pmsFormErrors.cost_of_repair }"
                 />
                 <div v-if="pmsFormErrors.cost_of_repair" class="text-red-500 text-xs mt-1">{{ pmsFormErrors.cost_of_repair }}</div>
@@ -653,7 +653,7 @@ const showAllChecked    = computed({
                 <textarea
                   v-model="pmsForm.remarks"
                   rows="2"
-                  class="rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-400 w-full"
+                  class="rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-400 w-full"
                   placeholder="Additional remarks"
                   :class="{ 'border-red-500': pmsFormErrors.remarks }"
                 ></textarea>
@@ -672,7 +672,7 @@ const showAllChecked    = computed({
                 <button
                   type="submit"
                   :disabled="isSubmittingPms"
-                  class="inline-flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors shadow-sm disabled:opacity-50"
+                  class="inline-flex items-center gap-2 bg-primary-600 hover:bg-primary-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors shadow-sm disabled:opacity-50"
                 >
                   {{ isSubmittingPms ? 'Adding...' : 'Add PMS History' }}
                 </button>
@@ -707,7 +707,7 @@ const showAllChecked    = computed({
                     type="radio"
                     v-model="reportGroupBy"
                     value="category"
-                    class="text-indigo-600"
+                    class="text-primary-600"
                   />
                   <span>Category</span>
                 </label>
@@ -716,7 +716,7 @@ const showAllChecked    = computed({
                     type="radio"
                     v-model="reportGroupBy"
                     value="location"
-                    class="text-indigo-600"
+                    class="text-primary-600"
                   />
                   <span>Location / Room</span>
                 </label>

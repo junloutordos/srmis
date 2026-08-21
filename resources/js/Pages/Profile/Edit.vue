@@ -35,7 +35,7 @@ defineProps({
                 <h2 class="text-xl font-semibold text-slate-800">
                     Profile
                 </h2>
-                <button @click="openProfileModal" class="inline-flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors shadow-sm">
+                <button @click="openProfileModal" class="inline-flex items-center gap-2 bg-primary-600 hover:bg-primary-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors shadow-sm">
                     Update Profile
                 </button>
             </div>
@@ -61,18 +61,18 @@ defineProps({
 
                 <!-- Digital Signature -->
                 <Link :href="route('profile.signature')"
-                      class="block bg-white rounded-xl border border-slate-100 shadow-sm px-6 py-5 hover:border-indigo-300 hover:shadow-md transition-all group">
+                      class="block bg-white rounded-xl border border-slate-100 shadow-sm px-6 py-5 hover:border-primary-300 hover:shadow-md transition-all group">
                     <div class="flex items-center justify-between max-w-xl">
                         <div class="flex items-center gap-3">
-                            <div class="w-9 h-9 rounded-lg bg-indigo-50 flex items-center justify-center group-hover:bg-indigo-100 transition-colors">
-                                <FingerPrintIcon class="w-5 h-5 text-indigo-600" />
+                            <div class="w-9 h-9 rounded-lg bg-primary-50 flex items-center justify-center group-hover:bg-primary-100 transition-colors">
+                                <FingerPrintIcon class="w-5 h-5 text-primary-600" />
                             </div>
                             <div>
                                 <p class="text-sm font-semibold text-slate-800">Digital Signature</p>
                                 <p class="text-xs text-slate-500">Set up your signature image and signing PIN</p>
                             </div>
                         </div>
-                        <span class="text-slate-400 group-hover:text-indigo-500 text-sm transition-colors">&rarr;</span>
+                        <span class="text-slate-400 group-hover:text-primary-500 text-sm transition-colors">&rarr;</span>
                     </div>
                 </Link>
             </div>

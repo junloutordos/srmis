@@ -101,10 +101,10 @@ const baseOptions = {
   <AdminLayout title="Dashboard">
     <div class="space-y-6">
       <!-- Greeting -->
-      <div class="rounded-2xl bg-gradient-to-r from-indigo-900 via-indigo-700 to-blue-600 p-6 text-white shadow">
-        <p class="text-sm text-indigo-200">{{ today }}</p>
+      <div class="rounded-2xl bg-gradient-to-r from-primary-900 via-primary-700 to-blue-600 p-6 text-white shadow">
+        <p class="text-sm text-primary-200">{{ today }}</p>
         <h1 class="mt-1 text-2xl font-bold">{{ greeting }}, {{ authUser?.name }}!</h1>
-        <p class="mt-1 text-sm text-indigo-100">
+        <p class="mt-1 text-sm text-primary-100">
           Service Ticketing and Request Information &amp; Dispatch Engine<span v-if="campusName"> — {{ campusName }}</span>
         </p>
       </div>
@@ -113,7 +113,7 @@ const baseOptions = {
       <div class="grid grid-cols-2 gap-4 lg:grid-cols-4">
         <div class="rounded-2xl bg-white p-5 shadow-sm border border-slate-100">
           <div class="flex items-center gap-3">
-            <div class="rounded-xl bg-indigo-50 p-2.5"><UsersIcon class="h-6 w-6 text-indigo-600" /></div>
+            <div class="rounded-xl bg-primary-50 p-2.5"><UsersIcon class="h-6 w-6 text-primary-600" /></div>
             <div>
               <p class="text-2xl font-bold text-slate-800">{{ totalEmployees.toLocaleString('en-PH') }}</p>
               <p class="text-xs font-semibold text-slate-500 uppercase tracking-wide">Active Employees</p>

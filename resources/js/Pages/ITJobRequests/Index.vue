@@ -254,12 +254,12 @@ function handleSigCancel() {
             :href="route('jobrequests.queue')"
             class="inline-flex items-center gap-2 bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 px-4 py-2 rounded-lg text-sm font-medium transition-colors shadow-sm"
           >
-            <QueueListIcon class="w-4 h-4 text-indigo-500" />
+            <QueueListIcon class="w-4 h-4 text-primary-500" />
             Queue
           </a>
           <button
             @click="handleNewRequest"
-            class="inline-flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors shadow-sm"
+            class="inline-flex items-center gap-2 bg-primary-600 hover:bg-primary-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors shadow-sm"
           >
             + New Request
           </button>
@@ -276,10 +276,10 @@ function handleSigCancel() {
                 type="text"
                 placeholder="Search requests..."
                 @keydown.enter.prevent="applyFilters(true)"
-                class="rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-400 w-full"
+                class="rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-400 w-full"
               />
               <span v-if="isLoading" class="absolute right-3 top-1/2 -translate-y-1/2">
-                <svg class="animate-spin h-4 w-4 text-indigo-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                <svg class="animate-spin h-4 w-4 text-primary-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                   <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/>
                   <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/>
                 </svg>
@@ -288,12 +288,12 @@ function handleSigCancel() {
             <button
               @click="applyFilters(true)"
               :disabled="isLoading"
-              class="inline-flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors shadow-sm disabled:opacity-50 whitespace-nowrap"
+              class="inline-flex items-center gap-2 bg-primary-600 hover:bg-primary-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors shadow-sm disabled:opacity-50 whitespace-nowrap"
             >
               Search
             </button>
             <label class="inline-flex items-center gap-1.5 cursor-pointer select-none whitespace-nowrap text-sm text-slate-600">
-              <input type="checkbox" v-model="showAllChecked" class="h-4 w-4 rounded border-slate-300 text-indigo-600" />
+              <input type="checkbox" v-model="showAllChecked" class="h-4 w-4 rounded border-slate-300 text-primary-600" />
               Show All
             </label>
           </div>
@@ -301,14 +301,14 @@ function handleSigCancel() {
           <div class="flex items-center gap-2 flex-wrap">
             <select
               v-model="filterCategory"
-              class="rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-400"
+              class="rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-400"
             >
               <option value="">All Categories</option>
               <option v-for="cat in props.categories" :key="cat.id" :value="cat.name">{{ cat.name }}</option>
             </select>
             <select
               v-model="filterStatus"
-              class="rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-400"
+              class="rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-400"
             >
               <option value="">All Statuses</option>
               <option value="Pending Division Chief Approval">Pending DC Approval</option>
@@ -338,7 +338,7 @@ function handleSigCancel() {
         <!-- Loading overlay -->
         <div v-if="isLoading" class="relative">
           <div class="absolute inset-0 bg-white/70 flex items-center justify-center z-10 rounded-xl">
-            <div class="flex flex-col items-center gap-2 text-indigo-600">
+            <div class="flex flex-col items-center gap-2 text-primary-600">
               <svg class="animate-spin h-8 w-8" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                 <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/>
                 <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/>
@@ -459,7 +459,7 @@ function handleSigCancel() {
             <div class="mt-3 flex gap-2 flex-wrap">
               <button
                 @click="viewRequest(req)"
-                class="flex-1 inline-flex items-center justify-center gap-2 px-3 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg text-sm font-medium transition-colors"
+                class="flex-1 inline-flex items-center justify-center gap-2 px-3 py-2 bg-primary-600 hover:bg-primary-700 text-white rounded-lg text-sm font-medium transition-colors"
               >
                 <EyeIcon class="w-4 h-4"/> View
               </button>
@@ -599,13 +599,13 @@ function handleSigCancel() {
                   >
                     <!-- Timeline Dot -->
                     <span
-                      class="absolute -left-[9px] top-1 h-4 w-4 rounded-full bg-indigo-500 ring-4 ring-white"
+                      class="absolute -left-[9px] top-1 h-4 w-4 rounded-full bg-primary-500 ring-4 ring-white"
                     ></span>
 
                     <!-- Log Card -->
                     <div class="bg-slate-50 rounded-lg border border-slate-100 p-4 shadow-sm">
                       <div class="flex justify-between items-start">
-                        <p class="text-sm font-semibold text-indigo-600">
+                        <p class="text-sm font-semibold text-primary-600">
                           {{ log.status }}
                         </p>
                         <span class="text-xs text-slate-400">
@@ -640,14 +640,14 @@ function handleSigCancel() {
               <template v-if="modalMode==='create'">
                 <div>
                   <label class="block text-xs font-medium text-slate-600 mb-1">Request</label>
-                  <input v-model="form.title" type="text" class="rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-400 w-full" required />
+                  <input v-model="form.title" type="text" class="rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-400 w-full" required />
                 </div>
                 <!-- Category -->
                 <div>
                     <label class="block text-xs font-medium text-slate-600 mb-1">Category</label>
                     <select
                     v-model="form.category"
-                    class="rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-400 w-full"
+                    class="rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-400 w-full"
                     required
                     >
                     <option value="">-- Select Request Type --</option>
@@ -667,7 +667,7 @@ function handleSigCancel() {
                     v-model="form.event_date"
                     type="date"
                     :min="minEventDate"
-                    class="rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-400 w-full"
+                    class="rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-400 w-full"
                     required
                   />
                   <p class="text-xs text-amber-600 mt-1">
@@ -681,7 +681,7 @@ function handleSigCancel() {
                     <textarea
                     v-model="form.description"
                     rows="4"
-                    class="rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-400 w-full"
+                    class="rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-400 w-full"
                     required
                     ></textarea>
                 </div>
@@ -722,11 +722,11 @@ function handleSigCancel() {
                     ]" :key="opt.value"
                       class="flex-1 flex items-start gap-2.5 p-3 rounded-xl border cursor-pointer transition-colors"
                       :class="form.posting_type === opt.value
-                        ? 'border-indigo-500 bg-indigo-50'
+                        ? 'border-primary-500 bg-primary-50'
                         : 'border-slate-200 hover:border-slate-300'">
-                      <input type="radio" name="posting_type" v-model="form.posting_type" :value="opt.value" class="mt-0.5 accent-indigo-600" required />
+                      <input type="radio" name="posting_type" v-model="form.posting_type" :value="opt.value" class="mt-0.5 accent-primary-600" required />
                       <div>
-                        <p class="text-sm font-semibold" :class="form.posting_type === opt.value ? 'text-indigo-700' : 'text-slate-700'">{{ opt.label }}</p>
+                        <p class="text-sm font-semibold" :class="form.posting_type === opt.value ? 'text-primary-700' : 'text-slate-700'">{{ opt.label }}</p>
                         <p class="text-xs text-slate-400 mt-0.5">{{ opt.sub }}</p>
                       </div>
                     </label>
@@ -747,7 +747,7 @@ function handleSigCancel() {
 
               <div class="flex justify-end gap-2 pt-4">
                 <button type="button" @click="closeModal" class="inline-flex items-center gap-2 bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 px-4 py-2 rounded-lg text-sm font-medium transition-colors shadow-sm">Cancel</button>
-                <button type="submit" :disabled="form.processing" class="inline-flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors shadow-sm disabled:opacity-60 disabled:cursor-not-allowed min-w-[80px]">
+                <button type="submit" :disabled="form.processing" class="inline-flex items-center gap-2 bg-primary-600 hover:bg-primary-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors shadow-sm disabled:opacity-60 disabled:cursor-not-allowed min-w-[80px]">
                   Save
                 </button>
               </div>

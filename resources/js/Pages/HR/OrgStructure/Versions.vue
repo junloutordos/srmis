@@ -132,7 +132,7 @@ const STATUS_CLASS = {
       <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
         <div>
           <h1 class="text-xl font-semibold text-slate-800 flex items-center gap-2">
-            <ClockIcon class="h-6 w-6 text-indigo-500" />
+            <ClockIcon class="h-6 w-6 text-primary-500" />
             Version History
           </h1>
           <p class="text-sm text-slate-500 mt-0.5">Track and manage org structure versions over time.</p>
@@ -140,7 +140,7 @@ const STATUS_CLASS = {
         <button
           v-if="can.manage"
           @click="showCreate = true"
-          class="inline-flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-medium px-4 py-2 rounded-lg shadow-sm"
+          class="inline-flex items-center gap-2 bg-primary-600 hover:bg-primary-700 text-white text-sm font-medium px-4 py-2 rounded-lg shadow-sm"
         >
           <PlusIcon class="h-4 w-4" /> New Draft
         </button>
@@ -261,8 +261,8 @@ const STATUS_CLASS = {
       </div>
 
       <div class="flex gap-3">
-        <a :href="route('hr.org.index')" class="text-sm text-indigo-600 hover:underline">← Back to Org Chart</a>
-        <a :href="route('hr.org.reports')" class="text-sm text-indigo-600 hover:underline">Reports →</a>
+        <a :href="route('hr.org.index')" class="text-sm text-primary-600 hover:underline">← Back to Org Chart</a>
+        <a :href="route('hr.org.reports')" class="text-sm text-primary-600 hover:underline">Reports →</a>
       </div>
     </div>
 
@@ -273,7 +273,7 @@ const STATUS_CLASS = {
           <div>
             <label class="block text-xs font-medium text-slate-600 mb-1">Version Number <span class="text-red-500">*</span></label>
             <input v-model="form.version_number" type="text" placeholder="e.g. 2026-001"
-              class="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-400"
+              class="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary-400"
               :class="{ 'border-red-400': errors.version_number }"
             />
             <p v-if="errors.version_number" class="text-red-500 text-xs mt-1">{{ errors.version_number[0] }}</p>
@@ -281,7 +281,7 @@ const STATUS_CLASS = {
           <div>
             <label class="block text-xs font-medium text-slate-600 mb-1">Effective Date <span class="text-red-500">*</span></label>
             <input v-model="form.effective_date" type="date"
-              class="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-400"
+              class="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary-400"
               :class="{ 'border-red-400': errors.effective_date }"
             />
             <p v-if="errors.effective_date" class="text-red-500 text-xs mt-1">{{ errors.effective_date[0] }}</p>
@@ -291,7 +291,7 @@ const STATUS_CLASS = {
         <div>
           <label class="block text-xs font-medium text-slate-600 mb-1">Name <span class="text-red-500">*</span></label>
           <input v-model="form.name" type="text" placeholder="e.g. FY 2026 Reorganization"
-            class="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-400"
+            class="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary-400"
             :class="{ 'border-red-400': errors.name }"
           />
           <p v-if="errors.name" class="text-red-500 text-xs mt-1">{{ errors.name[0] }}</p>
@@ -300,14 +300,14 @@ const STATUS_CLASS = {
         <div>
           <label class="block text-xs font-medium text-slate-600 mb-1">Change Summary</label>
           <textarea v-model="form.change_summary" rows="2" placeholder="What changed in this version?"
-            class="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-400 resize-none"
+            class="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary-400 resize-none"
           ></textarea>
         </div>
 
         <div>
           <label class="block text-xs font-medium text-slate-600 mb-1">Basis Document</label>
           <input v-model="form.basis_document" type="text" placeholder="BOD Res. No. / EO No. / AO No."
-            class="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-400"
+            class="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary-400"
           />
         </div>
       </form>
@@ -315,7 +315,7 @@ const STATUS_CLASS = {
       <template #footer>
         <button @click="showCreate = false" class="text-sm px-4 py-2 rounded-lg border border-slate-200 text-slate-600 hover:bg-slate-50">Cancel</button>
         <button @click="submitCreate" :disabled="loading"
-          class="text-sm px-4 py-2 rounded-lg bg-indigo-600 hover:bg-indigo-700 text-white font-medium disabled:opacity-60">
+          class="text-sm px-4 py-2 rounded-lg bg-primary-600 hover:bg-primary-700 text-white font-medium disabled:opacity-60">
           {{ loading ? 'Creating…' : 'Create Draft' }}
         </button>
       </template>

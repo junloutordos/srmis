@@ -406,7 +406,7 @@ const equipmentHistoryMap = computed(() => {
           <!-- Checklist -->
           <div class="space-y-2">
             <label v-for="(item, idx) in checklistItems" :key="idx" class="flex items-center gap-2 text-sm text-slate-700 cursor-pointer">
-              <input type="checkbox" v-model="checklistStatus[idx]" class="rounded border-slate-300 text-indigo-600 focus:ring-indigo-500" />
+              <input type="checkbox" v-model="checklistStatus[idx]" class="rounded border-slate-300 text-primary-600 focus:ring-primary-500" />
               <span>{{ item }}</span>
             </label>
           </div>
@@ -416,18 +416,18 @@ const equipmentHistoryMap = computed(() => {
             <div>
               <label class="block text-xs font-medium text-slate-600 mb-1">Actual PMS Date</label>
               <input type="date" v-model="modalData.actualDate"
-                class="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-400" />
+                class="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-400" />
             </div>
             <input type="hidden" v-model="modalData.pmsType" />
             <div>
               <label class="block text-xs font-medium text-slate-600 mb-1">Cost of Repair (if any)</label>
               <input type="number" v-model="modalData.cost" min="0" step="0.01"
-                class="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-400" />
+                class="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-400" />
             </div>
             <div>
               <label class="block text-xs font-medium text-slate-600 mb-1">Remarks</label>
               <textarea v-model="modalData.remarks" rows="2"
-                class="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-400"></textarea>
+                class="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-400"></textarea>
             </div>
           </div>
         </div>
@@ -437,7 +437,7 @@ const equipmentHistoryMap = computed(() => {
             Cancel
           </button>
           <button @click="saveActivity" :disabled="isSubmitting"
-            class="inline-flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors shadow-sm disabled:opacity-50 disabled:cursor-not-allowed">
+            class="inline-flex items-center gap-2 bg-primary-600 hover:bg-primary-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors shadow-sm disabled:opacity-50 disabled:cursor-not-allowed">
             {{ isSubmitting ? 'Saving…' : 'Save' }}
           </button>
         </div>

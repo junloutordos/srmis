@@ -104,7 +104,7 @@ const destroy = (id) => {
           <h1 class="text-xl font-semibold text-slate-800">Vehicles</h1>
           <p class="text-sm text-slate-500 mt-0.5">Manage the fleet of vehicles</p>
         </div>
-        <button @click="openCreate" class="inline-flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors shadow-sm">
+        <button @click="openCreate" class="inline-flex items-center gap-2 bg-primary-600 hover:bg-primary-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors shadow-sm">
           + Add Vehicle
         </button>
       </div>
@@ -117,7 +117,7 @@ const destroy = (id) => {
             v-model="searchQuery"
             type="text"
             placeholder="Search vehicles…"
-            class="w-full sm:w-72 rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-400"
+            class="w-full sm:w-72 rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-400"
           />
         </div>
 
@@ -175,7 +175,7 @@ const destroy = (id) => {
                 <p class="text-xs text-slate-600">Status: {{ v.status ?? 'Good Working' }}</p>
               </div>
               <div class="flex flex-col items-end gap-2">
-                <button @click="openEdit(v)" class="inline-flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white px-3 py-1.5 rounded-lg text-xs font-medium transition-colors">Edit</button>
+                <button @click="openEdit(v)" class="inline-flex items-center gap-2 bg-primary-600 hover:bg-primary-700 text-white px-3 py-1.5 rounded-lg text-xs font-medium transition-colors">Edit</button>
                 <button @click="destroy(v.id)" class="inline-flex items-center gap-2 bg-red-600 hover:bg-red-700 text-white px-3 py-1.5 rounded-lg text-xs font-medium transition-colors">Delete</button>
               </div>
             </div>
@@ -208,22 +208,22 @@ const destroy = (id) => {
         <div class="px-6 py-5 space-y-4">
           <div>
             <label class="block text-xs font-medium text-slate-600 mb-1">Name</label>
-            <input v-model="form.name" type="text" class="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-400" />
+            <input v-model="form.name" type="text" class="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-400" />
             <p v-if="form.errors.name" class="text-red-600 text-xs mt-1">{{ form.errors.name }}</p>
           </div>
           <div>
             <label class="block text-xs font-medium text-slate-600 mb-1">Plate Number</label>
-            <input v-model="form.plate_number" type="text" class="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-400" />
+            <input v-model="form.plate_number" type="text" class="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-400" />
             <p v-if="form.errors.plate_number" class="text-red-600 text-xs mt-1">{{ form.errors.plate_number }}</p>
           </div>
           <div>
             <label class="block text-xs font-medium text-slate-600 mb-1">Capacity</label>
-            <input v-model.number="form.capacity" type="number" min="1" class="w-32 rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-400" />
+            <input v-model.number="form.capacity" type="number" min="1" class="w-32 rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-400" />
             <p v-if="form.errors.capacity" class="text-red-600 text-xs mt-1">{{ form.errors.capacity }}</p>
           </div>
           <div>
             <label class="block text-xs font-medium text-slate-600 mb-1">Status</label>
-            <select v-model="form.status" class="w-48 rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-400">
+            <select v-model="form.status" class="w-48 rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-400">
               <option value="Good Working">Good Working</option>
               <option value="Under Repair">Under Repair</option>
             </select>
@@ -231,12 +231,12 @@ const destroy = (id) => {
           </div>
           <div>
             <label class="block text-xs font-medium text-slate-600 mb-1">Description</label>
-            <textarea v-model="form.description" rows="3" class="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-400"></textarea>
+            <textarea v-model="form.description" rows="3" class="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-400"></textarea>
           </div>
         </div>
         <div class="px-6 py-4 border-t border-slate-100 flex justify-end gap-2">
           <button @click.prevent="showModal=false" class="inline-flex items-center gap-2 bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 px-4 py-2 rounded-lg text-sm font-medium transition-colors shadow-sm">Cancel</button>
-          <button @click.prevent="submit" :disabled="form.processing" class="inline-flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors shadow-sm disabled:opacity-60">Save</button>
+          <button @click.prevent="submit" :disabled="form.processing" class="inline-flex items-center gap-2 bg-primary-600 hover:bg-primary-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors shadow-sm disabled:opacity-60">Save</button>
         </div>
       </div>
     </div>

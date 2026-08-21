@@ -196,7 +196,7 @@ function categoryColor(c) {
 
       <!-- ── Breadcrumb ───────────────────────────────────────────────────────── -->
       <nav class="flex items-center gap-1.5 text-sm text-slate-500">
-        <a :href="route('hr.org.index')" class="hover:text-indigo-600">Org Structure</a>
+        <a :href="route('hr.org.index')" class="hover:text-primary-600">Org Structure</a>
         <template v-for="(crumb, i) in breadcrumb.split(' › ')" :key="i">
           <ChevronRightIcon class="h-3.5 w-3.5 text-slate-300" />
           <span :class="i === breadcrumb.split(' › ').length - 1 ? 'text-slate-800 font-medium' : ''">
@@ -217,7 +217,7 @@ function categoryColor(c) {
       <div class="bg-white rounded-xl border border-slate-100 shadow-sm px-6 py-5 flex flex-col sm:flex-row sm:items-start gap-4">
         <div class="flex-1 min-w-0">
           <div class="flex items-center gap-2 flex-wrap">
-            <span class="text-xs font-semibold uppercase tracking-wide bg-indigo-50 text-indigo-700 px-2 py-0.5 rounded">{{ unit.type }}</span>
+            <span class="text-xs font-semibold uppercase tracking-wide bg-primary-50 text-primary-700 px-2 py-0.5 rounded">{{ unit.type }}</span>
             <span class="text-xs font-mono text-slate-400">{{ unit.code }}</span>
             <span v-if="!unit.is_active" class="text-xs bg-amber-50 text-amber-600 px-2 py-0.5 rounded">Inactive</span>
           </div>
@@ -226,7 +226,7 @@ function categoryColor(c) {
           <p v-if="unit.description" class="text-sm text-slate-600 mt-2 max-w-2xl">{{ unit.description }}</p>
 
           <div v-if="currentHead" class="mt-3 flex items-center gap-2 text-sm text-slate-600">
-            <UserCircleIcon class="h-4 w-4 text-indigo-400 shrink-0" />
+            <UserCircleIcon class="h-4 w-4 text-primary-400 shrink-0" />
             <span class="font-medium">{{ currentHead.user?.name }}</span>
             <span v-if="currentHead.designation_title" class="text-slate-400">— {{ currentHead.designation_title }}</span>
             <span v-if="currentHead.is_acting" class="text-xs bg-amber-50 text-amber-600 px-1.5 py-0.5 rounded">Acting</span>
@@ -237,7 +237,7 @@ function categoryColor(c) {
           <button
             v-if="can.assign"
             @click="openAssignModal"
-            class="inline-flex items-center gap-1.5 text-sm px-3 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg font-medium"
+            class="inline-flex items-center gap-1.5 text-sm px-3 py-2 bg-primary-600 hover:bg-primary-700 text-white rounded-lg font-medium"
           >
             <UserGroupIcon class="h-4 w-4" /> Assign Employee
           </button>
@@ -264,7 +264,7 @@ function categoryColor(c) {
           :class="[
             'flex items-center gap-1.5 px-4 py-2.5 text-sm font-medium border-b-2 -mb-px transition-colors',
             activeTab === tab.key
-              ? 'border-indigo-600 text-indigo-700'
+              ? 'border-primary-600 text-primary-700'
               : 'border-transparent text-slate-500 hover:text-slate-700',
           ]"
         >
@@ -303,7 +303,7 @@ function categoryColor(c) {
         <div class="lg:col-span-2 bg-white rounded-xl border border-slate-100 shadow-sm">
           <div class="px-5 py-3 border-b border-slate-100">
             <h3 class="text-sm font-semibold text-slate-700 flex items-center gap-2">
-              <BuildingOfficeIcon class="h-4 w-4 text-indigo-400" />
+              <BuildingOfficeIcon class="h-4 w-4 text-primary-400" />
               Child Units
               <span class="text-xs text-slate-400 font-normal">({{ unit.active_children?.length ?? 0 }})</span>
             </h3>
@@ -314,7 +314,7 @@ function categoryColor(c) {
           <ul v-else class="divide-y divide-slate-100">
             <li v-for="child in unit.active_children" :key="child.id" class="px-5 py-3 flex items-center justify-between hover:bg-slate-50/60">
               <div>
-                <a :href="route('hr.org.units.show', child.id)" class="text-sm font-medium text-slate-800 hover:text-indigo-600">
+                <a :href="route('hr.org.units.show', child.id)" class="text-sm font-medium text-slate-800 hover:text-primary-600">
                   {{ child.name }}
                 </a>
                 <span class="ml-2 text-xs font-mono text-slate-400">{{ child.code }}</span>
@@ -329,7 +329,7 @@ function categoryColor(c) {
       <div v-if="activeTab === 'assignments'" class="bg-white rounded-xl border border-slate-100 shadow-sm">
         <div class="px-5 py-3 border-b border-slate-100 flex items-center justify-between">
           <h3 class="text-sm font-semibold text-slate-700 flex items-center gap-2">
-            <UserGroupIcon class="h-4 w-4 text-indigo-400" />
+            <UserGroupIcon class="h-4 w-4 text-primary-400" />
             Employees
             <span class="text-xs text-slate-400 font-normal">({{ employees.length }})</span>
           </h3>
@@ -377,12 +377,12 @@ function categoryColor(c) {
       <div v-if="activeTab === 'heads'" class="bg-white rounded-xl border border-slate-100 shadow-sm">
         <div class="px-5 py-3 border-b border-slate-100 flex items-center justify-between">
           <h3 class="text-sm font-semibold text-slate-700 flex items-center gap-2">
-            <UserCircleIcon class="h-4 w-4 text-indigo-400" /> Head Designations
+            <UserCircleIcon class="h-4 w-4 text-primary-400" /> Head Designations
           </h3>
           <button
             v-if="can.heads"
             @click="openHeadModal"
-            class="text-xs px-3 py-1.5 bg-indigo-50 hover:bg-indigo-100 text-indigo-700 rounded-lg font-medium"
+            class="text-xs px-3 py-1.5 bg-primary-50 hover:bg-primary-100 text-primary-700 rounded-lg font-medium"
           >
             + Designate
           </button>
@@ -420,7 +420,7 @@ function categoryColor(c) {
         <div>
           <label class="block text-xs font-medium text-slate-600 mb-1">Employee <span class="text-red-500">*</span></label>
           <select v-model="assignForm.user_id"
-            class="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-400"
+            class="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary-400"
             :class="{ 'border-red-400': errors.user_id }"
           >
             <option :value="null">— Select employee —</option>
@@ -434,7 +434,7 @@ function categoryColor(c) {
           <div>
             <label class="block text-xs font-medium text-slate-600 mb-1">Assignment Type <span class="text-red-500">*</span></label>
             <select v-model="assignForm.assignment_type"
-              class="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-400"
+              class="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary-400"
             >
               <option v-for="(label, val) in ASSIGNMENT_TYPE_LABELS" :key="val" :value="val">{{ label }}</option>
             </select>
@@ -443,7 +443,7 @@ function categoryColor(c) {
           <div>
             <label class="block text-xs font-medium text-slate-600 mb-1">Appointment Type</label>
             <select v-model="assignForm.appointment_type"
-              class="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-400"
+              class="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary-400"
             >
               <option v-for="(label, val) in APPOINTMENT_TYPE_LABELS" :key="val" :value="val">{{ label }}</option>
             </select>
@@ -454,7 +454,7 @@ function categoryColor(c) {
         <div>
           <label class="block text-xs font-medium text-slate-600 mb-1">Position Title</label>
           <input v-model="assignForm.position_title" type="text" placeholder="e.g. Division Chief III"
-            class="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-400"
+            class="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary-400"
           />
         </div>
 
@@ -462,13 +462,13 @@ function categoryColor(c) {
           <div>
             <label class="block text-xs font-medium text-slate-600 mb-1">Item Number</label>
             <input v-model="assignForm.item_number" type="text" placeholder="Plantilla item #"
-              class="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-400"
+              class="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary-400"
             />
           </div>
           <div>
             <label class="block text-xs font-medium text-slate-600 mb-1">Effective Date <span class="text-red-500">*</span></label>
             <input v-model="assignForm.effective_date" type="date"
-              class="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-400"
+              class="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary-400"
               :class="{ 'border-red-400': errors.effective_date }"
             />
             <p v-if="errors.effective_date" class="text-red-500 text-xs mt-1">{{ errors.effective_date[0] }}</p>
@@ -476,7 +476,7 @@ function categoryColor(c) {
         </div>
 
         <label class="flex items-center gap-2 cursor-pointer">
-          <input v-model="assignForm.is_primary" type="checkbox" class="rounded border-slate-300 text-indigo-600" />
+          <input v-model="assignForm.is_primary" type="checkbox" class="rounded border-slate-300 text-primary-600" />
           <span class="text-sm text-slate-700">Set as primary unit assignment</span>
         </label>
 
@@ -484,7 +484,7 @@ function categoryColor(c) {
       <template #footer>
         <button @click="showAssign = false" class="text-sm px-4 py-2 rounded-lg border border-slate-200 text-slate-600 hover:bg-slate-50">Cancel</button>
         <button @click="submitAssign" :disabled="loading"
-          class="text-sm px-4 py-2 rounded-lg bg-indigo-600 hover:bg-indigo-700 text-white font-medium disabled:opacity-60">
+          class="text-sm px-4 py-2 rounded-lg bg-primary-600 hover:bg-primary-700 text-white font-medium disabled:opacity-60">
           {{ loading ? 'Saving…' : 'Assign' }}
         </button>
       </template>
@@ -496,7 +496,7 @@ function categoryColor(c) {
         <div>
           <label class="block text-xs font-medium text-slate-600 mb-1">Employee <span class="text-red-500">*</span></label>
           <select v-model="headForm.user_id"
-            class="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-400"
+            class="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary-400"
             :class="{ 'border-red-400': errors.user_id }"
           >
             <option :value="null">— Select employee —</option>
@@ -507,14 +507,14 @@ function categoryColor(c) {
         <div>
           <label class="block text-xs font-medium text-slate-600 mb-1">Designation Title</label>
           <input v-model="headForm.designation_title" type="text" placeholder="e.g. Division Chief, OIC Director"
-            class="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-400"
+            class="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary-400"
           />
         </div>
         <div class="grid grid-cols-2 gap-4">
           <div>
             <label class="block text-xs font-medium text-slate-600 mb-1">Effective Date <span class="text-red-500">*</span></label>
             <input v-model="headForm.effective_date" type="date"
-              class="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-400"
+              class="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary-400"
               :class="{ 'border-red-400': errors.effective_date }"
             />
             <p v-if="errors.effective_date" class="text-red-500 text-xs mt-1">{{ errors.effective_date[0] }}</p>
@@ -522,17 +522,17 @@ function categoryColor(c) {
           <div>
             <label class="block text-xs font-medium text-slate-600 mb-1">Designation Order No.</label>
             <input v-model="headForm.designation_order" type="text" placeholder="DO No. / CSC Order"
-              class="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-400"
+              class="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary-400"
             />
           </div>
         </div>
         <div class="flex items-center gap-4">
           <label class="flex items-center gap-2 cursor-pointer">
-            <input v-model="headForm.is_acting" type="checkbox" class="rounded border-slate-300 text-indigo-600" />
+            <input v-model="headForm.is_acting" type="checkbox" class="rounded border-slate-300 text-primary-600" />
             <span class="text-sm text-slate-700">Acting / OIC</span>
           </label>
           <label class="flex items-center gap-2 cursor-pointer">
-            <input v-model="headForm.is_current" type="checkbox" class="rounded border-slate-300 text-indigo-600" />
+            <input v-model="headForm.is_current" type="checkbox" class="rounded border-slate-300 text-primary-600" />
             <span class="text-sm text-slate-700">Set as current head</span>
           </label>
         </div>
@@ -540,7 +540,7 @@ function categoryColor(c) {
       <template #footer>
         <button @click="showHead = false" class="text-sm px-4 py-2 rounded-lg border border-slate-200 text-slate-600 hover:bg-slate-50">Cancel</button>
         <button @click="submitHead" :disabled="loading"
-          class="text-sm px-4 py-2 rounded-lg bg-indigo-600 hover:bg-indigo-700 text-white font-medium disabled:opacity-60">
+          class="text-sm px-4 py-2 rounded-lg bg-primary-600 hover:bg-primary-700 text-white font-medium disabled:opacity-60">
           {{ loading ? 'Saving…' : 'Designate' }}
         </button>
       </template>

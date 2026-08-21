@@ -14,7 +14,7 @@
           <p class="text-sm text-slate-500 mt-0.5">Manage campus details and contact information</p>
         </div>
         <button v-if="!campus" @click.prevent="openModal()"
-          class="inline-flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors shadow-sm">
+          class="inline-flex items-center gap-2 bg-primary-600 hover:bg-primary-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors shadow-sm">
           + Add Campus
         </button>
         <button v-else @click.prevent="openModal(campus)"
@@ -69,11 +69,11 @@
               </div>
               <div v-if="campus.website" class="flex gap-2 text-sm">
                 <span class="font-medium text-slate-500 w-28 shrink-0">Website:</span>
-                <a :href="campus.website" target="_blank" class="text-indigo-600 hover:text-indigo-800">{{ campus.website }}</a>
+                <a :href="campus.website" target="_blank" class="text-primary-600 hover:text-primary-800">{{ campus.website }}</a>
               </div>
               <div v-if="campus.facebook" class="flex gap-2 text-sm">
                 <span class="font-medium text-slate-500 w-28 shrink-0">Facebook:</span>
-                <a :href="campus.facebook" target="_blank" class="text-indigo-600 hover:text-indigo-800">{{ campus.facebook }}</a>
+                <a :href="campus.facebook" target="_blank" class="text-primary-600 hover:text-primary-800">{{ campus.facebook }}</a>
               </div>
             </div>
           </div>
@@ -88,7 +88,7 @@
         <h3 class="text-sm font-medium text-slate-700 mb-1">No Campus Information</h3>
         <p class="text-sm text-slate-400 mb-4">Add your campus information to get started.</p>
         <button @click.prevent="openModal()"
-          class="inline-flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors shadow-sm">
+          class="inline-flex items-center gap-2 bg-primary-600 hover:bg-primary-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors shadow-sm">
           Add Campus Information
         </button>
       </div>
@@ -121,7 +121,7 @@
                     type="file"
                     @change="handleLogoChange"
                     accept="image/*"
-                    class="block w-full text-sm text-slate-500 file:mr-4 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:text-sm file:font-medium file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100"
+                    class="block w-full text-sm text-slate-500 file:mr-4 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:text-sm file:font-medium file:bg-primary-50 file:text-primary-700 hover:file:bg-primary-100"
                   />
                   <p class="text-xs text-slate-400 mt-1">PNG, JPG, GIF up to 2MB</p>
                 </div>
@@ -132,48 +132,48 @@
               <div class="md:col-span-2">
                 <label class="block text-xs font-medium text-slate-600 mb-1">Name <span class="text-red-500">*</span></label>
                 <input v-model="form.name" type="text"
-                  class="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-400"
+                  class="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-400"
                   required />
               </div>
               <div>
                 <label class="block text-xs font-medium text-slate-600 mb-1">Code</label>
                 <input v-model="form.code" type="text"
-                  class="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-400" />
+                  class="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-400" />
               </div>
               <div>
                 <label class="block text-xs font-medium text-slate-600 mb-1">Year Established</label>
                 <input v-model="form.year_established" type="number" min="1800" :max="new Date().getFullYear()+1"
-                  class="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-400" />
+                  class="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-400" />
               </div>
               <div class="md:col-span-2">
                 <label class="block text-xs font-medium text-slate-600 mb-1">Address</label>
                 <textarea v-model="form.address" rows="3"
-                  class="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-400"></textarea>
+                  class="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-400"></textarea>
               </div>
               <div>
                 <label class="block text-xs font-medium text-slate-600 mb-1">Telephone Number</label>
                 <input v-model="form.telephone" type="text"
-                  class="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-400" />
+                  class="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-400" />
               </div>
               <div>
                 <label class="block text-xs font-medium text-slate-600 mb-1">Mobile Number</label>
                 <input v-model="form.mobile" type="text"
-                  class="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-400" />
+                  class="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-400" />
               </div>
               <div>
                 <label class="block text-xs font-medium text-slate-600 mb-1">Official Email Address</label>
                 <input v-model="form.email" type="email"
-                  class="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-400" />
+                  class="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-400" />
               </div>
               <div>
                 <label class="block text-xs font-medium text-slate-600 mb-1">Website</label>
                 <input v-model="form.website" type="url"
-                  class="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-400" />
+                  class="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-400" />
               </div>
               <div class="md:col-span-2">
                 <label class="block text-xs font-medium text-slate-600 mb-1">Facebook</label>
                 <input v-model="form.facebook" type="text"
-                  class="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-400" />
+                  class="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-400" />
               </div>
             </div>
 
@@ -183,7 +183,7 @@
                 Cancel
               </button>
               <button type="submit" :disabled="form.processing"
-                class="inline-flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors shadow-sm disabled:opacity-50 disabled:cursor-not-allowed">
+                class="inline-flex items-center gap-2 bg-primary-600 hover:bg-primary-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors shadow-sm disabled:opacity-50 disabled:cursor-not-allowed">
                 {{ form.processing ? 'Saving…' : 'Save' }}
               </button>
             </div>

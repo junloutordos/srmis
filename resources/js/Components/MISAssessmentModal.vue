@@ -168,7 +168,7 @@ const isHardware = computed(() =>
             <textarea
               v-model="form.mis_assessment"
               rows="3"
-              class="rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-400 w-full"
+              class="rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-400 w-full"
               placeholder="Describe the initial assessment…"
             ></textarea>
           </div>
@@ -179,7 +179,7 @@ const isHardware = computed(() =>
             <input
               v-model="form.expected_completion_date"
               type="date"
-              class="rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-400 w-full"
+              class="rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-400 w-full"
             />
           </div>
 
@@ -190,7 +190,7 @@ const isHardware = computed(() =>
               v-model="form.recommendation"
               rows="2"
               placeholder="e.g. Repair/Replace defective hardware component(s)"
-              class="rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-400 w-full"
+              class="rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-400 w-full"
             ></textarea>
           </div>
 
@@ -201,7 +201,7 @@ const isHardware = computed(() =>
               v-model="form.action_taken"
               rows="3"
               placeholder="Describe what was done to resolve the request…"
-              class="rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-400 w-full"
+              class="rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-400 w-full"
             ></textarea>
           </div>
 
@@ -211,7 +211,7 @@ const isHardware = computed(() =>
             <input
               v-model="form.completed_at"
               type="date"
-              class="rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-400 w-full"
+              class="rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-400 w-full"
             />
           </div>
 
@@ -222,7 +222,7 @@ const isHardware = computed(() =>
             <button
               type="button"
               @click="openEqDrop"
-              class="w-full flex items-center justify-between gap-2 rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+              class="w-full flex items-center justify-between gap-2 rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500"
             >
               <span :class="form.ict_equipment_id ? 'text-slate-800' : 'text-slate-400'" class="truncate">
                 {{ selectedEquipmentLabel || '-- Select Equipment --' }}
@@ -240,7 +240,7 @@ const isHardware = computed(() =>
                   type="text"
                   placeholder="Search by name, owner, serial no…"
                   @blur="closeEqDrop"
-                  class="w-full rounded-lg border border-slate-200 px-3 py-1.5 text-sm text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                  class="w-full rounded-lg border border-slate-200 px-3 py-1.5 text-sm text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-primary-500"
                 />
               </div>
               <ul class="max-h-56 overflow-y-auto py-1">
@@ -259,8 +259,8 @@ const isHardware = computed(() =>
                     @mousedown.prevent="selectEquipment(eq)"
                     class="w-full text-left px-3 py-2 text-sm transition-colors"
                     :class="form.ict_equipment_id == eq.id
-                      ? 'bg-indigo-50 text-indigo-700 font-medium'
-                      : 'text-slate-700 hover:bg-indigo-50 hover:text-indigo-700'"
+                      ? 'bg-primary-50 text-primary-700 font-medium'
+                      : 'text-slate-700 hover:bg-primary-50 hover:text-primary-700'"
                   >
                     <span class="font-medium">{{ eq.room?.name ?? '—' }}</span>
                     <span class="text-slate-500"> · {{ eq.owner?.name ?? '—' }}</span>
@@ -285,7 +285,7 @@ const isHardware = computed(() =>
             <button
               type="submit"
               :disabled="form.processing"
-              class="inline-flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors shadow-sm disabled:opacity-60 disabled:cursor-not-allowed min-w-[80px]"
+              class="inline-flex items-center gap-2 bg-primary-600 hover:bg-primary-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors shadow-sm disabled:opacity-60 disabled:cursor-not-allowed min-w-[80px]"
             >
               <svg v-if="form.processing" class="animate-spin h-4 w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                 <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/>

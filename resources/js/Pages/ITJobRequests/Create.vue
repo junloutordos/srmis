@@ -49,7 +49,7 @@ const submit = () => {
               <input
                 v-model="form.title"
                 type="text"
-                class="rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-400 w-full"
+                class="rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-400 w-full"
                 required
               />
             </div>
@@ -59,7 +59,7 @@ const submit = () => {
               <label class="block text-xs font-medium text-slate-600 mb-1">Category</label>
               <select
                 v-model="form.category"
-                class="rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-400 w-full"
+                class="rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-400 w-full"
                 required
               >
                 <option value="">-- Select --</option>
@@ -77,7 +77,7 @@ const submit = () => {
               <textarea
                 v-model="form.description"
                 rows="4"
-                class="rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-400 w-full"
+                class="rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-400 w-full"
                 required
               ></textarea>
             </div>
@@ -118,7 +118,7 @@ const submit = () => {
               <button
                 type="submit"
                 :disabled="form.processing"
-                class="inline-flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors shadow-sm w-full justify-center disabled:opacity-60"
+                class="inline-flex items-center gap-2 bg-primary-600 hover:bg-primary-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors shadow-sm w-full justify-center disabled:opacity-60"
               >
                 Submit Request
               </button>

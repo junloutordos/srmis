@@ -119,7 +119,7 @@ const COLS = [
     <!-- Header -->
     <div class="bg-white border-b border-slate-200 px-6 py-4 flex items-center justify-between sticky top-0 z-10">
       <div class="flex items-center gap-3">
-        <BuildingOffice2Icon class="h-6 w-6 text-indigo-500" />
+        <BuildingOffice2Icon class="h-6 w-6 text-primary-500" />
         <div>
           <h1 class="text-lg font-semibold text-slate-800">System Overview</h1>
           <p class="text-xs text-slate-400">Cross-campus analytics · data cached 5 min</p>
@@ -128,7 +128,7 @@ const COLS = [
       <div class="flex items-center gap-3">
         <a :href="route('central.admin')" class="text-sm text-slate-500 hover:text-slate-700">← Admin</a>
         <button @click="refresh" :disabled="loading"
-          class="inline-flex items-center gap-2 text-sm px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg disabled:opacity-60 transition-colors"
+          class="inline-flex items-center gap-2 text-sm px-4 py-2 bg-primary-600 hover:bg-primary-700 text-white rounded-lg disabled:opacity-60 transition-colors"
         >
           <ArrowPathIcon class="h-4 w-4" :class="{ 'animate-spin': loading }" />
           Refresh
@@ -159,8 +159,8 @@ const COLS = [
       <!-- System-wide stat cards -->
       <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4">
         <div class="bg-white rounded-xl border border-slate-100 shadow-sm p-4 text-center">
-          <BuildingOffice2Icon class="h-5 w-5 text-indigo-400 mx-auto mb-1" />
-          <p class="text-2xl font-bold text-indigo-600">{{ provisioned.length }}</p>
+          <BuildingOffice2Icon class="h-5 w-5 text-primary-400 mx-auto mb-1" />
+          <p class="text-2xl font-bold text-primary-600">{{ provisioned.length }}</p>
           <p class="text-xs text-slate-500 mt-0.5">Campuses</p>
         </div>
         <div class="bg-white rounded-xl border border-slate-100 shadow-sm p-4 text-center">
@@ -191,14 +191,14 @@ const COLS = [
       </div>
 
       <!-- Busiest campus callout -->
-      <div v-if="busiestCampus && busiestCampus.requests_this_month > 0" class="bg-indigo-50 border border-indigo-100 rounded-xl px-5 py-3 flex items-center gap-3">
-        <ChartBarIcon class="h-5 w-5 text-indigo-400 shrink-0" />
-        <p class="text-sm text-indigo-800">
+      <div v-if="busiestCampus && busiestCampus.requests_this_month > 0" class="bg-primary-50 border border-primary-100 rounded-xl px-5 py-3 flex items-center gap-3">
+        <ChartBarIcon class="h-5 w-5 text-primary-400 shrink-0" />
+        <p class="text-sm text-primary-800">
           <span class="font-semibold">{{ busiestCampus.name }}</span> is the most active campus this month with
           <span class="font-semibold">{{ busiestCampus.requests_this_month }}</span> requests.
         </p>
         <a :href="route('central.overview.campus', busiestCampus.id)"
-          class="ml-auto shrink-0 text-xs text-indigo-600 hover:text-indigo-800 font-medium flex items-center gap-1">
+          class="ml-auto shrink-0 text-xs text-primary-600 hover:text-primary-800 font-medium flex items-center gap-1">
           View <ArrowTopRightOnSquareIcon class="h-3.5 w-3.5" />
         </a>
       </div>
@@ -224,8 +224,8 @@ const COLS = [
                 >
                   <span class="flex items-center gap-1">
                     {{ col.label }}
-                    <ChevronUpIcon v-if="sortBy === col.key && sortDir === 'asc'" class="h-3 w-3 text-indigo-500" />
-                    <ChevronDownIcon v-else-if="sortBy === col.key && sortDir === 'desc'" class="h-3 w-3 text-indigo-500" />
+                    <ChevronUpIcon v-if="sortBy === col.key && sortDir === 'asc'" class="h-3 w-3 text-primary-500" />
+                    <ChevronDownIcon v-else-if="sortBy === col.key && sortDir === 'desc'" class="h-3 w-3 text-primary-500" />
                     <ChevronUpDownIcon v-else class="h-3 w-3 text-slate-300" />
                   </span>
                 </th>
@@ -237,7 +237,7 @@ const COLS = [
               <tr
                 v-for="s in sortedProvisioned"
                 :key="s.id"
-                class="hover:bg-indigo-50/40 transition-colors"
+                class="hover:bg-primary-50/40 transition-colors"
                 :class="{ 'bg-amber-50/40': totalPending(s) > 15 }"
               >
                 <td class="px-4 py-3">
@@ -279,7 +279,7 @@ const COLS = [
                 </td>
                 <td class="px-4 py-3 text-right">
                   <a :href="route('central.overview.campus', s.id)"
-                    class="inline-flex items-center gap-1 text-xs text-indigo-500 hover:text-indigo-700 font-medium whitespace-nowrap">
+                    class="inline-flex items-center gap-1 text-xs text-primary-500 hover:text-primary-700 font-medium whitespace-nowrap">
                     Details <ArrowTopRightOnSquareIcon class="h-3 w-3" />
                   </a>
                 </td>
