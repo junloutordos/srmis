@@ -11,6 +11,12 @@ use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\Auth\VerifyEmailController;
 use Illuminate\Support\Facades\Route;
 
+// Unconditional GET logout for the "session expired" overlay — deliberately
+// outside both the `guest` and `auth` middleware groups so it works no
+// matter what state the stale session is actually in (see forceLogout()).
+Route::get('force-logout', [AuthenticatedSessionController::class, 'forceLogout'])
+    ->name('force-logout');
+
 Route::middleware('guest')->group(function () {
     // Public self-registration is DISABLED — accounts are created by administrators only.
     // Route::get('register', [RegisteredUserController::class, 'create'])->name('register');

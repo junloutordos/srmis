@@ -44,6 +44,23 @@ watch(() => page.props.errors, (errs) => {
   }
 }, { immediate: true })
 
+// A long-idle login tab (or one restored from the browser's back/forward
+// cache) can hold a stale session/XSRF-token cookie pair — the server mints
+// a fresh one on the next request, but this raw axios call never sees it
+// since it bypasses Inertia's own request cycle. On a 419, refresh the pair
+// with one GET and retry the POST once instead of surfacing a raw CSRF error.
+async function postGoogleLogin(payload) {
+  try {
+    return await axios.post('/google/login', payload)
+  } catch (error) {
+    if (error.response?.status === 419) {
+      await axios.get(route('login'))
+      return axios.post('/google/login', payload)
+    }
+    throw error
+  }
+}
+
 const googleLogin = async () => {
   if (isLoading.value) return
   try {
@@ -54,7 +71,7 @@ const googleLogin = async () => {
       return
     }
     const idToken = await user.getIdToken()
-    const { data } = await axios.post('/google/login', { email: user.email, name: user.displayName, uid: user.uid, idToken })
+    const { data } = await postGoogleLogin({ email: user.email, name: user.displayName, uid: user.uid, idToken })
     if (!data?.success) throw new Error('Account verification failed')
     showAlert({ icon: 'success', title: 'Login Successful', text: `Welcome, ${user.displayName}! Redirecting…`, timer: 1500, showConfirmButton: false })
     window.location.href = data.redirect_to
@@ -64,6 +81,14 @@ const googleLogin = async () => {
     isLoading.value = false
   }
 }
+
+// If this login page itself was restored from the bfcache (e.g. the user
+// hit the browser back button after navigating away), force a real reload
+// so the session/XSRF cookie pair — and the page's own CSRF-bound form — are
+// guaranteed fresh before any submit.
+window.addEventListener('pageshow', (event) => {
+  if (event.persisted) window.location.reload()
+})
 
 // ── Email + password fallback (campus admins / non-Google accounts) ──────────
 const form = useForm({ email: '', password: '', remember: false })
@@ -133,118 +158,119 @@ const modules = [
 
   <div class="flex min-h-screen bg-white">
 
-    <!-- ── Left panel: illustration ─────────────────────────────────────────── -->
+    <!-- ── Left panel: product preview ──────────────────────────────────────── -->
     <div class="relative hidden w-[55%] flex-col justify-between overflow-hidden md:flex"
-         style="background: linear-gradient(160deg, #060e50 0%, #0d1f8a 55%, #1447c0 100%);">
+         style="background: linear-gradient(160deg, #091F54 0%, #10399B 55%, #1447C0 100%);">
+
+      <!-- dot-grid texture -->
+      <div class="pointer-events-none absolute inset-0 opacity-[0.07]"
+           style="background-image: radial-gradient(circle, #ffffff 1px, transparent 1px); background-size: 22px 22px;"></div>
 
       <!-- soft background shapes -->
       <div class="pointer-events-none absolute inset-0 opacity-20">
-        <div class="absolute -left-24 -top-24 h-96 w-96 rounded-full bg-cyan-400/30 blur-3xl"></div>
-        <div class="absolute bottom-10 right-0 h-80 w-80 rounded-full bg-indigo-400/30 blur-3xl"></div>
+        <div class="absolute -left-24 -top-24 h-96 w-96 rounded-full bg-sky-400/30 blur-3xl"></div>
+        <div class="absolute bottom-10 right-0 h-80 w-80 rounded-full bg-primary-400/30 blur-3xl"></div>
       </div>
 
       <!-- brand -->
       <div class="relative z-10 flex items-center gap-3 px-10 pt-8">
-        <img src="/images/pshslogo.png" alt="PSHS" class="h-9 w-9 object-contain" style="filter: drop-shadow(0 0 8px rgba(0,200,232,0.45));" />
+        <img src="/images/pshslogo.png" alt="PSHS" class="h-9 w-9 object-contain" style="filter: drop-shadow(0 0 8px rgba(56,189,248,0.45));" />
         <div>
           <p class="text-sm font-bold tracking-wide text-white">STRIDE</p>
           <p class="text-[11px] text-blue-200/60">Philippine Science High School System</p>
         </div>
       </div>
 
-      <!-- vector illustration: a service request flowing to approval -->
-      <div class="relative z-10 flex flex-1 items-center justify-center px-10">
-        <svg viewBox="0 0 520 380" fill="none" class="w-full max-w-lg" aria-hidden="true">
-          <!-- ground shadow -->
-          <ellipse cx="260" cy="352" rx="190" ry="16" fill="#04123f" opacity="0.45" />
+      <!-- tilted product-preview mockup with floating glass chips -->
+      <div class="relative z-10 flex flex-1 items-center justify-center px-12">
+        <div class="relative w-full max-w-md" style="perspective: 1600px;">
 
-          <!-- dashed flow line: form → approval -->
-          <path d="M150 210 C 210 130, 320 130, 384 96" stroke="#7dd3fc" stroke-width="2.5"
-                stroke-dasharray="2 9" stroke-linecap="round" opacity="0.8" />
-          <path d="M168 250 C 250 300, 330 290, 396 240" stroke="#7dd3fc" stroke-width="2.5"
-                stroke-dasharray="2 9" stroke-linecap="round" opacity="0.55" />
+          <div class="animate-floaty absolute -top-8 left-4 z-20 flex items-center gap-2 rounded-2xl border border-white/15 bg-white/10 px-3 py-2 text-[11px] font-medium text-white shadow-lg backdrop-blur-md"
+               style="animation-delay: .3s;">
+            <span class="flex h-5 w-5 items-center justify-center rounded-full bg-emerald-400/90">
+              <CheckCircleIcon class="h-3.5 w-3.5 text-emerald-900" />
+            </span>
+            Request approved
+          </div>
+          <div class="animate-floaty absolute -bottom-8 right-4 z-20 flex items-center gap-2 rounded-2xl border border-white/15 bg-white/10 px-3 py-2 text-[11px] font-medium text-white shadow-lg backdrop-blur-md"
+               style="animation-delay: 1.4s;">
+            <ChatBubbleLeftRightIcon class="h-3.5 w-3.5 text-sky-300" />
+            3 new messages
+          </div>
 
-          <!-- main request form card -->
-          <g>
-            <rect x="60" y="110" width="190" height="232" rx="18" fill="#ffffff" />
-            <rect x="60" y="110" width="190" height="232" rx="18" fill="url(#cardSheen)" opacity="0.5" />
-            <!-- clip -->
-            <rect x="125" y="96" width="60" height="28" rx="9" fill="#38bdf8" />
-            <rect x="138" y="103" width="34" height="14" rx="7" fill="#0d1f8a" />
+          <div class="overflow-hidden rounded-2xl bg-white ring-1 ring-black/5"
+               style="transform: rotateY(-9deg) rotateX(5deg) rotateZ(1deg); box-shadow: 0 40px 80px -20px rgba(4,10,50,0.55), 0 15px 35px -10px rgba(4,10,50,0.4);">
 
-            <!-- row 1: done -->
-            <circle cx="92" cy="166" r="11" fill="#34d399" />
-            <path d="M86.5 166 l4 4 l7 -8" stroke="#064e3b" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" fill="none" />
-            <rect x="112" y="156" width="116" height="9" rx="4.5" fill="#c7d2fe" />
-            <rect x="112" y="171" width="78" height="7" rx="3.5" fill="#e0e7ff" />
+            <!-- window chrome -->
+            <div class="flex items-center gap-1.5 border-b border-slate-100 bg-slate-50 px-4 py-2.5">
+              <span class="h-2.5 w-2.5 rounded-full bg-red-300"></span>
+              <span class="h-2.5 w-2.5 rounded-full bg-amber-300"></span>
+              <span class="h-2.5 w-2.5 rounded-full bg-emerald-300"></span>
+              <span class="ml-3 rounded-full bg-white px-3 py-0.5 text-[10px] font-medium text-slate-400 ring-1 ring-slate-200">
+                stride.pshs.edu.ph/dashboard
+              </span>
+            </div>
 
-            <!-- row 2: done -->
-            <circle cx="92" cy="216" r="11" fill="#34d399" />
-            <path d="M86.5 216 l4 4 l7 -8" stroke="#064e3b" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" fill="none" />
-            <rect x="112" y="206" width="116" height="9" rx="4.5" fill="#c7d2fe" />
-            <rect x="112" y="221" width="92" height="7" rx="3.5" fill="#e0e7ff" />
+            <div class="flex">
+              <!-- mini nav rail -->
+              <div class="hidden w-14 flex-col items-center gap-3 border-r border-slate-100 bg-slate-50/60 py-4 sm:flex">
+                <span class="flex h-7 w-7 items-center justify-center rounded-lg bg-primary-600 text-white">
+                  <ComputerDesktopIcon class="h-4 w-4" />
+                </span>
+                <span class="flex h-7 w-7 items-center justify-center rounded-lg text-slate-400">
+                  <InboxIcon class="h-4 w-4" />
+                </span>
+                <span class="flex h-7 w-7 items-center justify-center rounded-lg text-slate-400">
+                  <UsersIcon class="h-4 w-4" />
+                </span>
+                <span class="flex h-7 w-7 items-center justify-center rounded-lg text-slate-400">
+                  <ChartBarIcon class="h-4 w-4" />
+                </span>
+              </div>
 
-            <!-- row 3: pending -->
-            <circle cx="92" cy="266" r="11" fill="#fbbf24" />
-            <circle cx="92" cy="266" r="4.5" fill="#92400e" />
-            <rect x="112" y="256" width="116" height="9" rx="4.5" fill="#c7d2fe" />
-            <rect x="112" y="271" width="64" height="7" rx="3.5" fill="#e0e7ff" />
+              <!-- mock dashboard content -->
+              <div class="flex-1 space-y-3 p-4">
+                <div class="flex items-center justify-between">
+                  <p class="text-xs font-semibold text-slate-700">Dashboard</p>
+                  <div class="h-5 w-16 rounded-md bg-primary-50"></div>
+                </div>
 
-            <!-- submit bar -->
-            <rect x="84" y="300" width="142" height="22" rx="11" fill="#1447c0" />
-            <rect x="128" y="308" width="54" height="6" rx="3" fill="#bfdbfe" />
-          </g>
+                <div class="grid grid-cols-3 gap-2">
+                  <div class="rounded-lg bg-emerald-50 p-2">
+                    <p class="text-sm font-bold text-emerald-700">128</p>
+                    <p class="text-[9px] font-medium text-emerald-600">Approved</p>
+                  </div>
+                  <div class="rounded-lg bg-amber-50 p-2">
+                    <p class="text-sm font-bold text-amber-700">14</p>
+                    <p class="text-[9px] font-medium text-amber-600">Pending</p>
+                  </div>
+                  <div class="rounded-lg bg-primary-50 p-2">
+                    <p class="text-sm font-bold text-primary-700">42</p>
+                    <p class="text-[9px] font-medium text-primary-600">In progress</p>
+                  </div>
+                </div>
 
-          <!-- approval seal -->
-          <g>
-            <circle cx="404" cy="84" r="34" fill="#34d399" />
-            <circle cx="404" cy="84" r="34" stroke="#a7f3d0" stroke-width="3" stroke-dasharray="5 7" fill="none" />
-            <path d="M388 84 l11 11 l21 -23" stroke="#064e3b" stroke-width="5.5" stroke-linecap="round" stroke-linejoin="round" fill="none" />
-          </g>
-
-          <!-- floating module chips -->
-          <!-- wrench / work -->
-          <g>
-            <rect x="284" y="156" width="54" height="54" rx="14" fill="#ffffff" />
-            <path d="M321 173 a10 10 0 0 0 -13 13 l-9 9 a4.5 4.5 0 0 0 6.4 6.4 l9 -9 a10 10 0 0 0 13 -13 l-6 6 l-6.5 -6.5 z"
-                  fill="#1447c0" />
-          </g>
-          <!-- vehicle -->
-          <g>
-            <rect x="356" y="262" width="60" height="46" rx="13" fill="#ffffff" />
-            <path d="M368 290 v-7 a4 4 0 0 1 4 -4 h4 l5 -7 h14 a4 4 0 0 1 3.4 1.9 L402 279 h2 a4 4 0 0 1 4 4 v7 z" fill="#1447c0" />
-            <circle cx="377" cy="292" r="4.4" fill="#0b1c69" />
-            <circle cx="399" cy="292" r="4.4" fill="#0b1c69" />
-          </g>
-          <!-- chat bubble -->
-          <g>
-            <rect x="292" y="40" width="52" height="48" rx="13" fill="#ffffff" />
-            <path d="M304 56 h28 a5 5 0 0 1 5 5 v10 a5 5 0 0 1 -5 5 h-15 l-8 7 v-7 h-5 a5 5 0 0 1 -5 -5 v-10 a5 5 0 0 1 5 -5 z" fill="#38bdf8" />
-            <circle cx="311" cy="66" r="2.1" fill="#075985" />
-            <circle cx="318.5" cy="66" r="2.1" fill="#075985" />
-            <circle cx="326" cy="66" r="2.1" fill="#075985" />
-          </g>
-          <!-- paper plane / messengerial -->
-          <g>
-            <rect x="430" y="160" width="52" height="48" rx="13" fill="#ffffff" />
-            <path d="M440 184 l34 -13 l-9 30 l-8 -9 l-4 7 l-2 -10 z" fill="#1447c0" />
-            <path d="M457 192 l17 -21" stroke="#93c5fd" stroke-width="2" stroke-linecap="round" />
-          </g>
-
-          <!-- sparkles -->
-          <circle cx="62" cy="70" r="4" fill="#7dd3fc" opacity="0.9" />
-          <circle cx="476" cy="46" r="3" fill="#a5b4fc" opacity="0.9" />
-          <circle cx="46" cy="318" r="3.4" fill="#a5b4fc" opacity="0.8" />
-          <circle cx="496" cy="300" r="4" fill="#7dd3fc" opacity="0.7" />
-          <path d="M236 36 l3.4 8 l8 3.4 l-8 3.4 l-3.4 8 l-3.4 -8 l-8 -3.4 l8 -3.4 z" fill="#facc15" opacity="0.95" />
-
-          <defs>
-            <linearGradient id="cardSheen" x1="60" y1="110" x2="250" y2="342" gradientUnits="userSpaceOnUse">
-              <stop stop-color="#ffffff" />
-              <stop offset="1" stop-color="#dbeafe" />
-            </linearGradient>
-          </defs>
-        </svg>
+                <div class="space-y-1.5 rounded-lg border border-slate-100 p-2">
+                  <div class="flex items-center gap-2">
+                    <span class="h-5 w-5 rounded-md bg-slate-100"></span>
+                    <span class="h-2 flex-1 rounded-full bg-slate-100"></span>
+                    <span class="rounded-full bg-emerald-100 px-1.5 py-0.5 text-[8px] font-semibold text-emerald-700">Approved</span>
+                  </div>
+                  <div class="flex items-center gap-2">
+                    <span class="h-5 w-5 rounded-md bg-slate-100"></span>
+                    <span class="h-2 w-3/4 rounded-full bg-slate-100"></span>
+                    <span class="rounded-full bg-amber-100 px-1.5 py-0.5 text-[8px] font-semibold text-amber-700">Pending</span>
+                  </div>
+                  <div class="flex items-center gap-2">
+                    <span class="h-5 w-5 rounded-md bg-slate-100"></span>
+                    <span class="h-2 w-5/6 rounded-full bg-slate-100"></span>
+                    <span class="rounded-full bg-primary-100 px-1.5 py-0.5 text-[8px] font-semibold text-primary-700">In progress</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
 
       <!-- tagline + module strip -->
@@ -266,7 +292,7 @@ const modules = [
 
     <!-- ── Right panel: sign in ──────────────────────────────────────────────── -->
     <div class="flex w-full flex-col items-center justify-center px-6 py-8 md:w-[45%]">
-      <div class="w-full max-w-sm">
+      <div class="animate-fade-in-up w-full max-w-sm">
 
         <!-- brand (compact, all viewports) -->
         <div class="text-center">
@@ -279,7 +305,7 @@ const modules = [
         <button
           @click="googleLogin"
           :disabled="isLoading"
-          class="mt-6 flex w-full items-center justify-center gap-3 rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm font-medium text-slate-700 shadow-sm transition hover:border-slate-300 hover:bg-slate-50 disabled:opacity-60"
+          class="mt-6 flex w-full items-center justify-center gap-3 rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm font-medium text-slate-700 shadow-sm transition hover:border-slate-300 hover:bg-slate-50 hover:shadow-md disabled:opacity-60"
         >
           <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" class="h-5 w-5" alt="" />
           {{ isLoading ? 'Signing in…' : 'Continue with Google' }}
@@ -302,7 +328,7 @@ const modules = [
               required
               autocomplete="username"
               placeholder="name@crc.pshs.edu.ph"
-              class="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+              class="w-full rounded-lg border border-slate-200 bg-white px-3 py-2.5 text-sm transition focus:border-primary-300 focus:outline-none focus:ring-2 focus:ring-primary-500"
             />
 
             <!-- live campus detection -->
@@ -325,17 +351,17 @@ const modules = [
               type="password"
               required
               autocomplete="current-password"
-              class="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+              class="w-full rounded-lg border border-slate-200 bg-white px-3 py-2.5 text-sm transition focus:border-primary-300 focus:outline-none focus:ring-2 focus:ring-primary-500"
             />
             <p v-if="form.errors.password" class="mt-1 text-xs text-red-600">{{ form.errors.password }}</p>
           </div>
 
           <div class="flex items-center justify-between">
             <label class="flex items-center gap-2 text-sm text-slate-600">
-              <input v-model="form.remember" type="checkbox" class="rounded border-slate-300 text-indigo-600 focus:ring-indigo-500" />
+              <input v-model="form.remember" type="checkbox" class="rounded border-slate-300 text-primary-600 focus:ring-primary-500" />
               Remember me
             </label>
-            <a :href="route('password.request')" class="text-sm text-indigo-600 hover:text-indigo-700 font-medium">
+            <a :href="route('password.request')" class="text-sm font-medium text-primary-600 hover:text-primary-700">
               Forgot password?
             </a>
           </div>
@@ -343,7 +369,7 @@ const modules = [
           <button
             type="submit"
             :disabled="form.processing"
-            class="w-full rounded-xl bg-indigo-600 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-indigo-700 disabled:opacity-60"
+            class="w-full rounded-xl bg-primary-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:-translate-y-0.5 hover:bg-primary-700 hover:shadow-lg disabled:pointer-events-none disabled:opacity-60"
           >
             {{ form.processing ? 'Signing in…' : 'Sign in' }}
           </button>
@@ -354,12 +380,12 @@ const modules = [
         </p>
       </div>
 
-      <div class="mt-6 text-center">
+      <div class="animate-fade-in-up mt-6 text-center" style="animation-delay:.15s;">
         <p class="text-[11px] text-slate-400">
           STRIDE v{{ appVersion }} · Philippine Science High School System
         </p>
         <p class="mt-1 text-[11px] text-slate-400">
-          Developed by the <a href="/developer" class="font-medium text-indigo-400 hover:text-indigo-600">PSHS-CRC MIS Team</a>
+          Developed by the <a href="/developer" class="font-medium text-primary-500 hover:text-primary-700">PSHS-CRC MIS Team</a>
         </p>
       </div>
     </div>

@@ -46,7 +46,7 @@
                   </span>
                 </td>
                 <td class="px-4 py-3 text-sm text-slate-700">{{ log.auditable_type ? log.auditable_type.split('\\').pop() + ' #' + (log.auditable_id ?? '') : '' }}</td>
-                <td class="px-4 py-3 text-sm text-slate-700 max-w-xs">
+                <td class="px-4 py-3 text-sm text-slate-700 max-w-xs break-all">
                   <AuditDiff :old-values="log.old_values" :new-values="log.new_values" />
                 </td>
                 <td class="px-4 py-3 text-sm text-slate-700 whitespace-nowrap">{{ log.ip_address }}</td>

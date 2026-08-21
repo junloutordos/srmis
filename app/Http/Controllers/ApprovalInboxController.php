@@ -71,7 +71,11 @@ class ApprovalInboxController extends Controller
         } catch (\Illuminate\Http\Exceptions\HttpResponseException $e) {
             throw $e;
         } catch (\Symfony\Component\HttpKernel\Exception\HttpException $e) {
-            throw $e;
+            // A raw abort() lacks the X-Inertia header Inertia needs to route
+            // the error to the page's onError callback — without this, the
+            // frontend's "processing…" UI never resolves. Redirect back with
+            // a flashed error instead, the same way validation errors work.
+            return back()->withErrors(['message' => $e->getMessage() ?: 'This action could not be completed.']);
         } catch (\Throwable $e) {
             logger()->error('ApprovalInboxController::approve error', [
                 'type'  => $type,
@@ -79,7 +83,7 @@ class ApprovalInboxController extends Controller
                 'error' => $e->getMessage(),
                 'trace' => $e->getTraceAsString(),
             ]);
-            return response()->json(['message' => 'An unexpected error occurred.'], 500);
+            return back()->withErrors(['message' => 'An unexpected error occurred.']);
         }
     }
 
@@ -106,7 +110,7 @@ class ApprovalInboxController extends Controller
         } catch (\Illuminate\Http\Exceptions\HttpResponseException $e) {
             throw $e;
         } catch (\Symfony\Component\HttpKernel\Exception\HttpException $e) {
-            throw $e;
+            return back()->withErrors(['message' => $e->getMessage() ?: 'This action could not be completed.']);
         } catch (\Throwable $e) {
             logger()->error('ApprovalInboxController::decline error', [
                 'type'  => $type,
@@ -114,7 +118,7 @@ class ApprovalInboxController extends Controller
                 'error' => $e->getMessage(),
                 'trace' => $e->getTraceAsString(),
             ]);
-            return response()->json(['message' => 'An unexpected error occurred.'], 500);
+            return back()->withErrors(['message' => 'An unexpected error occurred.']);
         }
     }
 

@@ -1,4 +1,4 @@
-import { ref, computed } from "vue"
+import { ref, computed, watch } from "vue"
 import { router } from "@inertiajs/vue3"
 import Swal from "sweetalert2"
 
@@ -14,6 +14,15 @@ export function useUsers(props) {
   const searchQuery = ref("")
   const currentPage = ref(1)
   const perPage = 10
+
+  // usersList is a plain ref (not a computed over props.users) because rows
+  // are also mutated in place after delete/activate. Without this watcher,
+  // changing the status filter triggers a fresh Inertia fetch but the table
+  // keeps rendering whatever list was present on the very first page load.
+  watch(() => props.users, (newUsers) => {
+    usersList.value = newUsers || []
+    currentPage.value = 1
+  })
 
   // Form
   const form = ref({

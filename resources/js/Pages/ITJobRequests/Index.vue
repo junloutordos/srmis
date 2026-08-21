@@ -724,7 +724,7 @@ function handleSigCancel() {
                       :class="form.posting_type === opt.value
                         ? 'border-indigo-500 bg-indigo-50'
                         : 'border-slate-200 hover:border-slate-300'">
-                      <input type="radio" v-model="form.posting_type" :value="opt.value" class="mt-0.5 accent-indigo-600" required />
+                      <input type="radio" name="posting_type" v-model="form.posting_type" :value="opt.value" class="mt-0.5 accent-indigo-600" required />
                       <div>
                         <p class="text-sm font-semibold" :class="form.posting_type === opt.value ? 'text-indigo-700' : 'text-slate-700'">{{ opt.label }}</p>
                         <p class="text-xs text-slate-400 mt-0.5">{{ opt.sub }}</p>

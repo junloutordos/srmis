@@ -1097,13 +1097,13 @@ filteredMenu.value.forEach((item) => {
         <h2 class="text-lg font-semibold text-slate-800 mb-1">Session Expired</h2>
         <p class="text-sm text-slate-500 mb-6">Your session has timed out. Please sign in again to continue.</p>
         <a
-          href="/login"
+          :href="route('force-logout')"
           class="block w-full bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-medium px-4 py-2.5 rounded-lg transition-colors text-center"
         >
           Sign In Again
         </a>
         <a
-          href="/login"
+          :href="route('force-logout')"
           class="block w-full mt-3 text-sm text-slate-500 hover:text-slate-700 py-1 transition-colors text-center"
         >
           Sign Out

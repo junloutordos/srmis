@@ -48,7 +48,16 @@ class CheckPermission
 
     private function deny(Request $request): Response
     {
-        if ($request->expectsJson() || $request->header('X-Inertia')) {
+        // Inertia POST/PUT/PATCH/DELETE requests need a redirect-with-errors
+        // response, not a raw abort(): Inertia only recognizes responses that
+        // carry the X-Inertia header, so a plain abort(403) falls through to
+        // Inertia's own error-overlay handling and never reaches the page's
+        // onError callback, leaving any "processing…" UI stuck indefinitely.
+        if ($request->header('X-Inertia') && ! $request->isMethod('get')) {
+            return back()->withErrors(['message' => 'You do not have permission to perform this action.']);
+        }
+
+        if ($request->expectsJson()) {
             abort(403, 'You do not have permission to perform this action.');
         }
 

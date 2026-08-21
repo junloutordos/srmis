@@ -96,6 +96,7 @@ const rejectRequest = async (id) => {
   Swal.fire({ title: 'Declining…', allowOutsideClick: false, showConfirmButton: false, didOpen: () => Swal.showLoading() })
   router.post(route('vehicle-requests.ocd-action', id), { action: 'reject' }, {
     onSuccess: () => Swal.fire('Declined', 'Vehicle request declined.', 'error'),
+    onError: (errors) => Swal.fire('Error', errors?.message ?? 'Could not decline this request. It may have already been acted upon.', 'error'),
     onFinish:  () => { isSubmitting.value = false },
   })
 }
