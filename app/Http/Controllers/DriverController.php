@@ -52,6 +52,25 @@ class DriverController extends Controller
         $timeStart = $vehicleRequest->time_of_departure;
         $timeEnd = $vehicleRequest->eta;
 
+        // Normalise to H:i once — these come straight from the DB's TIME
+        // columns (H:i:s), but the request/existing-booking comparisons below
+        // work in H:i. Guards against both 'H:i' and 'H:i:s' inputs so it
+        // doesn't blow up if the value is ever stored without seconds.
+        $normaliseTime = function (?string $time): ?string {
+            if (empty($time)) return null;
+            foreach (['H:i:s', 'H:i'] as $format) {
+                try {
+                    return Carbon::createFromFormat($format, $time)->format('H:i');
+                } catch (\Throwable $e) {
+                    continue;
+                }
+            }
+            return substr($time, 0, 5);
+        };
+
+        $timeStart = $normaliseTime($timeStart);
+        $timeEnd = $normaliseTime($timeEnd);
+
         // Determine vehicle name to check conflicts against
         $vehicleName = $vehicleRequest->vehicle_type;
         if ($request->filled('vehicle_id')) {
@@ -77,15 +96,10 @@ class DriverController extends Controller
                         $vehicleConflicts[] = $d;
                         break;
                     }
-                    try {
-                        $exStart = Carbon::createFromFormat('H:i:s', $ex->time_of_departure)->format('H:i');
-                        $exEnd = Carbon::createFromFormat('H:i:s', $ex->eta)->format('H:i');
-                    } catch (\Throwable $e) {
-                        $exStart = substr($ex->time_of_departure,0,5);
-                        $exEnd = substr($ex->eta,0,5);
-                    }
-                    $nStart = Carbon::createFromFormat('H:i', $timeStart)->format('H:i');
-                    $nEnd = Carbon::createFromFormat('H:i', $timeEnd)->format('H:i');
+                    $exStart = $normaliseTime($ex->time_of_departure);
+                    $exEnd = $normaliseTime($ex->eta);
+                    $nStart = $timeStart;
+                    $nEnd = $timeEnd;
 
                     if ($nStart < $exEnd && $nEnd > $exStart) {
                         $vehicleConflicts[] = $d;
@@ -123,15 +137,10 @@ class DriverController extends Controller
                         $driverConflicts[] = $d;
                         break;
                     }
-                    try {
-                        $exStart = Carbon::createFromFormat('H:i:s', $ex->time_of_departure)->format('H:i');
-                        $exEnd = Carbon::createFromFormat('H:i:s', $ex->eta)->format('H:i');
-                    } catch (\Throwable $e) {
-                        $exStart = substr($ex->time_of_departure,0,5);
-                        $exEnd = substr($ex->eta,0,5);
-                    }
-                    $nStart = Carbon::createFromFormat('H:i', $timeStart)->format('H:i');
-                    $nEnd = Carbon::createFromFormat('H:i', $timeEnd)->format('H:i');
+                    $exStart = $normaliseTime($ex->time_of_departure);
+                    $exEnd = $normaliseTime($ex->eta);
+                    $nStart = $timeStart;
+                    $nEnd = $timeEnd;
 
                     if ($nStart < $exEnd && $nEnd > $exStart) {
                         $driverConflicts[] = $d;
