@@ -11,7 +11,7 @@ use App\Models\Permission;
 use App\Models\Role;
 use App\Models\User;
 use App\Services\FacultyLoading\LoadComputationService;
-use Illuminate\Foundation\Testing\RefreshDatabase;
+use Tests\Concerns\RefreshesTenantDatabase;
 use Tests\TestCase;
 
 /**
@@ -28,7 +28,7 @@ use Tests\TestCase;
  */
 class OverloadPayTest extends TestCase
 {
-    use RefreshDatabase;
+    use RefreshesTenantDatabase;
 
     private LoadComputationService $svc;
     private User         $faculty;

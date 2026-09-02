@@ -11,7 +11,7 @@ use App\Models\FacultyLoading\Subject;
 use App\Models\Permission;
 use App\Models\Role;
 use App\Models\User;
-use Illuminate\Foundation\Testing\RefreshDatabase;
+use Tests\Concerns\RefreshesTenantDatabase;
 use Tests\TestCase;
 
 /**
@@ -28,7 +28,7 @@ use Tests\TestCase;
  */
 class FacultyLoadingHttpTest extends TestCase
 {
-    use RefreshDatabase;
+    use RefreshesTenantDatabase;
 
     // ── Permission helpers ────────────────────────────────────────────────────
 

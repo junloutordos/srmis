@@ -126,7 +126,7 @@ class ApprovalInboxController extends Controller
 
     private function isApprover($user): bool
     {
-        return $user->hasAnyRole(['Administrator', 'DivisionChief', 'GSU Head', 'OCD', 'FAD Chief'])
+        return $user->hasAnyRole(['Administrator', 'DivisionChief', 'GSU Head', 'GSU Dispatcher', 'OCD', 'FAD Chief'])
             || str_contains($user->position ?? '', 'FAD');
     }
 
@@ -176,7 +176,7 @@ class ApprovalInboxController extends Controller
     {
         $isDC    = $user->hasRole('DivisionChief') || $user->hasRole('Administrator');
         $isFAD   = str_contains($user->position ?? '', 'FAD') || $user->hasRole('FAD Chief') || $user->hasRole('Administrator');
-        $isGSU   = $user->hasRole('GSU Head') || $user->hasRole('Administrator');
+        $isGSU   = $user->hasRole('GSU Head') || $user->hasRole('GSU Dispatcher') || $user->hasRole('Administrator');
         $isOCD   = $user->hasRole('OCD') || $user->hasRole('Administrator');
 
         switch ($type) {
@@ -246,7 +246,7 @@ class ApprovalInboxController extends Controller
     {
         $pendingStatuses = [
             'it_job_requests'      => ['Pending Division Chief Approval', 'Pending OCD Approval'],
-            'vehicle_requests'     => ['Pending', 'Approved'],
+            'vehicle_requests'     => ['Pending Division Chief Approval', 'Approved'],
             'facility_requests'    => ['Pending', 'Pending FAD Approval', 'Pending OCD Approval'],
             'work_requests'        => ['Pending', 'GSU Approved', 'Pending FAD Approval'],
             'service_requests'     => ['Pending', 'Approved'],
@@ -282,7 +282,7 @@ class ApprovalInboxController extends Controller
                     ->approveByOCD($request, $record);
 
             case 'vehicle_requests':
-                if ($status === 'Pending') {
+                if ($status === 'Pending Division Chief Approval') {
                     return app(\App\Http\Controllers\VehicleRequestController::class)
                         ->approveInApp($request, $record);
                 }
@@ -346,7 +346,7 @@ class ApprovalInboxController extends Controller
                     ->approveByOCD($request, $record);
 
             case 'vehicle_requests':
-                if ($status === 'Pending') {
+                if ($status === 'Pending Division Chief Approval') {
                     return app(\App\Http\Controllers\VehicleRequestController::class)
                         ->declineInApp($request, $record);
                 }

@@ -5,7 +5,7 @@ namespace Tests\Unit;
 use App\Models\PPMP\Ppmp;
 use App\Models\PPMP\PpmpItem;
 use App\Services\PPMP\CostComputationService;
-use Illuminate\Foundation\Testing\RefreshDatabase;
+use Tests\Concerns\RefreshesTenantDatabase;
 use Tests\TestCase;
 
 /**
@@ -13,7 +13,7 @@ use Tests\TestCase;
  */
 class PPMPCostComputationTest extends TestCase
 {
-    use RefreshDatabase;
+    use RefreshesTenantDatabase;
 
     private CostComputationService $service;
 

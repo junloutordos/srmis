@@ -9,7 +9,7 @@ use App\Models\FacultyLoading\SchoolYear;
 use App\Models\FacultyLoading\Subject;
 use App\Models\User;
 use App\Services\FacultyLoading\ConflictDetectionService;
-use Illuminate\Foundation\Testing\RefreshDatabase;
+use Tests\Concerns\RefreshesTenantDatabase;
 use Tests\TestCase;
 
 /**
@@ -24,7 +24,7 @@ use Tests\TestCase;
  */
 class ConflictIntegrationTest extends TestCase
 {
-    use RefreshDatabase;
+    use RefreshesTenantDatabase;
 
     private ConflictDetectionService $service;
     private User       $faculty;

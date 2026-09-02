@@ -9,7 +9,7 @@ use App\Models\PPMP\PpmpItem;
 use App\Models\PPMP\PpmpStatusHistory;
 use App\Models\Role;
 use App\Models\User;
-use Illuminate\Foundation\Testing\RefreshDatabase;
+use Tests\Concerns\RefreshesTenantDatabase;
 use Tests\TestCase;
 
 /**
@@ -18,7 +18,7 @@ use Tests\TestCase;
  */
 class PPMPWorkflowTest extends TestCase
 {
-    use RefreshDatabase;
+    use RefreshesTenantDatabase;
 
     // ─── Helpers ──────────────────────────────────────────────────────────────
 

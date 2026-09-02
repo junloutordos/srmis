@@ -12,7 +12,7 @@ use App\Models\FacultyLoading\Subject;
 use App\Models\Permission;
 use App\Models\Role;
 use App\Models\User;
-use Illuminate\Foundation\Testing\RefreshDatabase;
+use Tests\Concerns\RefreshesTenantDatabase;
 use Tests\TestCase;
 
 /**
@@ -30,7 +30,7 @@ use Tests\TestCase;
  */
 class WorkflowIntegrationTest extends TestCase
 {
-    use RefreshDatabase;
+    use RefreshesTenantDatabase;
 
     private User        $cid;
     private User        $ocd;

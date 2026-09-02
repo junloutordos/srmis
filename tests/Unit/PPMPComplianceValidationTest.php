@@ -6,7 +6,7 @@ use App\Models\PPMP\Ppmp;
 use App\Models\PPMP\PpmpItem;
 use App\Services\PPMP\ComplianceValidationService;
 use App\Services\PPMP\ThresholdConfigService;
-use Illuminate\Foundation\Testing\RefreshDatabase;
+use Tests\Concerns\RefreshesTenantDatabase;
 use Tests\TestCase;
 
 /**
@@ -15,7 +15,7 @@ use Tests\TestCase;
  */
 class PPMPComplianceValidationTest extends TestCase
 {
-    use RefreshDatabase;
+    use RefreshesTenantDatabase;
 
     private ComplianceValidationService $service;
 

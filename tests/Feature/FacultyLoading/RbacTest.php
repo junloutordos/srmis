@@ -7,7 +7,7 @@ use App\Models\FacultyLoading\SchoolYear;
 use App\Models\Permission;
 use App\Models\Role;
 use App\Models\User;
-use Illuminate\Foundation\Testing\RefreshDatabase;
+use Tests\Concerns\RefreshesTenantDatabase;
 use Tests\TestCase;
 
 /**
@@ -29,7 +29,7 @@ use Tests\TestCase;
  */
 class RbacTest extends TestCase
 {
-    use RefreshDatabase;
+    use RefreshesTenantDatabase;
 
     // ── Helper — create a user with specific permissions ─────────────────────
 

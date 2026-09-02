@@ -10,7 +10,7 @@ use App\Models\FacultyLoading\SchoolYear;
 use App\Models\FacultyLoading\Subject;
 use App\Models\User;
 use App\Services\FacultyLoading\ScheduleValidationService;
-use Illuminate\Foundation\Testing\RefreshDatabase;
+use Tests\Concerns\RefreshesTenantDatabase;
 use Tests\TestCase;
 
 /**
@@ -28,7 +28,7 @@ use Tests\TestCase;
  */
 class ScheduleValidationTest extends TestCase
 {
-    use RefreshDatabase;
+    use RefreshesTenantDatabase;
 
     private ScheduleValidationService $svc;
     private User       $faculty;

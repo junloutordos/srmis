@@ -10,7 +10,7 @@ use App\Models\FacultyLoading\SstPosition;
 use App\Models\Permission;
 use App\Models\Role;
 use App\Models\User;
-use Illuminate\Foundation\Testing\RefreshDatabase;
+use Tests\Concerns\RefreshesTenantDatabase;
 use Tests\TestCase;
 
 /**
@@ -25,7 +25,7 @@ use Tests\TestCase;
  */
 class ReportTest extends TestCase
 {
-    use RefreshDatabase;
+    use RefreshesTenantDatabase;
 
     private User        $reporter;
     private SchoolYear  $sy;

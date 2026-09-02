@@ -9,7 +9,7 @@ use App\Models\FacultyLoading\SchoolYear;
 use App\Models\FacultyLoading\SstPosition;
 use App\Models\User;
 use App\Services\FacultyLoading\LoadComputationService;
-use Illuminate\Foundation\Testing\RefreshDatabase;
+use Tests\Concerns\RefreshesTenantDatabase;
 use Tests\TestCase;
 
 /**
@@ -26,7 +26,7 @@ use Tests\TestCase;
  */
 class LoadComplianceTest extends TestCase
 {
-    use RefreshDatabase;
+    use RefreshesTenantDatabase;
 
     private LoadComputationService $svc;
     private User         $faculty;

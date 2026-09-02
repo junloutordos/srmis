@@ -8,7 +8,7 @@ use App\Models\PPMP\Ppmp;
 use App\Models\PPMP\PpmpItem;
 use App\Models\Role;
 use App\Models\User;
-use Illuminate\Foundation\Testing\RefreshDatabase;
+use Tests\Concerns\RefreshesTenantDatabase;
 use Tests\TestCase;
 
 /**
@@ -16,7 +16,7 @@ use Tests\TestCase;
  */
 class PPMPItemTest extends TestCase
 {
-    use RefreshDatabase;
+    use RefreshesTenantDatabase;
 
     protected function endUser(?Division $division = null): User
     {

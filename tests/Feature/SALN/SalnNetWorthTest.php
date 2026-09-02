@@ -6,7 +6,7 @@ use App\Models\Permission;
 use App\Models\Role;
 use App\Models\SALN\SalnRecord;
 use App\Models\User;
-use Illuminate\Foundation\Testing\RefreshDatabase;
+use Tests\Concerns\RefreshesTenantDatabase;
 use Tests\TestCase;
 
 /**
@@ -14,7 +14,7 @@ use Tests\TestCase;
  */
 class SalnNetWorthTest extends TestCase
 {
-    use RefreshDatabase;
+    use RefreshesTenantDatabase;
 
     protected function employeeWithSaln(): array
     {
