@@ -231,7 +231,6 @@ export function useVehicleRequests(requestsSource = [], vehicles = []) {
     time_of_departure:  '',
     eta:                '',
     vehicle_type:       '',
-    division_chief_id:  '',
     passengers:         1,
     status:             '',
   })
@@ -243,7 +242,6 @@ export function useVehicleRequests(requestsSource = [], vehicles = []) {
     time_of_departure: '',
     eta:               '',
     vehicle_type:      '',
-    division_chief_id: '',
     passengers:        '',
   })
 
@@ -277,17 +275,13 @@ export function useVehicleRequests(requestsSource = [], vehicles = []) {
           fieldErrors.eta = ''
         }
         break
-      case 'vehicle_type':
-        fieldErrors.vehicle_type = form.vehicle_type ? '' : 'Select a vehicle type'; break
-      case 'division_chief_id':
-        fieldErrors.division_chief_id = form.division_chief_id ? '' : 'Select a division chief'; break
       case 'passengers':
         fieldErrors.passengers = form.passengers && Number(form.passengers) >= 1 ? '' : 'Passengers must be at least 1'; break
     }
   }
 
   const validateAll = () => {
-    const fields = ['purpose','destination','date_needed','time_of_departure','eta','vehicle_type','division_chief_id','passengers']
+    const fields = ['purpose','destination','date_needed','time_of_departure','eta','passengers']
     fields.forEach(f => validateField(f))
     return !Object.values(fieldErrors).some(v => v?.length > 0)
   }

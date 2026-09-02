@@ -185,8 +185,9 @@ public function index(Request $request)
             return back()->withErrors(['category' => $e->getMessage()]);
         }
 
-        // Auto-assign MIS personnel (category-routed)
-        $validated['assignedto'] = $this->autoAssignMIS($validated['category']);
+        // MIS personnel is no longer auto-assigned at submission. Assignment now
+        // happens at the dispatch step (see dispatch()) once OCD has approved,
+        // performed manually by a user with the ITJR Dispatcher role.
 
         // Duplicate guard: same user submitted identical title+category within the last 30 seconds
         $isDuplicate = ITJobRequest::where('user_id', $request->user()->id)
@@ -237,21 +238,6 @@ public function index(Request $request)
                     }
                 }
                 NotificationService::notifyUser($chief, 'IT Job Request', $jobRequest->itjr_no, 'New request awaiting your approval', route('jobrequests.index'));
-            }
-        }
-
-        // Send email + in-app notification to Assigned Administrator
-        if ($jobRequest->assignedto) {
-            $admin = User::find($jobRequest->assignedto);
-            if ($admin) {
-                if ($admin->email) {
-                    try {
-                        Mail::to($admin->email)->send(new ITJRStatusMail($jobRequest, 'New Request Assigned', 'You have been assigned to this request.', 'Administrator'));
-                    } catch (\Throwable $e) {
-                        logger()->error('Failed to send Administrator ITJR email', ['error' => $e->getMessage()]);
-                    }
-                }
-                NotificationService::notifyUser($admin, 'IT Job Request', $jobRequest->itjr_no, 'New request assigned to you', route('jobrequests.index'));
             }
         }
 
@@ -401,7 +387,7 @@ public function index(Request $request)
     // 3️⃣ Update the request status and log the approval date
     $jobRequest->update([
         'ocd_approval_date' => now(),
-        'status'            => 'In Progress',
+        'status'            => 'Pending Dispatch',
         'queued_at'         => now(),
     ]);
 
@@ -430,16 +416,22 @@ public function index(Request $request)
             $jobRequest->user,
             'IT Job Request',
             $jobRequest->itjr_no,
-            'Approved by OCD — now In Progress',
+            'Approved by OCD — awaiting dispatch to MIS',
             route('jobrequests.index'),
         );
     }
-    if ($jobRequest->assignedto) {
-        $admin = User::find($jobRequest->assignedto);
-        if ($admin && $admin->email) {
-            Mail::to($admin->email)
-                ->send(new ITJRStatusMail($jobRequest, 'OCD Approved', 'The request you are assigned to has been approved by OCD.', 'Administrator'));
+    // Notify ITJR Dispatchers so they can dispatch this request to MIS personnel
+    $dispatchers = User::havingRole('ITJR Dispatcher')->get();
+    foreach ($dispatchers as $dispatcher) {
+        if ($dispatcher->email) {
+            try {
+                Mail::to($dispatcher->email)
+                    ->send(new ITJRStatusMail($jobRequest, 'OCD Approved', 'Approved by OCD — awaiting dispatch to MIS personnel.', 'OCD'));
+            } catch (\Throwable $e) {
+                logger()->error('Failed to send ITJR Dispatcher notification email', ['error' => $e->getMessage()]);
+            }
         }
+        NotificationService::notifyUser($dispatcher, 'IT Job Request', $jobRequest->itjr_no, 'Awaiting dispatch to MIS personnel', route('jobrequests.dispatch'));
     }
 
     // 6️⃣ Return a confirmation view
@@ -806,7 +798,7 @@ public function showOCDDeclineForm(ITJobRequest $jobRequest, $ocd)
             $jobRequest->update([
                 'ocd_approval'     => true,
                 'ocd_approval_date' => now(),
-                'status'           => 'In Progress',
+                'status'           => 'Pending Dispatch',
                 'queued_at'        => now(),
             ]);
 
@@ -829,6 +821,20 @@ public function showOCDDeclineForm(ITJobRequest $jobRequest, $ocd)
                 "IT Job Request #{$jobRequest->itjr_no} — OCD Approval",
                 $jobRequest->itjr_no . 'ocd_approval' . $request->user()->id
             );
+
+            // Notify ITJR Dispatchers so they can dispatch this request to MIS personnel
+            $dispatchers = User::havingRole('ITJR Dispatcher')->get();
+            foreach ($dispatchers as $dispatcher) {
+                if ($dispatcher->email) {
+                    try {
+                        Mail::to($dispatcher->email)
+                            ->send(new ITJRStatusMail($jobRequest, 'OCD Approved', 'Approved by OCD — awaiting dispatch to MIS personnel.', 'OCD'));
+                    } catch (\Throwable $e) {
+                        logger()->error('Failed to send ITJR Dispatcher notification email', ['error' => $e->getMessage()]);
+                    }
+                }
+                NotificationService::notifyUser($dispatcher, 'IT Job Request', $jobRequest->itjr_no, 'Awaiting dispatch to MIS personnel', route('jobrequests.dispatch'));
+            }
         } else {
             $jobRequest->update([
                 'status' => 'Rejected by OCD',
@@ -1032,6 +1038,119 @@ public function showOCDDeclineForm(ITJobRequest $jobRequest, $ocd)
         }
 
         return back()->with('success', 'Priority updated.');
+    }
+
+    /* =====================================================
+     | DISPATCH QUEUE (ITJR Dispatcher / Admin only)
+     |=====================================================*/
+    public function dispatchQueue(Request $request)
+    {
+        $user = $request->user();
+
+        if (! $user->hasPermission('it.requests.dispatch')) {
+            abort(403, 'Unauthorized');
+        }
+
+        $search   = trim($request->query('search', ''));
+        $category = trim($request->query('category', ''));
+
+        $items = ITJobRequest::select([
+                'id', 'itjr_no', 'title', 'category', 'description', 'status',
+                'user_id', 'assignedto', 'priority', 'queued_at', 'created_at',
+            ])
+            ->with(['user:id,name', 'assignedTo:id,name'])
+            ->where('status', 'Pending Dispatch')
+            ->when($search, fn($q) => $q->where(function ($inner) use ($search) {
+                $inner->where('title', 'like', "%{$search}%")
+                      ->orWhere('itjr_no', 'like', "%{$search}%")
+                      ->orWhere('category', 'like', "%{$search}%")
+                      ->orWhereHas('user', fn($u) => $u->where('name', 'like', "%{$search}%"));
+            }))
+            ->when($category, fn($q) => $q->where('category', $category))
+            ->orderByRaw("FIELD(priority, 'urgent', 'high', 'normal', 'low')")
+            ->orderBy('queued_at', 'asc')
+            ->get();
+
+        // Attach a suggested MIS assignee (load-balanced) for each item — the
+        // dispatcher may accept the suggestion or pick someone else.
+        $items->each(function ($item) {
+            $item->suggested_assignee_id = $this->autoAssignMIS($item->category);
+        });
+
+        return Inertia::render('ITJobRequests/Dispatch', [
+            'items'          => $items,
+            'filters'        => ['search' => $search, 'category' => $category],
+            'categories'     => ITJobCategory::orderBy('name')->get(['id', 'name']),
+            'misPersonnel'   => User::havingRole('MIS')->orderBy('name')->get(['id', 'name']),
+        ]);
+    }
+
+    /**
+     * Dispatch a "Pending Dispatch" request to a specific MIS personnel.
+     * Also allows re-dispatch/reassignment while the request is In Progress
+     * or MIS Assessed the Request, so the dispatcher can correct mistakes.
+     */
+    public function dispatchToMis(Request $request, ITJobRequest $jobRequest)
+    {
+        $user = $request->user();
+
+        if (! $user->hasPermission('it.requests.dispatch')) {
+            abort(403, 'Unauthorized');
+        }
+
+        if (! in_array($jobRequest->status, ['Pending Dispatch', 'In Progress', 'MIS Assessed the Request'])) {
+            return back()->withErrors(['message' => 'This request is not awaiting dispatch.']);
+        }
+
+        $validated = $request->validate([
+            'assignedto' => 'required|exists:users,id',
+        ]);
+
+        $assignee = User::find($validated['assignedto']);
+        if (! $assignee || ! $assignee->hasRole('MIS')) {
+            return back()->withErrors(['assignedto' => 'Selected user is not an MIS personnel.']);
+        }
+
+        $wasDispatched = $jobRequest->status !== 'Pending Dispatch';
+        $previousAssignee = $jobRequest->assignedTo?->name;
+
+        $jobRequest->update([
+            'assignedto' => $assignee->id,
+            'status'     => $wasDispatched ? $jobRequest->status : 'In Progress',
+            'queued_at'  => $jobRequest->queued_at ?? now(),
+        ]);
+
+        ITJRTrackingLog::create([
+            'it_job_request_id' => $jobRequest->id,
+            'status'            => $wasDispatched ? 'Dispatch Reassigned' : 'Dispatched to MIS',
+            'remarks'           => $wasDispatched
+                ? "Reassigned from {$previousAssignee} to {$assignee->name} by {$user->name}."
+                : "Dispatched to {$assignee->name} by {$user->name}.",
+            'updated_by'        => $user->id,
+        ]);
+
+        // Notify the assignee
+        if ($assignee->email) {
+            try {
+                Mail::to($assignee->email)->send(new ITJRStatusMail($jobRequest, 'New Request Assigned', 'You have been assigned to this request by the ITJR Dispatcher.', 'Administrator'));
+            } catch (\Throwable $e) {
+                logger()->error('Failed to send Administrator ITJR dispatch email', ['error' => $e->getMessage()]);
+            }
+        }
+        NotificationService::notifyUser($assignee, 'IT Job Request', $jobRequest->itjr_no, 'New request assigned to you', route('jobrequests.index'));
+
+        // Notify requester that dispatch has occurred
+        if (! $wasDispatched && $jobRequest->user) {
+            NotificationService::notifyUser(
+                $jobRequest->user,
+                'IT Job Request',
+                $jobRequest->itjr_no,
+                'Dispatched to MIS — now In Progress',
+                route('jobrequests.index'),
+            );
+        }
+
+        return back()->with('success', $wasDispatched ? 'Request reassigned.' : 'Request dispatched to MIS.');
     }
 
     // ── Private ───────────────────────────────────────────────────────────────

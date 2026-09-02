@@ -2,7 +2,7 @@
 import { Head, usePage, router } from "@inertiajs/vue3";
 import { computed, ref, onMounted } from "vue";
 import axios from "axios";
-import { PencilSquareIcon, TrashIcon, UserIcon, PrinterIcon } from "@heroicons/vue/24/outline";
+import { PencilSquareIcon, TrashIcon, PrinterIcon } from "@heroicons/vue/24/outline";
 import AdminLayout from "@/Layouts/AdminLayout.vue";
 import { useVehicleRequests } from "@/Composables/useVehicleRequests";
 import { statusBadgeClass, badgeBase } from '@/Composables/useStatusBadge.js'
@@ -12,7 +12,6 @@ import DigitalSignaturePin from '@/Components/DigitalSignaturePin.vue'
 const props = defineProps({
   requests:       Array,
   vehicles:       Array,
-  divisionChiefs: Array,
   hasPendingCsm:  { type: Boolean, default: false },
   hasPin:         { type: Boolean, default: false },
   signatureUri:   { type: String, default: null },
@@ -29,9 +28,6 @@ const {
   searchQuery, currentPage, filteredRequests, totalPages,
   // banner
   banner,
-  // assign driver
-  showAssignDriverModal, drivers, selectedDriverId, selectedVehicleId, assignLoading,
-  openAssignDriverModal, closeAssignDriverModal, assignDriver,
   // calendar
   showCalendar, monthLabel, calendarMonthInput, fetchBookings, openCalendar, prevMonth, nextMonth, jumpToMonth,
   monthDays, bookingsForDate,
@@ -137,7 +133,7 @@ async function handleNewRequest() {
       <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-6">
         <h1 class="text-xl font-semibold text-slate-800">Vehicle Requests</h1>
         <div class="flex items-center gap-2">
-          <button v-if="!hasRole('GSU Head')" @click.prevent="handleNewRequest()"
+          <button v-if="!hasAnyRole('GSU Head','GSU Dispatcher')" @click.prevent="handleNewRequest()"
                   class="inline-flex items-center gap-2 bg-primary-600 hover:bg-primary-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors shadow-sm">
             + New Request
           </button>
@@ -162,7 +158,7 @@ async function handleNewRequest() {
             <thead class="bg-slate-50">
               <tr>
                 <th class="px-4 py-3 text-left text-xs font-semibold text-slate-500 uppercase tracking-wide whitespace-nowrap">#</th>
-                <th v-if="!hasAnyRole('Staff','Faculty')" class="px-4 py-3 text-left text-xs font-semibold text-slate-500 uppercase tracking-wide whitespace-nowrap">{{ hasRole('GSU Head') ? 'Requestor' : 'Submitted By' }}</th>
+                <th v-if="!hasAnyRole('Staff','Faculty')" class="px-4 py-3 text-left text-xs font-semibold text-slate-500 uppercase tracking-wide whitespace-nowrap">{{ hasAnyRole('GSU Head','GSU Dispatcher') ? 'Requestor' : 'Submitted By' }}</th>
                 <th class="px-4 py-3 text-left text-xs font-semibold text-slate-500 uppercase tracking-wide whitespace-nowrap">Purpose</th>
                 <th class="px-4 py-3 text-left text-xs font-semibold text-slate-500 uppercase tracking-wide whitespace-nowrap">Vehicle</th>
                 <th class="px-4 py-3 text-left text-xs font-semibold text-slate-500 uppercase tracking-wide whitespace-nowrap">Date Needed</th>
@@ -195,8 +191,7 @@ async function handleNewRequest() {
                   <div class="flex items-center gap-1 justify-center">
                     <button v-if="roleName === 'Administrator' && req.status !== 'Approved' && req.status !== 'Declined' && req.status !== 'OCD Approved'" @click.prevent="openModal(req)" class="p-1.5 rounded-lg hover:bg-slate-100 text-slate-500 hover:text-slate-700 transition-colors" title="Edit"><PencilSquareIcon class="w-4 h-4" /></button>
                     <button v-if="roleName === 'Administrator' && req.status !== 'Approved' && req.status !== 'Declined' && req.status !== 'OCD Approved'" @click.prevent="destroy(req)" class="p-1.5 rounded-lg hover:bg-slate-100 text-slate-500 hover:text-red-600 transition-colors" title="Delete"><TrashIcon class="w-4 h-4" /></button>
-                    <button v-if="hasAnyRole('Administrator','GSU Head') && req.status === 'Approved' && !req.driver" @click.prevent="openAssignDriverModal(req)" class="p-1.5 rounded-lg hover:bg-slate-100 text-slate-500 hover:text-primary-600 transition-colors" title="Assign Driver"><UserIcon class="w-4 h-4" /></button>
-                    <button v-if="hasAnyRole('Administrator','GSU Head') && (req.status === 'OCD Approved' || req.status === 'Completed')" @click.prevent="openPrint(req)" class="p-1.5 rounded-lg hover:bg-slate-100 text-slate-500 hover:text-slate-700 transition-colors" title="Print"><PrinterIcon class="w-4 h-4" /></button>
+                    <button v-if="hasAnyRole('Administrator','GSU Head','GSU Dispatcher') && (req.status === 'OCD Approved' || req.status === 'Completed')" @click.prevent="openPrint(req)" class="p-1.5 rounded-lg hover:bg-slate-100 text-slate-500 hover:text-slate-700 transition-colors" title="Print"><PrinterIcon class="w-4 h-4" /></button>
                     <button v-if="req.status === 'OCD Approved' && req.requestor_id === page.props.auth.user.id" @click.prevent="openCsmModal(req)" class="inline-flex items-center gap-1.5 bg-emerald-600 hover:bg-emerald-700 text-white px-3 py-1 rounded-lg text-xs font-medium transition-colors shadow-sm">Confirm &amp; Rate</button>
                   </div>
                 </td>
@@ -240,8 +235,7 @@ async function handleNewRequest() {
             <div class="mt-3 flex items-center gap-2">
               <button v-if="roleName === 'Administrator' && req.status !== 'Approved' && req.status !== 'Declined' && req.status !== 'OCD Approved'" @click.prevent="openModal(req)" class="flex-1 inline-flex items-center justify-center gap-2 bg-primary-600 hover:bg-primary-700 text-white px-3 py-2 rounded-lg text-sm font-medium transition-colors shadow-sm"><PencilSquareIcon class="w-4 h-4" /> Edit</button>
               <button v-if="roleName === 'Administrator' && req.status !== 'Approved' && req.status !== 'Declined' && req.status !== 'OCD Approved'" @click.prevent="destroy(req)" class="inline-flex items-center gap-2 bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 px-3 py-2 rounded-lg text-sm font-medium transition-colors shadow-sm"><TrashIcon class="w-4 h-4" /></button>
-              <button v-if="hasAnyRole('Administrator','GSU Head') && req.status === 'Approved' && !req.driver" @click.prevent="openAssignDriverModal(req)" class="inline-flex items-center gap-2 bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 px-3 py-2 rounded-lg text-sm font-medium transition-colors shadow-sm"><UserIcon class="w-4 h-4" /> Assign</button>
-              <button v-if="hasAnyRole('Administrator','GSU Head') && (req.status === 'OCD Approved' || req.status === 'Completed')" @click.prevent="openPrint(req)" class="inline-flex items-center gap-2 bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 px-3 py-2 rounded-lg text-sm font-medium transition-colors shadow-sm"><PrinterIcon class="w-4 h-4" /> Print</button>
+              <button v-if="hasAnyRole('Administrator','GSU Head','GSU Dispatcher') && (req.status === 'OCD Approved' || req.status === 'Completed')" @click.prevent="openPrint(req)" class="inline-flex items-center gap-2 bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 px-3 py-2 rounded-lg text-sm font-medium transition-colors shadow-sm"><PrinterIcon class="w-4 h-4" /> Print</button>
               <button v-if="req.status === 'OCD Approved' && req.requestor_id === page.props.auth.user.id" @click.prevent="openCsmModal(req)" class="flex-1 inline-flex items-center justify-center gap-1.5 bg-emerald-600 hover:bg-emerald-700 text-white px-3 py-2 rounded-lg text-xs font-medium transition-colors shadow-sm">Confirm &amp; Rate</button>
             </div>
           </div>
@@ -293,39 +287,6 @@ async function handleNewRequest() {
               </div>
             </div>
           </template>
-        </div>
-      </div>
-    </div>
-
-    <!-- Assign Driver Modal -->
-    <div v-if="showAssignDriverModal" class="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/50">
-      <div class="bg-white w-full sm:h-auto sm:rounded-2xl sm:shadow-xl sm:max-w-md relative overflow-auto">
-        <div class="px-6 py-4 border-b border-slate-100 flex items-center justify-between">
-          <h2 class="text-xl font-semibold text-slate-800">Assign Driver</h2>
-          <button class="p-1.5 rounded-lg hover:bg-slate-100 text-slate-500 hover:text-slate-700 transition-colors" @click="closeAssignDriverModal"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="h-4 w-4 shrink-0"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" /></svg></button>
-        </div>
-        <div class="px-6 py-5 space-y-4 max-h-[70vh] overflow-auto">
-          <div v-if="assignLoading" class="py-8 text-center text-slate-400 text-sm">Loading drivers...</div>
-          <div v-else class="space-y-4">
-            <div>
-              <label class="block text-xs font-medium text-slate-600 mb-1">Vehicle (change if needed)</label>
-              <select v-model="selectedVehicleId" class="rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-400 w-full">
-                <option value="">Keep requested vehicle</option>
-                <option v-for="v in props.vehicles" :key="v.id" :value="v.id">{{ v.name }}</option>
-              </select>
-            </div>
-            <div>
-              <label class="block text-xs font-medium text-slate-600 mb-1">Driver</label>
-              <select v-model="selectedDriverId" class="rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-400 w-full">
-                <option value="">Select driver</option>
-                <option v-for="d in drivers" :key="d.id" :value="d.id">{{ d.name }}{{ d.position ? ' — ' + d.position : '' }}</option>
-              </select>
-            </div>
-          </div>
-        </div>
-        <div class="px-6 py-4 border-t border-slate-100 flex justify-end gap-2">
-          <button @click.prevent="closeAssignDriverModal" class="inline-flex items-center gap-2 bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 px-4 py-2 rounded-lg text-sm font-medium transition-colors shadow-sm">Cancel</button>
-          <button @click.prevent="assignDriver" :disabled="assignLoading || !selectedDriverId" class="inline-flex items-center gap-2 bg-primary-600 hover:bg-primary-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors shadow-sm disabled:opacity-50">Assign</button>
         </div>
       </div>
     </div>
@@ -389,23 +350,13 @@ async function handleNewRequest() {
           </div>
 
           <div>
-            <label class="block text-xs font-medium text-slate-600 mb-1">Vehicle Type <span class="text-red-500">*</span></label>
-            <select v-model="form.vehicle_type" @change="() => validateField('vehicle_type')"
-                    :class="['rounded-lg border bg-white px-3 py-2 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-400 w-full', fieldErrors.vehicle_type ? 'border-red-400' : 'border-slate-200']">
-              <option value="">Select vehicle</option>
+            <label class="block text-xs font-medium text-slate-600 mb-1">Preferred Vehicle Type <span class="text-slate-400 font-normal">(optional)</span></label>
+            <select v-model="form.vehicle_type"
+                    class="rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-400 w-full">
+              <option value="">No preference — GSU will assign</option>
               <option v-for="v in props.vehicles" :key="v.id" :value="v.name">{{ v.name }}</option>
             </select>
-            <p v-if="fieldErrors.vehicle_type" class="text-red-500 text-xs mt-1">{{ fieldErrors.vehicle_type }}</p>
-          </div>
-
-          <div>
-            <label class="block text-xs font-medium text-slate-600 mb-1">Division Chief (Approver) <span class="text-red-500">*</span></label>
-            <select v-model="form.division_chief_id" @change="() => validateField('division_chief_id')"
-                    :class="['rounded-lg border bg-white px-3 py-2 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-400 w-full', fieldErrors.division_chief_id ? 'border-red-400' : 'border-slate-200']">
-              <option value="">Select division chief</option>
-              <option v-for="d in props.divisionChiefs" :key="d.id" :value="d.id">{{ d.name }}</option>
-            </select>
-            <p v-if="fieldErrors.division_chief_id" class="text-red-500 text-xs mt-1">{{ fieldErrors.division_chief_id }}</p>
+            <p class="text-xs text-slate-400 mt-1">This is only a preference. GSU will assign the actual vehicle and driver.</p>
           </div>
 
           <div>

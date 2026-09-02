@@ -109,7 +109,7 @@ class SystemOverviewController extends Controller
 
         $vehicleRows    = $this->qry($s, "SELECT status, COUNT(*) AS c FROM {S}.`vehicle_requests` GROUP BY status");
         $vehicleMap     = collect($vehicleRows)->pluck('c', 'status');
-        $vehiclePending = (int) ($vehicleMap['Pending'] ?? 0);
+        $vehiclePending = (int) ($vehicleMap['Pending GSU Assignment'] ?? 0) + (int) ($vehicleMap['Pending Division Chief Approval'] ?? 0);
         $vehicleTotal   = $vehicleMap->sum();
 
         $gsPending = 0;
@@ -229,10 +229,11 @@ class SystemOverviewController extends Controller
         $vehTiming   = $this->timingRow($s, 'vehicle_requests', $thisMonth, $thisWeek);
 
         $vehicleStatuses = [
-            'Pending'      => $vehMap['Pending']      ?? 0,
-            'OCD Approved' => $vehMap['OCD Approved'] ?? 0,
-            'Approved'     => $vehMap['Approved']     ?? 0,
-            'Declined'     => $vehMap['Declined']     ?? 0,
+            'Pending GSU Assignment'          => $vehMap['Pending GSU Assignment']          ?? 0,
+            'Pending Division Chief Approval' => $vehMap['Pending Division Chief Approval'] ?? 0,
+            'OCD Approved'                    => $vehMap['OCD Approved']                    ?? 0,
+            'Approved'                        => $vehMap['Approved']                        ?? 0,
+            'Declined'                        => $vehMap['Declined']                        ?? 0,
         ];
 
         // ── Work Requests ─────────────────────────────────────────────────────

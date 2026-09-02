@@ -23,7 +23,7 @@ class VehicleRequestFactory extends Factory
             'date_needed' => $this->faker->dateTimeBetween('now', '+1 year')->format('Y-m-d'),
             'vehicle_type' => $this->faker->randomElement(['Van', 'Car', 'Pickup']),
             'passengers' => $this->faker->numberBetween(1, 12),
-            'status' => 'Pending',
+            'status' => 'Pending GSU Assignment',
         ];
     }
 }

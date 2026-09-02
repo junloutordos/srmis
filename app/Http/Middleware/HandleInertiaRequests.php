@@ -113,7 +113,7 @@ class HandleInertiaRequests extends Middleware
                     if (!$user) return 0;
                     $cacheKey = 'badge.vehicles.u' . $user->id;
                     return Cache::remember($cacheKey, 60, function () use ($user) {
-                        return VehicleRequest::where('status', 'Pending')->where('requestor_id', $user->id)->count();
+                        return VehicleRequest::whereIn('status', ['Pending GSU Assignment', 'Pending Division Chief Approval'])->where('requestor_id', $user->id)->count();
                     });
                 } catch (\Throwable $e) { return 0; }
             },

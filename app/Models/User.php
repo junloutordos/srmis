@@ -276,6 +276,11 @@ class User extends Authenticatable
         return $query->whereHas('roles', fn($q) => $q->where('name', $roleName));
     }
 
+    public function scopeHavingAnyRole($query, array $roleNames)
+    {
+        return $query->whereHas('roles', fn($q) => $q->whereIn('name', $roleNames));
+    }
+
     // ─── Chat Relationships ───────────────────────────────────────────────────
 
     public function conversations()

@@ -10,7 +10,7 @@
 @endphp
 
 <p class="greeting">Hello,</p>
-<p class="lead">A vehicle request has been approved by the Division Chief and requires OCD action.</p>
+<p class="lead">A vehicle request has been approved by the Division Chief and requires your final action. A driver and vehicle have already been assigned by GSU.</p>
 
 <table class="details" role="presentation">
     <tr><td class="lbl">Request ID</td><td class="val"><strong>#{{ $request->id }}</strong></td></tr>
@@ -22,6 +22,7 @@
         @else — @endif
     </td></tr>
     <tr><td class="lbl">Vehicle</td><td class="val">{{ $request->vehicle_type ?? '—' }}</td></tr>
+    <tr><td class="lbl">Driver</td><td class="val">{{ $request->driver?->name ?? '—' }}</td></tr>
 </table>
 @endsection
 

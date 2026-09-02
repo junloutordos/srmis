@@ -38,7 +38,7 @@ class ApprovalInboxService
 
         $isDivisionChief = $user->hasRole('DivisionChief');
         $isFADChief      = str_contains($user->position ?? '', 'FAD') || $user->hasRole('FAD Chief');
-        $isGSUHead       = $user->hasRole('GSU Head');
+        $isGSUHead       = $user->hasRole('GSU Head') || $user->hasRole('GSU Dispatcher');
         $isOCD           = $user->hasRole('OCD');
         $isAdmin         = $user->hasRole('Administrator');
 
@@ -74,7 +74,7 @@ class ApprovalInboxService
 
             // Vehicle Requests
             $vrQuery = VehicleRequest::with(['requester:id,name', 'divisionChief:id,name'])
-                ->where('status', 'Pending');
+                ->where('status', 'Pending Division Chief Approval');
             if (! $isAdmin) {
                 $vrQuery->where(function ($q) use ($user, $divisionIds) {
                     $q->where('division_chief_id', $user->id);
@@ -156,10 +156,10 @@ class ApprovalInboxService
 
         // ── GSU Head ──────────────────────────────────────────────────────────
         if ($isGSUHead) {
-            $vrGSU = VehicleRequest::with(['requester:id,name', 'divisionChief:id,name'])
-                ->where('status', 'Approved')->whereNull('driver_id')->latest()->get()
-                ->map(fn($r) => $this->normaliseVehicleRequest($r))->values()->all();
-            $this->mergeOrAddTab($tabs, 'vehicle_requests', 'Vehicle Requests', $vrGSU);
+            // Vehicle Requests pending GSU assignment are NOT listed here — they
+            // require assigning a driver + vehicle (not a simple approve/decline),
+            // so they are handled exclusively on the dedicated GSU Dispatch page
+            // (see VehicleRequestController::gsuDispatch()).
 
             $frGSU = FacilityRequest::with('requester:id,name')
                 ->where('status', 'Pending FAD Approval')->latest()->get()

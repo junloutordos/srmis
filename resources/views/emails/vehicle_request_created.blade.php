@@ -6,7 +6,7 @@
 
 @section('content')
 <p class="greeting">Hello <strong>{{ $request->divisionChief?->name ?? 'Division Chief' }}</strong>,</p>
-<p class="lead">A new vehicle request has been submitted and assigned to you for approval. Please act within <strong>24 hours</strong>.</p>
+<p class="lead">A vehicle request from your division has been dispatched by GSU (driver and vehicle assigned) and now awaits your approval. Please act within <strong>24 hours</strong>.</p>
 
 @php
     $dates = $request->date_needed_multiple ?? ($request->date_needed ? [\Carbon\Carbon::parse($request->date_needed)->toDateString()] : []);
@@ -24,6 +24,7 @@
     </td></tr>
     <tr><td class="lbl">Departure / ETA</td><td class="val">{{ $request->time_of_departure ?? '—' }} — {{ $request->eta ?? '—' }}</td></tr>
     <tr><td class="lbl">Vehicle</td><td class="val">{{ $request->vehicle_type ?? '—' }}</td></tr>
+    <tr><td class="lbl">Driver</td><td class="val">{{ $request->driver?->name ?? '—' }}</td></tr>
     <tr><td class="lbl">Passengers</td><td class="val">{{ $request->passengers ?? '—' }}</td></tr>
     <tr><td class="lbl">Date Filed</td><td class="val">{{ $request->created_at?->format('F j, Y g:i A') ?? '—' }}</td></tr>
 </table>

@@ -470,7 +470,7 @@ const menuItems = [
   {
     label: "MIS",
     icon: ServerStackIcon,
-    permissions: ["it.requests.view", "it.requests.manage"],
+    permissions: ["it.requests.view", "it.requests.manage", "it.requests.dispatch"],
     children: [
       {
         label: "MIS Dashboard",
@@ -492,6 +492,13 @@ const menuItems = [
         href: route("jobrequests.index"),
         icon: ComputerDesktopIcon,
         permissions: ["it.requests.view"],
+      },
+      {
+        label: "Dispatch Queue",
+        routeName: "jobrequests.dispatch",
+        href: route("jobrequests.dispatch"),
+        icon: ComputerDesktopIcon,
+        permissions: ["it.requests.dispatch"],
       },
       {
         label: "Equipment Inventory",
@@ -519,7 +526,7 @@ const menuItems = [
   {
     label: "General Services",
     icon: WrenchScrewdriverIcon,
-    permissions: ["vehicles.view", "facilities.view"],
+    permissions: ["vehicles.view", "vehicles.dispatch", "facilities.view"],
     children: [
       {
         label: "Vehicle Request",
@@ -527,6 +534,13 @@ const menuItems = [
         href: route("vehicle-requests.index"),
         icon: ClipboardDocumentListIcon,
         permissions: ["vehicles.view"],
+      },
+      {
+        label: "Vehicle Dispatch",
+        routeName: "vehicle-requests.gsu-dispatch",
+        href: route("vehicle-requests.gsu-dispatch"),
+        icon: ClipboardDocumentListIcon,
+        permissions: ["vehicles.dispatch"],
       },
       {
         label: "Facility Request",

@@ -23,12 +23,14 @@ class TenantPermissionsSeeder extends Seeder
             // ── MIS ───────────────────────────────────────────────────────────
             ['module' => 'MIS', 'name' => 'it.requests.view',    'description' => 'View own IT job requests'],
             ['module' => 'MIS', 'name' => 'it.requests.manage',  'description' => 'Manage all IT job requests, MIS dashboard, CSM feedback'],
+            ['module' => 'MIS', 'name' => 'it.requests.dispatch','description' => 'Dispatch OCD-approved IT job requests to MIS personnel'],
             ['module' => 'MIS', 'name' => 'it.equipment.view',   'description' => 'View ICT equipment inventory and PMS'],
             ['module' => 'MIS', 'name' => 'it.equipment.manage', 'description' => 'Manage ICT equipment inventory and PMS'],
 
             // ── General Services — Vehicles ──────────────────────────────────
             ['module' => 'GeneralServices', 'name' => 'vehicles.view',        'description' => 'View and file vehicle requests'],
             ['module' => 'GeneralServices', 'name' => 'vehicles.manage',      'description' => 'Manage vehicles, assign drivers, print trip tickets'],
+            ['module' => 'GeneralServices', 'name' => 'vehicles.dispatch',    'description' => 'Assign driver and vehicle to a vehicle request before Division Chief approval'],
             ['module' => 'GeneralServices', 'name' => 'vehicles.dc-approve',  'description' => 'Approve vehicle requests as Division Chief'],
             ['module' => 'GeneralServices', 'name' => 'vehicles.ocd-approve', 'description' => 'Approve vehicle requests as OCD'],
 

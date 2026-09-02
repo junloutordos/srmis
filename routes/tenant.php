@@ -171,6 +171,8 @@ Route::middleware(['auth', 'allowed.domain'])->group(function () {
     Route::get('/job-requests/export-pdf', [ITJobRequestController::class, 'exportPdf'])->name('jobrequests.export-pdf');
     Route::get('/job-requests/queue', [ITJobRequestController::class, 'queue'])->name('jobrequests.queue');
     Route::put('/job-requests/{jobRequest}/priority', [ITJobRequestController::class, 'updatePriority'])->name('jobrequests.update-priority')->middleware('permission:it.requests.manage');
+    Route::get('/job-requests/dispatch', [ITJobRequestController::class, 'dispatchQueue'])->name('jobrequests.dispatch')->middleware('permission:it.requests.dispatch');
+    Route::post('/job-requests/{jobRequest}/dispatch', [ITJobRequestController::class, 'dispatchToMis'])->name('jobrequests.dispatch.action')->middleware('permission:it.requests.dispatch');
     Route::get('/job-requests', [ITJobRequestController::class, 'index'])->name('jobrequests.index');
     Route::get('/job-requests/create', [ITJobRequestController::class, 'create'])->name('jobrequests.create');
     Route::post('/job-requests', [ITJobRequestController::class, 'store'])->name('jobrequests.store');
@@ -276,14 +278,15 @@ Route::middleware(['auth', 'allowed.domain'])->group(function () {
     // ── Vehicle Requests ──────────────────────────────────────────────────────
     Route::get('/vehicle-requests', [VehicleRequestController::class, 'index'])->name('vehicle-requests.index');
     Route::post('/vehicle-requests', [VehicleRequestController::class, 'store'])->name('vehicle-requests.store');
+    Route::get('/vehicle-requests/gsu-dispatch', [VehicleRequestController::class, 'gsuDispatch'])->name('vehicle-requests.gsu-dispatch')->middleware('permission:vehicles.dispatch');
     Route::post('/vehicle-requests/{vehicleRequest}/approve', [VehicleRequestController::class, 'approveInApp'])->name('vehicle-requests.approve.inapp')->middleware('permission:vehicles.dc-approve');
     Route::post('/vehicle-requests/{vehicleRequest}/decline', [VehicleRequestController::class, 'declineInApp'])->name('vehicle-requests.decline.inapp')->middleware('permission:vehicles.dc-approve');
     Route::post('/vehicle-requests/{vehicleRequest}/sign-completion', [VehicleRequestController::class, 'signCompletion'])->name('vehicle-requests.sign-completion');
     Route::get('/vehicle-bookings', [VehicleRequestController::class, 'bookings'])->name('vehicle-requests.bookings');
 
-    // Driver assignment API
-    Route::get('/api/drivers', [\App\Http\Controllers\DriverController::class, 'index'])->name('api.drivers.index')->middleware('permission:vehicles.manage');
-    Route::post('/vehicle-requests/{vehicleRequest}/assign-driver', [\App\Http\Controllers\DriverController::class, 'assign'])->name('vehicle-requests.assign-driver')->middleware('permission:vehicles.manage');
+    // Driver assignment API (GSU dispatch step)
+    Route::get('/api/drivers', [\App\Http\Controllers\DriverController::class, 'index'])->name('api.drivers.index')->middleware('permission:vehicles.dispatch');
+    Route::post('/vehicle-requests/{vehicleRequest}/assign-driver', [\App\Http\Controllers\DriverController::class, 'assign'])->name('vehicle-requests.assign-driver')->middleware('permission:vehicles.dispatch');
 
     // Signed email-link approvals (Division Chief / OCD)
     Route::get('/vehicle-requests/{vehicleRequest}/approve/{chief}', [VehicleRequestController::class, 'approveByDivisionChief'])

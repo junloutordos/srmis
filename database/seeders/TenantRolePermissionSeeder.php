@@ -41,7 +41,7 @@ class TenantRolePermissionSeeder extends Seeder
             'chat.access',
             'org.view',
         ];
-        foreach (['MIS', 'DivisionChief', 'FAD Chief', 'GSU Head', 'OCD', 'Faculty', 'Staff', 'Driver'] as $role) {
+        foreach (['MIS', 'ITJR Dispatcher', 'DivisionChief', 'FAD Chief', 'GSU Head', 'GSU Dispatcher', 'OCD', 'Faculty', 'Staff', 'Driver'] as $role) {
             $assign($role, $baseline);
         }
 
@@ -51,6 +51,11 @@ class TenantRolePermissionSeeder extends Seeder
             'it.equipment.view', 'it.equipment.manage',
             'users.view',
             'reports.view', 'reports.export',
+        ]);
+
+        // ── ITJR Dispatcher — dispatches OCD-approved requests to MIS ────────
+        $assign('ITJR Dispatcher', [
+            'it.requests.dispatch',
         ]);
 
         // ── Division Chief — first-stage approvals ───────────────────────────
@@ -69,7 +74,13 @@ class TenantRolePermissionSeeder extends Seeder
         // ── GSU Head — operations: vehicles, facilities, assets, completion ──
         $assign('GSU Head', [
             'vehicles.manage',
+            'vehicles.dispatch',
             'facilities.manage',
+        ]);
+
+        // ── GSU Dispatcher — assigns driver + vehicle before DC approval ─────
+        $assign('GSU Dispatcher', [
+            'vehicles.dispatch',
         ]);
 
         // ── OCD — final-stage approvals ──────────────────────────────────────

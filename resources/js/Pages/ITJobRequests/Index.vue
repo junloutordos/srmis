@@ -313,6 +313,7 @@ function handleSigCancel() {
               <option value="">All Statuses</option>
               <option value="Pending Division Chief Approval">Pending DC Approval</option>
               <option value="Pending OCD Approval">Pending OCD Approval</option>
+              <option value="Pending Dispatch">Pending Dispatch</option>
               <option value="In Progress">In Progress</option>
               <option value="MIS Assessed the Request">MIS Assessed</option>
               <option value="Acted by MIS">Acted by MIS</option>
@@ -739,7 +740,7 @@ function handleSigCancel() {
                     <path stroke-linecap="round" stroke-linejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                   </svg>
                   <p class="text-xs text-slate-500 leading-relaxed">
-                    Your request will be automatically sent to your <strong>Division Chief</strong> for approval. MIS personnel will be auto-assigned based on workload.
+                    Your request will be automatically sent to your <strong>Division Chief</strong> for approval. Once approved by the Division Chief and OCD, it will be dispatched to an MIS personnel by the ITJR Dispatcher.
                   </p>
                 </div>
 

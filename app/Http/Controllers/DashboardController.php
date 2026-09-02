@@ -110,7 +110,7 @@ class DashboardController extends Controller
                 ],
                 [
                     'label'     => 'Vehicle Requests',
-                    'pending'   => VehicleRequest::where('status', 'Pending')->count(),
+                    'pending'   => VehicleRequest::whereIn('status', ['Pending GSU Assignment', 'Pending Division Chief Approval'])->count(),
                     'completed' => VehicleRequest::where('status', 'OCD Approved')->count(),
                     'total'     => VehicleRequest::count(),
                 ],

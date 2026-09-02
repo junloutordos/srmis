@@ -33,7 +33,7 @@ class VehicleRequestController extends Controller
     {
 
         $user = $request->user();
-        $canViewAll = $user->hasAnyRole(['Administrator', 'GSU Head', 'OCD']);
+        $canViewAll = $user->hasAnyRole(['Administrator', 'GSU Head', 'GSU Dispatcher', 'OCD']);
 
         $requests = VehicleRequest::with(['requester:id,name', 'driver:id,name'])->latest();
 
@@ -50,13 +50,12 @@ class VehicleRequestController extends Controller
 
         $requests = $requests->get();
 
-        // also fetch vehicles for dropdown (only available vehicles)
+        // also fetch vehicles for dropdown (only available vehicles) — shown as an
+        // optional "preferred vehicle type" hint on the create form.
         $vehicles = \App\Models\Vehicle::where('status','!=','Under Repair')->orderBy('name')->get();
 
-        // fetch users with DivisionChief role to allow requester to pick an approver
-        $divisionChiefs = \App\Models\User::havingRole('DivisionChief')
-            ->orderBy('name')
-            ->get(['id','name']);
+        // Division Chief is now auto-resolved from the requestor's division —
+        // no dropdown is shown on the create form.
 
         $isDivisionChief = $user->hasRole('DivisionChief');
 
@@ -68,7 +67,6 @@ class VehicleRequestController extends Controller
         return Inertia::render('VehicleRequests/Index', [
             'requests'        => $requests,
             'vehicles'        => $vehicles,
-            'divisionChiefs'  => $divisionChiefs,
             'isDivisionChief' => $isDivisionChief,
             'hasPendingCsm'   => $hasPendingCsm,
             'hasPin'          => ! empty($user->signature_pin),
@@ -97,9 +95,8 @@ class VehicleRequestController extends Controller
             'date_needed.*' => 'date',
                 'time_of_departure' => 'required|date_format:H:i',
                 'eta' => 'required|date_format:H:i',
-                'vehicle_type' => 'required|string|max:255',
+                'vehicle_type' => 'nullable|string|max:255',
                 'passengers' => 'required|integer|min:1',
-                'division_chief_id' => 'required|exists:users,id',
         ]);
 
         if ($request->input('time_of_departure') >= $request->input('eta')) {
@@ -117,46 +114,18 @@ class VehicleRequestController extends Controller
         $vehicleName = $request->input('vehicle_type');
         $timeStart = $request->input('time_of_departure');
         $timeEnd = $request->input('eta');
-        $vehicleConflicts = [];
-        if ($vehicleName && count($dates) > 0) {
-            foreach ($dates as $d) {
-                $existing = VehicleRequest::where('vehicle_type', $vehicleName)
-                    ->where('status', '!=', 'Declined')
-                    ->where(function ($q) use ($d) {
-                        $q->whereDate('date_needed', $d)
-                          ->orWhereJsonContains('date_needed_multiple', $d);
-                    })
-                    ->get();
+        // Note: vehicle_type submitted here is only a *preference* hint — the
+        // actual vehicle (and driver) are assigned later by GSU during dispatch,
+        // so no booking-conflict check is performed against it at this stage.
+        // GSU's dispatch step performs the authoritative conflict check.
 
-                foreach ($existing as $ex) {
-                    // treat missing times as conflict
-                    if (empty($ex->time_of_departure) || empty($ex->eta) || empty($timeStart) || empty($timeEnd)) {
-                        $vehicleConflicts[] = $d;
-                        break;
-                    }
+        // Auto-resolve the requestor's Division Chief (same pattern as IT Job Requests)
+        $chiefId = $user->division_id
+            ? \App\Models\Division::where('id', $user->division_id)->value('division_chief_id')
+            : null;
 
-                    // compare times (H:i)
-                    try {
-                        $exStart = Carbon::createFromFormat('H:i:s', $ex->time_of_departure)->format('H:i');
-                        $exEnd = Carbon::createFromFormat('H:i:s', $ex->eta)->format('H:i');
-                    } catch (\Throwable $e) {
-                        $exStart = substr($ex->time_of_departure,0,5);
-                        $exEnd = substr($ex->eta,0,5);
-                    }
-                    $nStart = Carbon::createFromFormat('H:i', $timeStart)->format('H:i');
-                    $nEnd = Carbon::createFromFormat('H:i', $timeEnd)->format('H:i');
-
-                    if ($nStart < $exEnd && $nEnd > $exStart) {
-                        $vehicleConflicts[] = $d;
-                        break;
-                    }
-                }
-            }
-        }
-
-        if (! empty($vehicleConflicts)) {
-            $datesStr = implode(', ', array_unique($vehicleConflicts));
-            return redirect()->back()->withInput()->withErrors(['vehicle' => "The vehicle {$vehicleName} is already booked on: {$datesStr}"]);
+        if (! $chiefId) {
+            return back()->withErrors(['division_chief_id' => 'You are not assigned to a division with a Division Chief. Please contact HR.']);
         }
 
         $vr = VehicleRequest::create([
@@ -170,23 +139,21 @@ class VehicleRequestController extends Controller
             'eta' => $request->input('eta'),
             'vehicle_type' => $request->input('vehicle_type'),
             'passengers' => $request->input('passengers') ?? 1,
-            'division_chief_id' => $request->input('division_chief_id'),
-            'status' => 'Pending',
+            'division_chief_id' => $chiefId,
+            'status' => 'Pending GSU Assignment',
         ]);
 
-        // send notification email to selected division chief (if provided)
-        if ($vr->division_chief_id) {
-            $chief = User::find($vr->division_chief_id);
-            if ($chief && $chief->email) {
-                $approveUrl = URL::signedRoute('vehicle-requests.approve', ['vehicleRequest' => $vr->id, 'chief' => $chief->id], now()->addDays(7));
-                $declineUrl = URL::signedRoute('vehicle-requests.decline', ['vehicleRequest' => $vr->id, 'chief' => $chief->id], now()->addDays(7));
+        // Notify GSU Head / GSU Dispatcher users so they can assign a driver and vehicle
+        $gsuUsers = User::havingAnyRole(['GSU Head', 'GSU Dispatcher'])->get();
+        foreach ($gsuUsers as $gsuUser) {
+            if ($gsuUser->email) {
                 try {
-                    Mail::to($chief->email)->send(new VehicleRequestCreatedMail($vr, $approveUrl, $declineUrl));
+                    Mail::to($gsuUser->email)->send(new \App\Mail\VehicleRequestGSUHeadMail($vr));
                 } catch (\Throwable $e) {
-                    // log but don't fail the request creation
-                    logger()->error('Failed to send vehicle request email', ['error' => $e->getMessage()]);
+                    logger()->error('Failed to send GSU dispatch notification email', ['error' => $e->getMessage()]);
                 }
             }
+            NotificationService::notifyUser($gsuUser, 'Vehicle Request', "#{$vr->id}", 'New request awaiting driver/vehicle assignment', route('vehicle-requests.gsu-dispatch'));
         }
 
         $this->performSign($request, VehicleRequest::class, $vr->id,
@@ -245,19 +212,23 @@ class VehicleRequestController extends Controller
         );
 
         try {
-            // Notify all GSU Head users (so GSU handles driver assignment)
-            $gsuHeads = \App\Models\User::havingRole('GSU Head')->get();
-            foreach ($gsuHeads as $gsuHead) {
-                if ($gsuHead->email) {
+            // Driver + vehicle were already assigned by GSU before this DC approval,
+            // so notify OCD directly for final sign-off instead of routing back to GSU.
+            $ocdUsers = \App\Models\User::havingRole('OCD')->get();
+            foreach ($ocdUsers as $ocdUser) {
+                if ($ocdUser->email) {
                     try {
-                        Mail::to($gsuHead->email)->send(new \App\Mail\VehicleRequestGSUHeadMail($vehicleRequest));
+                        $approveUrl = URL::signedRoute('vehicle-requests.ocd.approve', ['vehicleRequest' => $vehicleRequest->id, 'ocd' => $ocdUser->id], now()->addDays(7));
+                        $declineUrl = URL::signedRoute('vehicle-requests.ocd.decline', ['vehicleRequest' => $vehicleRequest->id, 'ocd' => $ocdUser->id], now()->addDays(7));
+                        Mail::to($ocdUser->email)->send(new \App\Mail\VehicleRequestOCDMail($vehicleRequest, $approveUrl, $declineUrl));
                     } catch (\Throwable $e) {
-                        logger()->error('Failed to send GSU Head vehicle request notification (in-app)', ['error' => $e->getMessage(), 'gsu_id' => $gsuHead->id]);
+                        logger()->error('Failed to send OCD vehicle request notification (in-app)', ['error' => $e->getMessage(), 'ocd_id' => $ocdUser->id]);
                     }
                 }
+                NotificationService::notifyUser($ocdUser, 'Vehicle Request', "#{$vehicleRequest->id}", 'Approved by Division Chief — awaiting your approval', route('vehicle-requests.ocd-approval'));
             }
         } catch (\Throwable $e) {
-            logger()->error('Failed to notify GSU Head users after in-app approval', ['error' => $e->getMessage()]);
+            logger()->error('Failed to notify OCD users after in-app approval', ['error' => $e->getMessage()]);
         }
 
         $this->performSign($request, VehicleRequest::class, $vehicleRequest->id,
@@ -349,21 +320,21 @@ class VehicleRequestController extends Controller
         $vehicleRequest->save();
         if ($vehicleRequest->requester) { NotificationService::notifyUser($vehicleRequest->requester, 'Vehicle Request', "#{$vehicleRequest->id}", 'Approved by Division Chief', route('vehicle-requests.index')); }
 
-        // Notify all GSU Head users (Division Chief approved -> GSU assigns driver)
-        $gsuHeads = \App\Models\User::havingRole('GSU Head')->get();
-        foreach ($gsuHeads as $gsuHead) {
-            if ($gsuHead->email) {
+        // Driver + vehicle were already assigned by GSU before this Division Chief
+        // approval, so notify OCD directly for final sign-off.
+        $ocdUsers = \App\Models\User::havingRole('OCD')->get();
+        foreach ($ocdUsers as $ocdUser) {
+            if ($ocdUser->email) {
                 try {
-                    \Mail::to($gsuHead->email)->send(new \App\Mail\VehicleRequestGSUHeadMail($vehicleRequest));
+                    $approveUrl = URL::signedRoute('vehicle-requests.ocd.approve', ['vehicleRequest' => $vehicleRequest->id, 'ocd' => $ocdUser->id], now()->addDays(7));
+                    $declineUrl = URL::signedRoute('vehicle-requests.ocd.decline', ['vehicleRequest' => $vehicleRequest->id, 'ocd' => $ocdUser->id], now()->addDays(7));
+                    \Mail::to($ocdUser->email)->send(new \App\Mail\VehicleRequestOCDMail($vehicleRequest, $approveUrl, $declineUrl));
                 } catch (\Throwable $e) {
-                    \Log::error('Failed to send GSU Head vehicle request notification', ['error' => $e->getMessage()]);
+                    \Log::error('Failed to send OCD vehicle request notification', ['error' => $e->getMessage()]);
                 }
             }
+            NotificationService::notifyUser($ocdUser, 'Vehicle Request', "#{$vehicleRequest->id}", 'Approved by Division Chief — awaiting your approval', route('vehicle-requests.ocd-approval'));
         }
-
-        // OCD notification is sent only after GSU Head assigns a driver.
-        // Previously we notified OCD users here immediately after Division Chief approval.
-        // That behavior was changed so OCD receives notification only after driver assignment by GSU Head.
 
         return view('vehicle_request_approved', ['vehicleRequest' => $vehicleRequest, 'already' => false]);
     }
@@ -517,10 +488,10 @@ class VehicleRequestController extends Controller
             'date_needed.*' => 'date',
             'time_of_departure' => 'required|date_format:H:i',
             'eta' => 'required|date_format:H:i',
-            'vehicle_type' => 'required|string|max:255',
+            'vehicle_type' => 'nullable|string|max:255',
             'passengers' => 'required|integer|min:1',
             'status' => 'nullable|string|max:255',
-            'division_chief_id' => 'required|exists:users,id',
+            'division_chief_id' => 'nullable|exists:users,id',
         ]);
 
         if ($request->input('time_of_departure') >= $request->input('eta')) {
@@ -681,7 +652,7 @@ class VehicleRequestController extends Controller
         $perPage = min((int) $request->query('per_page', 15), 50);
 
         $requests = VehicleRequest::with('requester:id,name')
-            ->where('status', 'Pending')
+            ->where('status', 'Pending Division Chief Approval')
             ->where('division_chief_id', $user->id)
             ->when($search, fn ($q) => $q->where(function ($inner) use ($search) {
                 $inner->where('purpose',     'like', "%{$search}%")
@@ -697,6 +668,41 @@ class VehicleRequestController extends Controller
             'filters'      => ['search' => $search],
             'hasPin'       => ! empty($user->signature_pin),
             'signatureUri' => $this->sigService->getSignatureDataUri($user),
+        ]);
+    }
+
+    /* =====================================================
+     | GSU DISPATCH DASHBOARD (GSU Head / GSU Dispatcher)
+     |=====================================================*/
+    public function gsuDispatch(Request $request)
+    {
+        $user = $request->user();
+        if (! $user->hasPermission('vehicles.dispatch')) {
+            abort(403);
+        }
+
+        $search  = trim($request->query('search', ''));
+        $perPage = min((int) $request->query('per_page', 15), 50);
+
+        $requests = VehicleRequest::with('requester:id,name')
+            ->where('status', 'Pending GSU Assignment')
+            ->when($search, fn ($q) => $q->where(function ($inner) use ($search) {
+                $inner->where('purpose',     'like', "%{$search}%")
+                      ->orWhere('destination', 'like', "%{$search}%")
+                      ->orWhereHas('requester', fn ($u) => $u->where('name', 'like', "%{$search}%"));
+            }))
+            ->latest()
+            ->paginate($perPage)
+            ->withQueryString();
+
+        $drivers  = User::where('position', 'LIKE', '%Driver%')->orderBy('name')->get(['id', 'name', 'position']);
+        $vehicles = \App\Models\Vehicle::where('status', '!=', 'Under Repair')->orderBy('name')->get();
+
+        return Inertia::render('VehicleRequests/GSUDispatch', [
+            'requests' => $requests,
+            'filters'  => ['search' => $search],
+            'drivers'  => $drivers,
+            'vehicles' => $vehicles,
         ]);
     }
 
