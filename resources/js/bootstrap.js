@@ -3,6 +3,42 @@ window.axios = axios;
 
 window.axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
 
+// ── Transparent CSRF-token retry ────────────────────────────────────────────
+// A tab that's been idle (bfcache restore, Edge tab-sleep/discard, or just
+// sitting past SESSION_LIFETIME) can hold a stale XSRF-TOKEN cookie. Inertia
+// visits already get a graceful "Session Expired" overlay (see app.js's
+// router.on('invalid')), but the many raw axios calls outside Inertia's
+// router (chat, RBAC, org structure, signature/PIN completion, driver
+// dispatch, ...) would otherwise surface a raw 419 "CSRF token mismatch"
+// straight into the caller's catch block. CSRF verification runs before the
+// controller, so a 419'd request never mutated anything server-side —
+// retrying once after reminting the token pair is always safe.
+import { sessionExpired } from './Composables/useSession';
+
+let csrfRefresh = null;
+
+window.axios.interceptors.response.use(
+    response => response,
+    async error => {
+        if (error.response?.status !== 419 || error.config?.__retriedAfter419) {
+            return Promise.reject(error);
+        }
+
+        error.config.__retriedAfter419 = true;
+
+        try {
+            csrfRefresh ??= window.axios.get(window.location.href).finally(() => { csrfRefresh = null; });
+            await csrfRefresh;
+            return await window.axios.request(error.config);
+        } catch (retryError) {
+            if (retryError.response?.status === 419) {
+                sessionExpired.value = true;
+            }
+            return Promise.reject(retryError);
+        }
+    }
+);
+
 // ── Laravel Echo + Soketi (Pusher-compatible WebSocket) ───────────────────
 import Echo from 'laravel-echo';
 import Pusher from 'pusher-js';

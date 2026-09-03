@@ -147,14 +147,30 @@ onMounted(() => {
   if ('Notification' in window && Notification.permission === 'default') {
     Notification.requestPermission();
   }
+
+  // Restoring this tab from the browser's back/forward cache (or an Edge
+  // "sleeping tab" wake) can leave a stale session/XSRF-token cookie pair.
+  // A silent background GET remints both before the user acts on anything —
+  // a plain window.location.reload() would work too, but would also wipe
+  // any in-progress form input on the page. axios.interceptors in
+  // bootstrap.js already catch the rare case a token still goes stale
+  // between this refresh and the user's next action.
+  window.addEventListener('pageshow', handlePageShow);
 });
 onUnmounted(() => {
   if (removeNavListener) removeNavListener();
+  window.removeEventListener('pageshow', handlePageShow);
   if (chatEchoChannel) {
     window.Echo?.leave(`user.${user?.id}`);
     chatEchoChannel = null;
   }
 });
+
+function handlePageShow(event) {
+  if (event.persisted) {
+    window.axios.get(window.location.href).catch(() => {});
+  }
+}
 
 // --- Page + Auth ---
 const page = usePage();
