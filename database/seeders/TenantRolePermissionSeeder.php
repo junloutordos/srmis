@@ -91,6 +91,22 @@ class TenantRolePermissionSeeder extends Seeder
             'org.view_all', 'org.export', 'org.reports', 'org.versions.view',
         ]);
 
+        // ── OED override — no campus director, so FAD Chief takes over the
+        // final approval stage for Vehicle Requests (a straight swap) and
+        // for Facility Requests (collapsed into FAD Chief's own approval —
+        // see ApprovalRoutingService::facilityFinalStageCollapsedIntoFad()).
+        // OCD keeps every other tenant's final-approval duty, and keeps its
+        // ITJR duty here too (displayed as "KID Chief", see
+        // TenantRoleLabelsSeeder). ──────────────────────────────────────────
+        if (tenant('id') === 'oed') {
+            $ocd = Role::where('name', 'OCD')->first();
+            if ($ocd) {
+                $revokeIds = Permission::whereIn('name', ['vehicles.ocd-approve', 'facilities.ocd-approve'])
+                    ->pluck('id')->toArray();
+                $ocd->permissions()->detach($revokeIds);
+            }
+            $assign('FAD Chief', ['vehicles.ocd-approve']);
+        }
 
         $this->command?->info('Role permissions mapped.');
     }

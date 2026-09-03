@@ -16,6 +16,7 @@ use Carbon\Carbon;
 use App\Enums\ApprovalStep;
 use App\Services\SnapshotService;
 use App\Services\DigitalSignatureService;
+use App\Services\ApprovalRoutingService;
 use App\Http\Traits\SignsDocuments;
 
 class VehicleRequestController extends Controller
@@ -33,7 +34,7 @@ class VehicleRequestController extends Controller
     {
 
         $user = $request->user();
-        $canViewAll = $user->hasAnyRole(['Administrator', 'GSU Head', 'GSU Dispatcher', 'OCD']);
+        $canViewAll = $user->hasAnyRole(['Administrator', 'GSU Head', 'GSU Dispatcher', ApprovalRoutingService::finalApproverRole()]);
 
         $requests = VehicleRequest::with(['requester:id,name', 'driver:id,name'])->latest();
 
@@ -213,8 +214,9 @@ class VehicleRequestController extends Controller
 
         try {
             // Driver + vehicle were already assigned by GSU before this DC approval,
-            // so notify OCD directly for final sign-off instead of routing back to GSU.
-            $ocdUsers = \App\Models\User::havingRole('OCD')->get();
+            // so notify the final approver directly for sign-off instead of routing
+            // back to GSU — OCD normally, FAD Chief in OED (no campus director).
+            $ocdUsers = \App\Models\User::havingRole(ApprovalRoutingService::finalApproverRole())->get();
             foreach ($ocdUsers as $ocdUser) {
                 if ($ocdUser->email) {
                     try {
@@ -321,8 +323,9 @@ class VehicleRequestController extends Controller
         if ($vehicleRequest->requester) { NotificationService::notifyUser($vehicleRequest->requester, 'Vehicle Request', "#{$vehicleRequest->id}", 'Approved by Division Chief', route('vehicle-requests.index')); }
 
         // Driver + vehicle were already assigned by GSU before this Division Chief
-        // approval, so notify OCD directly for final sign-off.
-        $ocdUsers = \App\Models\User::havingRole('OCD')->get();
+        // approval, so notify the final approver directly for sign-off — OCD
+        // normally, FAD Chief in OED (no campus director).
+        $ocdUsers = \App\Models\User::havingRole(ApprovalRoutingService::finalApproverRole())->get();
         foreach ($ocdUsers as $ocdUser) {
             if ($ocdUser->email) {
                 try {
@@ -584,7 +587,7 @@ class VehicleRequestController extends Controller
 
         $vehicleRequest->load(['requester','driver', 'divisionChief']);
 
-        $director    = User::havingRole('OCD')->first();
+        $director    = User::havingRole(ApprovalRoutingService::finalApproverRole())->first();
         $directorSig = $this->sigDataUri($director?->electronic_signature);
 
         $sigs = $this->loadSigsForPrint(VehicleRequest::class, $vehicleRequest->id);
@@ -726,10 +729,15 @@ class VehicleRequestController extends Controller
             ->withQueryString();
 
         return Inertia::render('VehicleRequests/OCDApproval', [
-            'requests'     => $requests,
-            'filters'      => ['search' => $search],
-            'hasPin'       => ! empty($request->user()->signature_pin),
-            'signatureUri' => $this->sigService->getSignatureDataUri($request->user()),
+            'requests'      => $requests,
+            'filters'       => ['search' => $search],
+            'hasPin'        => ! empty($request->user()->signature_pin),
+            'signatureUri'  => $this->sigService->getSignatureDataUri($request->user()),
+            // 'OCD' normally, 'FAD Chief' in OED — the page can't rely on the
+            // generic roleLabel() text substitution here, since OED's OCD
+            // role is separately labelled "KID Chief" for its ITJR duty and
+            // that label would be wrong on this now-FAD-Chief-owned page.
+            'approverLabel' => ApprovalRoutingService::finalApproverRole(),
         ]);
     }
 

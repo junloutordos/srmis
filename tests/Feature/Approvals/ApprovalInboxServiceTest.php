@@ -275,9 +275,12 @@ class ApprovalInboxServiceTest extends TestCase
             'date_needed' => now()->addDay(), 'passengers' => 1, 'status' => 'Pending Division Chief Approval',
         ]);
 
+        // FacilityRequestController::fadAction() sets 'Approved' (not
+        // 'Pending OCD Approval', which is never actually written anywhere)
+        // when it hands a request to the OCD stage — see ocdApproval().
         $pendingFr = FacilityRequest::create([
             'requestor_id' => $requester->id, 'activity' => 'For OCD', 'purpose' => 'x',
-            'date_start' => now()->format('Y-m-d'), 'status' => 'Pending OCD Approval',
+            'date_start' => now()->format('Y-m-d'), 'status' => 'Approved',
         ]);
         FacilityRequest::create([
             'requestor_id' => $requester->id, 'activity' => 'Not yet at OCD', 'purpose' => 'x',

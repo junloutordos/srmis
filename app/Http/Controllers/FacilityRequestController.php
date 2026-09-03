@@ -17,6 +17,7 @@ use App\Models\Facility;
 use App\Enums\ApprovalStep;
 use App\Services\SnapshotService;
 use App\Services\DigitalSignatureService;
+use App\Services\ApprovalRoutingService;
 use App\Http\Traits\SignsDocuments;
 
 class FacilityRequestController extends Controller
@@ -729,7 +730,11 @@ class FacilityRequestController extends Controller
      */
     public function bookings(Request $request)
     {
-        $rows = FacilityRequest::where('status', 'Approved')
+        // Includes both 'Approved' and 'OCD Approved' — a request that
+        // clears the final approval stage (see ocdAction() and, in OED,
+        // the collapsed fadAction()) must stay on the calendar, not vanish
+        // from it the moment it's fully signed off.
+        $rows = FacilityRequest::whereIn('status', ['Approved', 'OCD Approved'])
             ->get();
 
         $out = [];
@@ -937,9 +942,20 @@ class FacilityRequestController extends Controller
 
         $request->validate(['action' => 'required|in:approve,reject']);
 
+        // OED has no campus director, so its Facility Requests never route
+        // through a separate OCD stage — this FAD approval is already final.
+        $isFinalStageHere = ApprovalRoutingService::facilityFinalStageCollapsedIntoFad();
+
         if ($request->action === 'approve') {
-            $facilityRequest->update(['status' => 'Approved']);
-            if ($facilityRequest->requester) { NotificationService::notifyUser($facilityRequest->requester, 'Facility Request', "#{$facilityRequest->id}", 'Approved by FAD', route('facility-requests.index')); }
+            $finalStatus = $isFinalStageHere ? 'OCD Approved' : 'Approved';
+            $facilityRequest->update(['status' => $finalStatus]);
+            if ($facilityRequest->requester) {
+                NotificationService::notifyUser(
+                    $facilityRequest->requester, 'Facility Request', "#{$facilityRequest->id}",
+                    $isFinalStageHere ? 'Fully Approved — request scheduled' : 'Approved by FAD',
+                    route('facility-requests.index')
+                );
+            }
 
             $this->performSign($request, FacilityRequest::class, $facilityRequest->id,
                 'fad_approval',
@@ -951,7 +967,7 @@ class FacilityRequestController extends Controller
             try {
                 $requesterEmail = $facilityRequest->requester?->email ?? null;
                 if ($requesterEmail) {
-                    \Mail::to($requesterEmail)->send(new \App\Mail\FacilityRequestStatusMail($facilityRequest, 'Approved', null, $user->name));
+                    \Mail::to($requesterEmail)->send(new \App\Mail\FacilityRequestStatusMail($facilityRequest, $finalStatus, null, $user->name));
                 }
             } catch (\Throwable $e) {
                 logger()->error('Facility FAD approved email failed', ['error' => $e->getMessage()]);

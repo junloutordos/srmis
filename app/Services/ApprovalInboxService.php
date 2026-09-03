@@ -10,6 +10,7 @@ use App\Models\ServiceRequest;
 use App\Models\Division;
 use App\Models\User;
 use Illuminate\Support\Facades\DB;
+use App\Services\ApprovalRoutingService;
 
 class ApprovalInboxService
 {
@@ -40,6 +41,10 @@ class ApprovalInboxService
         $isFADChief      = str_contains($user->position ?? '', 'FAD') || $user->hasRole('FAD Chief');
         $isGSUHead       = $user->hasRole('GSU Head') || $user->hasRole('GSU Dispatcher');
         $isOCD           = $user->hasRole('OCD');
+        // Final approver for Vehicle/Facility Requests: OCD normally, FAD
+        // Chief in OED (no campus director) — see ApprovalRoutingService.
+        // IT Job Requests keep their own OCD-only stage below, unaffected.
+        $isFinalApprover = $user->hasRole(ApprovalRoutingService::finalApproverRole());
         $isAdmin         = $user->hasRole('Administrator');
 
         // Administrator sees all pending items across every module (union of all roles)
@@ -48,6 +53,7 @@ class ApprovalInboxService
             $isFADChief      = true;
             $isGSUHead       = true;
             $isOCD           = true;
+            $isFinalApprover = true;
         }
 
         // Pre-compute division IDs for DC queries (used in multiple places)
@@ -172,24 +178,34 @@ class ApprovalInboxService
             $this->mergeOrAddTab($tabs, 'work_requests', 'Work Requests', $wrGSU);
         }
 
-        // ── OCD ───────────────────────────────────────────────────────────────
+        // ── OCD — IT Job Requests only ───────────────────────────────────────
+        // OED's OCD role keeps this duty under its "KID Chief" display label;
+        // it is not affected by the Vehicle/Facility approval-routing override.
         if ($isOCD) {
             $itOCD = ITJobRequest::with(['user:id,name', 'divisionChief:id,name', 'assignedTo:id,name'])
                 ->where('status', 'Pending OCD Approval')->latest()->get()
                 ->map(fn($r) => $this->normaliseITJobRequest($r))->values()->all();
             $this->mergeOrAddTab($tabs, 'it_job_requests', 'IT Job Requests', $itOCD);
+        }
 
+        // ── Final approver — Vehicle & Facility Requests ─────────────────────
+        // OCD normally; FAD Chief in OED (see ApprovalRoutingService).
+        if ($isFinalApprover) {
             $vrOCD = VehicleRequest::with(['requester:id,name', 'divisionChief:id,name'])
                 ->where('status', 'Approved')->latest()->get()
                 ->map(fn($r) => $this->normaliseVehicleRequest($r))->values()->all();
             $this->mergeOrAddTab($tabs, 'vehicle_requests', 'Vehicle Requests', $vrOCD);
 
+            // FacilityRequestController::ocdApproval() actually queries
+            // status = 'Approved' (fadAction() moves it there, not "Pending
+            // OCD Approval" — that string is never written anywhere). In
+            // OED this stage is additionally collapsed into FAD Chief's own
+            // approval (fadAction sets 'OCD Approved' directly), so status
+            // never rests at 'Approved' there and this naturally yields zero.
             $frOCD = FacilityRequest::with('requester:id,name')
-                ->where('status', 'Pending OCD Approval')->latest()->get()
+                ->where('status', 'Approved')->latest()->get()
                 ->map(fn($r) => $this->normaliseFacilityRequest($r))->values()->all();
             $this->mergeOrAddTab($tabs, 'facility_requests', 'Facility Requests', $frOCD);
-
-
         }
 
 
