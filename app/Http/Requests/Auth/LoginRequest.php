@@ -70,7 +70,12 @@ class LoginRequest extends FormRequest
             ]);
         }
 
-        if (! Auth::attempt($this->only('email', 'password'), $this->boolean('remember'))) {
+        // No persistent "remember me": tenant identity lives only in the
+        // session (bound in AuthenticatedSessionController::store), never in
+        // a remember cookie. A remember cookie would let this guard silently
+        // re-authenticate the user after the session expires with no tenant
+        // resolved, and every `users` table query would then fail.
+        if (! Auth::attempt($this->only('email', 'password'))) {
             RateLimiter::hit($this->throttleKey());
 
             throw ValidationException::withMessages([

@@ -91,7 +91,7 @@ window.addEventListener('pageshow', (event) => {
 })
 
 // ── Email + password fallback (campus admins / non-Google accounts) ──────────
-const form = useForm({ email: '', password: '', remember: false })
+const form = useForm({ email: '', password: '' })
 
 function submit() {
   if (detectedCampus.value && !detectedCampus.value.known) {
@@ -356,11 +356,7 @@ const modules = [
             <p v-if="form.errors.password" class="mt-1 text-xs text-red-600">{{ form.errors.password }}</p>
           </div>
 
-          <div class="flex items-center justify-between">
-            <label class="flex items-center gap-2 text-sm text-slate-600">
-              <input v-model="form.remember" type="checkbox" class="rounded border-slate-300 text-primary-600 focus:ring-primary-500" />
-              Remember me
-            </label>
+          <div class="flex items-center justify-end">
             <a :href="route('password.request')" class="text-sm font-medium text-primary-600 hover:text-primary-700">
               Forgot password?
             </a>

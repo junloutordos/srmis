@@ -78,7 +78,13 @@ class GoogleAuthController extends Controller
                 ->with('error', 'Unable to log in. Contact MIS administrator.');
         }
 
-        Auth::login($user, true);
+        // No persistent "remember me" cookie: tenant identity lives only in the
+        // session (tenant_id, below). A remember cookie would let SessionGuard
+        // silently re-authenticate this guard after the session expires, with
+        // no tenant ever resolved — every `users` table query after that fails
+        // (there is no un-scoped `users` table) instead of prompting a fresh,
+        // tenant-resolving login.
+        Auth::login($user);
         request()->session()->regenerate();
         request()->session()->put('tenant_id', tenant('id'));
         $this->securityLog('info', 'Socialite login success', ['email' => $email, 'ip' => $ip, 'role' => $user->role ?? 'staff']);
@@ -159,7 +165,8 @@ class GoogleAuthController extends Controller
             $user->save();
         }
 
-        Auth::login($user, true);
+        // See the callback() method above for why remember must stay false here.
+        Auth::login($user);
         $request->session()->regenerate();
         $request->session()->put('tenant_id', tenant('id'));
         $this->securityLog('info', 'Google login success', ['email' => $email, 'ip' => $ip, 'role' => $user->role ?? 'staff']);

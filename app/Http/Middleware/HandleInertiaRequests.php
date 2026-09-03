@@ -38,7 +38,23 @@ class HandleInertiaRequests extends Middleware
     // app/Http/Middleware/HandleInertiaRequests.php
     public function share(Request $request): array
     {
-        $authUser = $request->user();
+        try {
+            $authUser = $request->user();
+        } catch (\Throwable $e) {
+            // A stale "remember me" cookie (issued before remember was disabled
+            // for this guard — see GoogleAuthController/LoginRequest) can
+            // re-authenticate a user with no tenant resolved for this request,
+            // which makes the `users` table lookup above hit the wrong/no
+            // schema. Report it, then drop the session and the recaller
+            // cookie so this browser is treated as a clean guest instead of
+            // repeating the same failing lookup on every request.
+            report($e);
+            $authUser = null;
+            $request->session()->invalidate();
+            \Illuminate\Support\Facades\Cookie::queue(
+                \Illuminate\Support\Facades\Cookie::forget(\Illuminate\Support\Facades\Auth::guard('web')->getRecallerName())
+            );
+        }
 
         // Central (system superadmin) sessions resolve a CentralUser — it has
         // no roles/permissions relations. The central pages don't consume the
