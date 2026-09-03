@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>OCD Decline — IT Job Request</title>
+    <title>{{ \App\Services\RoleLabelService::apply('OCD Decline — IT Job Request') }}</title>
     <style>
         body{background:#f1f5f9;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Arial,sans-serif;display:flex;align-items:center;justify-content:center;min-height:100vh;margin:0;padding:16px}
         .card{background:#fff;border-radius:12px;box-shadow:0 4px 24px rgba(15,23,42,.1);max-width:520px;width:100%;overflow:hidden}
@@ -26,10 +26,10 @@
 <div class="card">
     <div class="card-header">
         <h1>Decline IT Job Request</h1>
-        <p>PSHS-CRC MIS — OCD Action</p>
+        <p>{{ \App\Services\RoleLabelService::apply('PSHS-CRC MIS — OCD Action') }}</p>
     </div>
     <div class="card-body">
-        <p style="color:#475569;font-size:14px;margin:0 0 16px;">You are declining the following IT Job Request as OCD. Please provide a reason so the requestor and Division Chief are informed.</p>
+        <p style="color:#475569;font-size:14px;margin:0 0 16px;">{{ \App\Services\RoleLabelService::apply('You are declining the following IT Job Request as OCD. Please provide a reason so the requestor and Division Chief are informed.') }}</p>
         <div class="detail"><span class="lbl">ITJR No.</span><span class="val" style="font-family:monospace;">{{ $jobRequest->itjr_no }}</span></div>
         <div class="detail"><span class="lbl">Title</span><span class="val">{{ $jobRequest->title }}</span></div>
         <div class="detail"><span class="lbl">Submitted By</span><span class="val">{{ $jobRequest->user?->name ?? '—' }}</span></div>

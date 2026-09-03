@@ -2,7 +2,7 @@
 import { ref, computed, watch } from "vue"
 import { Head, router } from "@inertiajs/vue3"
 import AdminLayout from "@/Layouts/AdminLayout.vue"
-import { CheckCircleIcon, XCircleIcon, EyeIcon } from "@heroicons/vue/24/outline"
+import { CheckCircleIcon, XCircleIcon, EyeIcon, CalendarDaysIcon } from "@heroicons/vue/24/outline"
 import Swal from "sweetalert2"
 import "sweetalert2/dist/sweetalert2.min.css"
 import { statusBadgeClass, badgeBase } from '@/Composables/useStatusBadge.js'
@@ -42,7 +42,7 @@ const applyFilters = (immediate = true) => {
   clearTimeout(debounceTimer)
   const go = () => {
     isLoading.value = true
-    router.get(route('job-requests.ocd-approval'), buildParams(), {
+    router.get(route('job-requests.target-date-approval'), buildParams(), {
       preserveState: true,
       replace: true,
       only: ['requests', 'filters'],
@@ -58,7 +58,7 @@ watch(filterCategory, () => applyFilters(true))
 
 const goToPage = (pageNum) => {
   isLoading.value = true
-  router.get(route('job-requests.ocd-approval'), buildParams(pageNum), {
+  router.get(route('job-requests.target-date-approval'), buildParams(pageNum), {
     preserveState: true,
     replace: true,
     only: ['requests', 'filters'],
@@ -93,9 +93,9 @@ const handleApproveConfirm = (pin) => {
   const id = pendingApproveId.value
   pendingApproveId.value = null
   isSubmitting.value = true
-  Swal.fire({ title: 'Approving request...', allowOutsideClick: false, allowEscapeKey: false, showConfirmButton: false, didOpen: () => { Swal.showLoading() } })
-  router.post(route("job-requests.ocd-action", id), { action: "approve", pin }, {
-    onSuccess: () => Swal.fire("Approved!", "The request has been approved.", "success"),
+  Swal.fire({ title: 'Approving target date...', allowOutsideClick: false, allowEscapeKey: false, showConfirmButton: false, didOpen: () => { Swal.showLoading() } })
+  router.post(route("job-requests.target-date-decision", id), { action: "approve", pin }, {
+    onSuccess: () => Swal.fire("Approved!", "The proposed target date has been approved.", "success"),
     onFinish: () => { isSubmitting.value = false },
   })
 }
@@ -107,20 +107,23 @@ const handleApproveCancel = () => {
 
 const rejectRequest = async (id) => {
   const result = await Swal.fire({
-    title: "Are you sure?",
-    text: "Do you want to reject this request?",
+    title: "Reject this target date?",
+    input: "textarea",
+    inputLabel: "Reason (required — sent back to the assigned MIS personnel)",
+    inputPlaceholder: "Why is this date not acceptable?",
+    inputValidator: (value) => !value?.trim() ? "A reason is required." : undefined,
     icon: "warning",
     showCancelButton: true,
-    confirmButtonText: "Yes, reject it!",
+    confirmButtonText: "Reject",
     cancelButtonText: "Cancel",
-    reverseButtons: true
+    reverseButtons: true,
   })
 
   if (result.isConfirmed) {
     isSubmitting.value = true
-    Swal.fire({ title: 'Rejecting request...', allowOutsideClick: false, allowEscapeKey: false, showConfirmButton: false, didOpen: () => { Swal.showLoading() } })
-    router.post(route("job-requests.ocd-action", id), { action: "reject" }, {
-      onSuccess: () => Swal.fire("Rejected!", "The request has been rejected.", "error"),
+    Swal.fire({ title: 'Rejecting target date...', allowOutsideClick: false, allowEscapeKey: false, showConfirmButton: false, didOpen: () => { Swal.showLoading() } })
+    router.post(route("job-requests.target-date-decision", id), { action: "reject", reason: result.value }, {
+      onSuccess: () => Swal.fire("Rejected", "The assigned MIS personnel has been asked to propose a new date.", "error"),
       onFinish: () => { isSubmitting.value = false },
     })
   }
@@ -128,12 +131,18 @@ const rejectRequest = async (id) => {
 </script>
 
 <template>
-  <Head :title="roleLabel('OCD Approval - IT Job Requests')" />
-  <AdminLayout :title="roleLabel('OCD Approval - IT Job Requests')">
+  <Head :title="roleLabel('Target Date Approval - IT Job Requests')" />
+  <AdminLayout :title="roleLabel('Target Date Approval - IT Job Requests')">
     <div>
       <!-- Header -->
       <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-6">
-        <h1 class="text-xl font-semibold text-slate-800">{{ roleLabel('OCD Approval — IT Job Requests') }}</h1>
+        <div class="flex items-center gap-2">
+          <CalendarDaysIcon class="w-6 h-6 text-primary-600" />
+          <div>
+            <h1 class="text-xl font-semibold text-slate-800">{{ roleLabel('Target Completion Date Approval') }}</h1>
+            <p class="text-sm text-slate-500 mt-0.5">{{ roleLabel('Review the date MIS proposed before they may proceed with the request.') }}</p>
+          </div>
+        </div>
       </div>
 
       <!-- Filter bar -->
@@ -172,7 +181,8 @@ const rejectRequest = async (id) => {
               <tr>
                 <th class="px-4 py-3 text-left text-xs font-semibold text-slate-500 uppercase tracking-wide whitespace-nowrap">ITJR #</th>
                 <th class="px-4 py-3 text-left text-xs font-semibold text-slate-500 uppercase tracking-wide whitespace-nowrap">Title</th>
-                <th class="px-4 py-3 text-left text-xs font-semibold text-slate-500 uppercase tracking-wide whitespace-nowrap">Submitted By</th>
+                <th class="px-4 py-3 text-left text-xs font-semibold text-slate-500 uppercase tracking-wide whitespace-nowrap">Assigned To</th>
+                <th class="px-4 py-3 text-left text-xs font-semibold text-slate-500 uppercase tracking-wide whitespace-nowrap">Proposed Date</th>
                 <th class="px-4 py-3 text-left text-xs font-semibold text-slate-500 uppercase tracking-wide whitespace-nowrap">Status</th>
                 <th class="px-4 py-3 text-left text-xs font-semibold text-slate-500 uppercase tracking-wide whitespace-nowrap text-center">Actions</th>
               </tr>
@@ -185,15 +195,14 @@ const rejectRequest = async (id) => {
               >
                 <td class="px-4 py-3 text-sm text-slate-700">{{ req.itjr_no ?? req.id }}</td>
                 <td class="px-4 py-3 text-sm text-slate-700">{{ req.title }}</td>
-                <td class="px-4 py-3 text-sm text-slate-700">{{ req.user?.name ?? "—" }}</td>
+                <td class="px-4 py-3 text-sm text-slate-700">{{ req.assigned_to?.name ?? req.assignedTo?.name ?? '—' }}</td>
+                <td class="px-4 py-3 text-sm text-slate-700 font-medium">{{ req.expected_completion_date ?? '—' }}</td>
                 <td class="px-4 py-3">
                   <span :class="[badgeBase, statusBadgeClass(req.status)]">{{ roleLabel(req.status) }}</span>
                 </td>
                 <td class="px-4 py-3 text-center">
                   <div class="flex items-center gap-2 justify-center">
-                    <!-- Approve Button -->
                     <button
-                        v-if="req.status === 'Pending OCD Approval'"
                         @click="approveRequest(req.id)"
                         :disabled="isSubmitting"
                         class="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg bg-emerald-50 hover:bg-emerald-100 text-emerald-700 text-xs font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
@@ -202,9 +211,7 @@ const rejectRequest = async (id) => {
                         <span>Approve</span>
                     </button>
 
-                    <!-- Reject Button -->
                     <button
-                        v-if="req.status === 'Pending OCD Approval'"
                         @click="rejectRequest(req.id)"
                         :disabled="isSubmitting"
                         class="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg bg-red-50 hover:bg-red-100 text-red-600 text-xs font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
@@ -213,7 +220,6 @@ const rejectRequest = async (id) => {
                         <span>Reject</span>
                     </button>
 
-                    <!-- View Button -->
                     <button
                         @click="openModal(req)"
                         class="p-1.5 rounded-lg hover:bg-slate-100 text-slate-500 hover:text-slate-700 transition-colors"
@@ -225,8 +231,8 @@ const rejectRequest = async (id) => {
               </tr>
 
               <tr v-if="filteredRequests.length === 0">
-                <td colspan="5" class="py-16 text-center text-slate-400 text-sm">
-                  No requests found.
+                <td colspan="6" class="py-16 text-center text-slate-400 text-sm">
+                  {{ roleLabel('No requests are awaiting a target date decision.') }}
                 </td>
               </tr>
             </tbody>
@@ -251,12 +257,12 @@ const rejectRequest = async (id) => {
           <div class="px-6 py-5 space-y-2 text-sm text-slate-700">
             <p><strong>ITJR #:</strong> {{ selectedRequest.itjr_no ?? selectedRequest.id }}</p>
             <p><strong>Submitted By:</strong> {{ selectedRequest.user?.name ?? '—' }}</p>
-            <p><strong>Status:</strong> {{ selectedRequest.status }}</p>
+            <p><strong>Assigned To:</strong> {{ selectedRequest.assigned_to?.name ?? selectedRequest.assignedTo?.name ?? '—' }}</p>
+            <p><strong>Proposed Target Date:</strong> {{ selectedRequest.expected_completion_date ?? '—' }}</p>
+            <p><strong>Initial Assessment:</strong> {{ selectedRequest.mis_assessment ?? '—' }}</p>
+            <p><strong>Recommendation:</strong> {{ selectedRequest.recommendation ?? '—' }}</p>
             <p><strong>Description:</strong> {{ selectedRequest.description ?? '—' }}</p>
-            <p><strong>Division Chief:</strong> {{ selectedRequest.divisionchief ?? '—' }}</p>
-            <p><strong>Assigned To:</strong> {{ selectedRequest.assignedto ?? '—' }}</p>
-            <p><strong>Created At:</strong> {{ selectedRequest.created_at }}</p>
-            <p><strong>Updated At:</strong> {{ selectedRequest.updated_at }}</p>
+            <p><strong>Status:</strong> {{ roleLabel(selectedRequest.status) }}</p>
           </div>
         </div>
       </div>

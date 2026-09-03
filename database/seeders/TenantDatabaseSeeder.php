@@ -14,6 +14,7 @@ class TenantDatabaseSeeder extends Seeder
     public function run(): void
     {
         $this->call(TenantRolesSeeder::class);
+        $this->call(TenantRoleLabelsSeeder::class);    // per-tenant role display overrides (e.g. OED's OCD -> KID Chief)
         $this->call(TenantPermissionsSeeder::class);   // also calls OrgStructurePermissionsSeeder
         $this->call(TenantRolePermissionSeeder::class);
         $this->call(ITJobCategorySeeder::class);

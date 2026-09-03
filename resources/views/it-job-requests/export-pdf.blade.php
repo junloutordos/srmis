@@ -131,7 +131,7 @@ $statusAbbrev = [
             <td class="tc">{{ $rec->created_at ? \Carbon\Carbon::parse($rec->created_at)->format('m/d/Y') : '—' }}</td>
             <td>{{ $actionText ?: '—' }}</td>
             <td class="tc">{{ $rec->completed_at ? \Carbon\Carbon::parse($rec->completed_at)->format('m/d/Y') : '—' }}</td>
-            <td class="tc">{{ $statusAbbrev[$rec->status] ?? $rec->status }}</td>
+            <td class="tc">{{ \App\Services\RoleLabelService::apply($statusAbbrev[$rec->status] ?? $rec->status) }}</td>
             <td class="tc">
               @if($rec->rating)
                 {{ number_format($rec->rating, 1) }} ★

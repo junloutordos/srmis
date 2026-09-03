@@ -17,7 +17,10 @@ return new class extends Migration
     {
         // Tenants provisioned before this fix have the old index; tenants
         // provisioned from the updated baseline already lack it.
-        if (array_key_exists('users_role_id_foreign', Schema::getIndexes('users'))) {
+        // Schema::getIndexes() returns a list of index definitions (each with
+        // a 'name' key), not an array keyed by index name.
+        $hasIndex = collect(Schema::getIndexes('users'))->contains('name', 'users_role_id_foreign');
+        if ($hasIndex) {
             Schema::table('users', function (Blueprint $table) {
                 $table->dropIndex('users_role_id_foreign');
             });
@@ -30,7 +33,8 @@ return new class extends Migration
     {
         DB::statement('ALTER TABLE `users` MODIFY `role_id` BIGINT UNSIGNED NULL');
 
-        if (! array_key_exists('users_role_id_foreign', Schema::getIndexes('users'))) {
+        $hasIndex = collect(Schema::getIndexes('users'))->contains('name', 'users_role_id_foreign');
+        if (! $hasIndex) {
             Schema::table('users', function (Blueprint $table) {
                 $table->index('role_id', 'users_role_id_foreign');
             });

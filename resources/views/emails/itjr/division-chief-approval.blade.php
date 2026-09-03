@@ -49,7 +49,7 @@
 
 <div class="callout callout-blue">
     <div class="callout-title">Action Required</div>
-    Click <strong>Approve</strong> to endorse this request to OCD for final approval, or <strong>Decline</strong> if the request does not meet requirements. Please act within 24 hours.
+    Click <strong>Approve</strong> to endorse this request to {{ \App\Services\RoleLabelService::apply('OCD') }} for final approval, or <strong>Decline</strong> if the request does not meet requirements. Please act within 24 hours.
 </div>
 @endsection
 

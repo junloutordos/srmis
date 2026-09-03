@@ -6,6 +6,7 @@ import { CheckCircleIcon, XCircleIcon, EyeIcon, XMarkIcon } from "@heroicons/vue
 import Swal from "sweetalert2"
 import { statusBadgeClass, badgeBase } from '@/Composables/useStatusBadge.js'
 import DigitalSignaturePin from '@/Components/DigitalSignaturePin.vue'
+import { roleLabel } from '@/Composables/useRoleLabel'
 
 const props = defineProps({
   requests:     Object,
@@ -81,7 +82,7 @@ function handleApproveConfirm(pin) {
   isSubmitting.value = true
   Swal.fire({ title: 'Approving…', allowOutsideClick: false, showConfirmButton: false, didOpen: () => Swal.showLoading() })
   router.post(route('facility-requests.ocd-action', pendingApproveId.value), { action: 'approve', pin: pin || null }, {
-    onSuccess: () => Swal.fire('Approved!', 'Facility request approved by OCD.', 'success'),
+    onSuccess: () => Swal.fire('Approved!', roleLabel('Facility request approved by OCD.'), 'success'),
     onFinish:  () => { isSubmitting.value = false },
   })
 }
@@ -103,14 +104,14 @@ const rejectRequest = async (id) => {
 </script>
 
 <template>
-  <Head title="OCD Approval - Facility Requests" />
-  <AdminLayout title="OCD Approval - Facility Requests">
+  <Head :title="roleLabel('OCD Approval - Facility Requests')" />
+  <AdminLayout :title="roleLabel('OCD Approval - Facility Requests')">
     <div>
       <!-- Page header -->
       <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-6">
         <div>
-          <h1 class="text-xl font-semibold text-slate-800">OCD Approval — Facility Requests</h1>
-          <p class="text-sm text-slate-500 mt-0.5">Review and act on facility requests pending OCD approval</p>
+          <h1 class="text-xl font-semibold text-slate-800">{{ roleLabel('OCD Approval — Facility Requests') }}</h1>
+          <p class="text-sm text-slate-500 mt-0.5">{{ roleLabel('Review and act on facility requests pending OCD approval') }}</p>
         </div>
       </div>
 
@@ -171,7 +172,7 @@ const rejectRequest = async (id) => {
                 </td>
               </tr>
               <tr v-if="filteredRequests.length === 0">
-                <td colspan="7" class="py-16 text-center text-slate-400 text-sm">No pending facility requests for OCD approval.</td>
+                <td colspan="7" class="py-16 text-center text-slate-400 text-sm">{{ roleLabel('No pending facility requests for OCD approval.') }}</td>
               </tr>
             </tbody>
           </table>

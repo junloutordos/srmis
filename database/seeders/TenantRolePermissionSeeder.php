@@ -87,6 +87,7 @@ class TenantRolePermissionSeeder extends Seeder
         $assign('OCD', [
             'vehicles.ocd-approve',
             'facilities.ocd-approve',
+            'it.requests.ocd-approve',
             'org.view_all', 'org.export', 'org.reports', 'org.versions.view',
         ]);
 

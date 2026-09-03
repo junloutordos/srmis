@@ -186,18 +186,33 @@ Route::middleware(['auth', 'allowed.domain'])->group(function () {
         ->middleware('permission:it.requests.manage')
         ->name('jobrequests.assess');
     Route::put('/job-requests/{itJobRequest}/update', [ITJobRequestController::class, 'update'])
+        ->middleware('permission:it.requests.manage')
         ->name('job-requests.update');
+    Route::put('/job-requests/{jobRequest}/propose-target-date', [ITJobRequestController::class, 'proposeTargetDate'])
+        ->middleware('permission:it.requests.manage')
+        ->name('job-requests.propose-target-date');
 
-    // ITJR in-app approval dashboards (Division Chief / OCD)
+    // ITJR in-app approval dashboards (Division Chief)
     Route::middleware('permission:it.requests.manage')->group(function () {
         Route::get('/job-requests/for-approval', [ITJobRequestController::class, 'forApproval'])
             ->name('it.job-requests.for-approval');
         Route::post('/job-requests/{jobRequest}/division-chief-action', [ITJobRequestController::class, 'approveByDivisionChief'])
             ->name('job-requests.division-chief-action');
+    });
+
+    // ITJR in-app approval dashboards (OCD / KID Chief) — also reachable by
+    // MIS/Admin via it.requests.manage for oversight, but the dedicated
+    // it.requests.ocd-approve permission is what actually lets the OCD role
+    // (labeled "KID Chief" in OED) reach these in-app, not just via email.
+    Route::middleware('permission:it.requests.manage|it.requests.ocd-approve')->group(function () {
         Route::get('/job-requests/ocd-approval', [ITJobRequestController::class, 'ocdApproval'])
             ->name('job-requests.ocd-approval');
         Route::post('/job-requests/{jobRequest}/ocd-action', [ITJobRequestController::class, 'approveByOCD'])
             ->name('job-requests.ocd-action');
+        Route::get('/job-requests/target-date-approval', [ITJobRequestController::class, 'targetDateApproval'])
+            ->name('job-requests.target-date-approval');
+        Route::post('/job-requests/{jobRequest}/target-date-decision', [ITJobRequestController::class, 'decideTargetDate'])
+            ->name('job-requests.target-date-decision');
     });
     Route::get('/job-requests/{jobRequest}', [ITJobRequestController::class, 'show'])
         ->name('job-requests.show');

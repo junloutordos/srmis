@@ -156,6 +156,16 @@ public function index(Request $request)
      |=====================================================*/
     public function store(Request $request)
     {
+        // Diagram gate: staff must confirm & rate an already-acted-on request
+        // (via the CSM survey, CsmResponseController::store) before filing
+        // another one. Same condition as checkPendingActedByMis() below.
+        // Superadmins are exempt, consistent with the existing frontend nudge
+        // and isSuperAdmin()'s bypass elsewhere in the app.
+        if (! $request->user()->isSuperAdmin()
+            && ITJobRequest::where('user_id', $request->user()->id)->where('status', 'Acted by MIS')->exists()) {
+            return back()->withErrors(['message' => 'You have an IT Job Request awaiting your confirmation and Client Satisfaction Survey. Please complete it before filing a new request.']);
+        }
+
         $isTechEvent   = $request->input('category') === 'Technical Assistance on Events';
         $isPosting     = in_array($request->input('category'), ['Posting to Website', 'Posting to Social Media']);
 
@@ -503,98 +513,279 @@ public function showOCDDeclineForm(ITJobRequest $jobRequest, $ocd)
         ]);
     }
     /* =====================================================
-     | MIS ASSESSMENT & USER CONFIRMATION
+     | MIS: PROPOSE TARGET DATE → KID CHIEF/OCD DECISION → MIS ACTS
      |=====================================================*/
-    public function update(Request $request, $id)
-{
-    $jobRequest = ITJobRequest::findOrFail($id);
 
-    $validated = $request->validate([
-        'mis_assessment'           => 'nullable|string',
-        'recommendation'           => 'nullable|string|max:2000',
-        'expected_completion_date' => 'nullable|date',
-        'action_taken'             => 'nullable|string',
-        'completed_at'             => 'nullable|date',
-        'ict_equipment_id'         => 'nullable|exists:ict_equipments,id',
-    ]);
+    /**
+     * Tech Support (assigned MIS personnel) reviews the request and proposes
+     * a target completion date. Gated on a KID Chief/OCD decision before the
+     * assignee can act on the request — see decideTargetDate().
+     */
+    public function proposeTargetDate(Request $request, ITJobRequest $jobRequest)
+    {
+        $user = $request->user();
 
-    $isActedByMIS = !empty($validated['action_taken']) || !empty($validated['completed_at']);
+        if (! $user->hasPermission('it.requests.manage') || (int) $jobRequest->assignedto !== (int) $user->id) {
+            abort(403, 'Only the MIS personnel assigned to this request can propose a target date.');
+        }
 
-    $status = $isActedByMIS
-        ? 'Acted by MIS'
-        : 'MIS Assessed the Request';
+        if (! in_array($jobRequest->status, ['In Progress', 'Target Date Rejected'])) {
+            return back()->withErrors(['message' => 'This request is not awaiting a target date proposal.']);
+        }
 
-    DB::transaction(function () use ($jobRequest, $validated, $status, $isActedByMIS, $request) {
-        $jobRequest->update(array_merge($validated, [
-            'status' => $status,
-            'attendedby' => $request->user()->name,
-        ]));
-
-        ITJRTrackingLog::create([
-            'it_job_request_id' => $jobRequest->id,
-            'status' => $status,
-            'remarks' => collect($validated)->filter()->implode("\n"),
-            'updated_by' => $request->user()->id,
+        $validated = $request->validate([
+            'mis_assessment'           => 'nullable|string',
+            'recommendation'           => 'nullable|string|max:2000',
+            'expected_completion_date' => 'required|date',
         ]);
 
-        if ($isActedByMIS && !empty($validated['ict_equipment_id'])) {
-            ICTPMSHistory::create([
-                'ict_pms_id'     => null,
-                'equipment_id'   => $validated['ict_equipment_id'],
-                'pms_date'       => now()->toDateString(),
-                'description'    => 'IT Job Request Service (' . $jobRequest->itjr_no . ')',
-                'type'           => 'Repair',
-                'cost_of_repair' => 0.00,
-                'remarks'        => $validated['action_taken']
-                                    ?? $validated['mis_assessment']
-                                    ?? 'Service action from IT Job Request',
-                'created_by'     => $request->user()->id,
-            ]);
-        }
-    });
+        DB::transaction(function () use ($jobRequest, $validated, $request) {
+            $jobRequest->update(array_merge($validated, [
+                'status'                       => 'Pending Target Date Approval',
+                'target_date_rejection_reason' => null,
+                'attendedby'                   => $request->user()->name,
+            ]));
 
-    // 📧 NOTIFY REQUESTER (outside transaction — email failures must not roll back DB changes)
-    if ($jobRequest->user && $jobRequest->user->email) {
-        try {
-            Mail::to($jobRequest->user->email)->send(
-                new ITJRStatusMail(
-                    $jobRequest,
-                    $isActedByMIS ? 'MIS Action Completed' : 'MIS Assessment Update',
-                    $isActedByMIS
-                        ? ($validated['action_taken'] ?? 'Your request has been acted upon by MIS.')
-                        : ($validated['mis_assessment'] ?? 'Your request has been assessed by MIS.'),
-                    'MIS'
-                )
+            ITJRTrackingLog::create([
+                'it_job_request_id' => $jobRequest->id,
+                'status'            => 'Pending Target Date Approval',
+                'remarks'           => "Target completion date {$validated['expected_completion_date']} proposed by {$request->user()->name}.",
+                'updated_by'        => $request->user()->id,
+            ]);
+        });
+
+        $chiefs = User::havingRole('OCD')->get();
+        foreach ($chiefs as $chief) {
+            if ($chief->email) {
+                try {
+                    Mail::to($chief->email)->send(new ITJRStatusMail(
+                        $jobRequest,
+                        'Target Date Proposed',
+                        'A target completion date has been proposed and needs your approval.',
+                        'MIS'
+                    ));
+                } catch (\Throwable $e) {
+                    logger()->error('Failed to send target date proposal email', ['error' => $e->getMessage()]);
+                }
+            }
+            NotificationService::notifyUser(
+                $chief,
+                'IT Job Request',
+                $jobRequest->itjr_no,
+                'Target completion date awaiting your approval',
+                route('job-requests.target-date-approval'),
             );
-        } catch (\Throwable $e) {
-            logger()->error('Failed to send MIS update email', [
-                'job_request_id' => $jobRequest->id,
-                'error' => $e->getMessage(),
-            ]);
         }
-    }
-    if ($jobRequest->user) {
-        NotificationService::notifyUser(
-            $jobRequest->user,
-            'IT Job Request',
-            $jobRequest->itjr_no,
-            $isActedByMIS ? 'Acted by MIS — please confirm completion' : 'Assessed by MIS',
-            route('jobrequests.index'),
-        );
+
+        return back()->with('success', 'Target completion date submitted for approval.');
     }
 
-    // Auto-generate PDF when status becomes "Acted by MIS"
-    if ($isActedByMIS) {
+    public function targetDateApproval(Request $request)
+    {
+        $user = $request->user();
+
+        $search   = trim($request->query('search', ''));
+        $category = trim($request->query('category', ''));
+        $perPage  = min((int) $request->query('per_page', 15), 50);
+
+        $requests = ITJobRequest::with(['user:id,name', 'assignedTo:id,name'])
+            ->where('status', 'Pending Target Date Approval')
+            ->when($search, fn($q) => $q->where(function ($inner) use ($search) {
+                $inner->where('title', 'like', "%{$search}%")
+                      ->orWhere('category', 'like', "%{$search}%")
+                      ->orWhere('itjr_no', 'like', "%{$search}%")
+                      ->orWhereHas('user', fn($u) => $u->where('name', 'like', "%{$search}%"));
+            }))
+            ->when($category, fn($q) => $q->where('category', $category))
+            ->latest()
+            ->paginate($perPage)
+            ->withQueryString();
+
+        return Inertia::render('ITJobRequests/TargetDateApproval', [
+            'requests'     => $requests,
+            'filters'      => ['search' => $search, 'category' => $category],
+            'categories'   => ITJobCategory::orderBy('name')->get(['id', 'name']),
+            'hasPin'       => ! empty($user->signature_pin),
+            'signatureUri' => $this->sigService->getSignatureDataUri($user),
+        ]);
+    }
+
+    /**
+     * KID Chief/OCD approves or rejects the assignee's proposed target date.
+     * Approve unblocks update() (the resolution step); reject kicks the
+     * request back to the assignee to propose a new date, with a reason.
+     */
+    public function decideTargetDate(Request $request, ITJobRequest $jobRequest)
+    {
+        $validated = $request->validate([
+            'action' => 'required|in:approve,reject',
+            'reason' => 'required_if:action,reject|nullable|string|max:1000',
+        ]);
+
+        if ($jobRequest->status !== 'Pending Target Date Approval') {
+            return back()->withErrors(['message' => 'This request is not awaiting a target date decision.']);
+        }
+
+        if ($validated['action'] === 'approve') {
+            $jobRequest->update([
+                'status'                       => 'Target Date Approved',
+                'target_date_rejection_reason' => null,
+            ]);
+
+            ITJRTrackingLog::create([
+                'it_job_request_id' => $jobRequest->id,
+                'status'            => 'Target Date Approved',
+                'remarks'           => 'Target completion date approved by OCD/KID Chief.',
+                'updated_by'        => $request->user()->id,
+            ]);
+
+            $this->snapshots->recordApproval(
+                approvable: $jobRequest,
+                step:       ApprovalStep::ITJR_TARGET_DATE,
+                sequence:   5,
+                action:     'approved',
+                approver:   $request->user(),
+            );
+
+            $this->trySign($request, $jobRequest, 'target_date_approval',
+                "IT Job Request #{$jobRequest->itjr_no} — Target Date Approval",
+                $jobRequest->itjr_no . 'target_date_approval' . $request->user()->id
+            );
+
+            $this->notifyAssigneeOfTargetDateDecision($jobRequest, 'Target Date Approved', 'Your proposed target completion date has been approved. You may now proceed with the request.');
+        } else {
+            $jobRequest->update([
+                'status'                       => 'Target Date Rejected',
+                'target_date_rejection_reason' => $validated['reason'],
+            ]);
+
+            ITJRTrackingLog::create([
+                'it_job_request_id' => $jobRequest->id,
+                'status'            => 'Target Date Rejected',
+                'remarks'           => 'Target completion date rejected by OCD/KID Chief: ' . $validated['reason'],
+                'updated_by'        => $request->user()->id,
+            ]);
+
+            $this->snapshots->recordApproval(
+                approvable: $jobRequest,
+                step:       ApprovalStep::ITJR_TARGET_DATE,
+                sequence:   5,
+                action:     'rejected',
+                approver:   $request->user(),
+            );
+
+            $this->notifyAssigneeOfTargetDateDecision($jobRequest, 'Target Date Rejected', 'Your proposed target completion date was rejected: ' . $validated['reason']);
+        }
+
+        return back()->with('success', 'Target date decision recorded!');
+    }
+
+    private function notifyAssigneeOfTargetDateDecision(ITJobRequest $jobRequest, string $subject, string $body): void
+    {
+        $assignee = $jobRequest->assignedTo;
+        if (! $assignee) {
+            return;
+        }
+
+        if ($assignee->email) {
+            try {
+                Mail::to($assignee->email)->send(new ITJRStatusMail($jobRequest, $subject, $body, 'OCD'));
+            } catch (\Throwable $e) {
+                logger()->error('Failed to send target date decision email', ['error' => $e->getMessage()]);
+            }
+        }
+
+        NotificationService::notifyUser($assignee, 'IT Job Request', $jobRequest->itjr_no, $subject, route('jobrequests.queue'));
+    }
+
+    /**
+     * Tech Support / assigned MIS personnel resolves the request once the
+     * target date is approved. Requires ownership — see proposeTargetDate()
+     * for the earlier stage of this same workflow.
+     */
+    public function update(Request $request, $id)
+    {
+        $jobRequest = ITJobRequest::findOrFail($id);
+        $user = $request->user();
+
+        if (! $user->hasPermission('it.requests.manage') || (int) $jobRequest->assignedto !== (int) $user->id) {
+            abort(403, 'Only the MIS personnel assigned to this request can act on it.');
+        }
+
+        if (! in_array($jobRequest->status, ['Target Date Approved', 'Acted by MIS'])) {
+            return back()->withErrors(['message' => 'The target completion date must be approved by OCD/KID Chief before this request can be acted on.']);
+        }
+
+        $validated = $request->validate([
+            'action_taken'     => 'required|string',
+            'completed_at'     => 'nullable|date',
+            'ict_equipment_id' => 'nullable|exists:ict_equipments,id',
+        ]);
+
+        DB::transaction(function () use ($jobRequest, $validated, $request) {
+            $jobRequest->update(array_merge($validated, [
+                'status'     => 'Acted by MIS',
+                'attendedby' => $request->user()->name,
+            ]));
+
+            ITJRTrackingLog::create([
+                'it_job_request_id' => $jobRequest->id,
+                'status' => 'Acted by MIS',
+                'remarks' => collect($validated)->filter()->implode("\n"),
+                'updated_by' => $request->user()->id,
+            ]);
+
+            if (!empty($validated['ict_equipment_id'])) {
+                ICTPMSHistory::create([
+                    'ict_pms_id'     => null,
+                    'equipment_id'   => $validated['ict_equipment_id'],
+                    'pms_date'       => now()->toDateString(),
+                    'description'    => 'IT Job Request Service (' . $jobRequest->itjr_no . ')',
+                    'type'           => 'Repair',
+                    'cost_of_repair' => 0.00,
+                    'remarks'        => $validated['action_taken'] ?? 'Service action from IT Job Request',
+                    'created_by'     => $request->user()->id,
+                ]);
+            }
+        });
+
+        // 📧 NOTIFY REQUESTER (outside transaction — email failures must not roll back DB changes)
+        if ($jobRequest->user && $jobRequest->user->email) {
+            try {
+                Mail::to($jobRequest->user->email)->send(
+                    new ITJRStatusMail(
+                        $jobRequest,
+                        'MIS Action Completed',
+                        $validated['action_taken'],
+                        'MIS'
+                    )
+                );
+            } catch (\Throwable $e) {
+                logger()->error('Failed to send MIS update email', [
+                    'job_request_id' => $jobRequest->id,
+                    'error' => $e->getMessage(),
+                ]);
+            }
+        }
+        if ($jobRequest->user) {
+            NotificationService::notifyUser(
+                $jobRequest->user,
+                'IT Job Request',
+                $jobRequest->itjr_no,
+                'Acted by MIS — please confirm completion',
+                route('jobrequests.index'),
+            );
+        }
+
         $this->trySign($request, $jobRequest, 'mis_acted',
             "IT Job Request #{$jobRequest->itjr_no} — Acted by MIS",
             $jobRequest->itjr_no . 'mis_acted' . $request->user()->id
         );
 
         GenerateITJobRequestPdfJob::dispatch($jobRequest);
-    }
 
-    return back()->with('success', 'MIS assessment saved.');
-}
+        return back()->with('success', 'MIS action saved.');
+    }
 
 
     public function confirmCompletion(Request $request, ITJobRequest $jobRequest)
@@ -758,7 +949,7 @@ public function showOCDDeclineForm(ITJobRequest $jobRequest, $ocd)
     {
         $user = $request->user();
 
-        if (! $user->hasPermission('it.requests.manage')) {
+        if (! $user->hasPermission('it.requests.manage') && ! $user->hasPermission('it.requests.ocd-approve')) {
             abort(403, 'Unauthorized');
         }
 
@@ -864,6 +1055,10 @@ public function showOCDDeclineForm(ITJobRequest $jobRequest, $ocd)
      |=====================================================*/
     public function checkPendingActedByMis(Request $request)
     {
+        if ($request->user()->isSuperAdmin()) {
+            return response()->json(['has_pending' => false, 'count' => 0]);
+        }
+
         $count = ITJobRequest::where('user_id', $request->user()->id)
             ->where('status', 'Acted by MIS')
             ->count();
@@ -1098,12 +1293,16 @@ public function showOCDDeclineForm(ITJobRequest $jobRequest, $ocd)
             abort(403, 'Unauthorized');
         }
 
-        if (! in_array($jobRequest->status, ['Pending Dispatch', 'In Progress', 'MIS Assessed the Request'])) {
+        if (! in_array($jobRequest->status, [
+            'Pending Dispatch', 'In Progress', 'Pending Target Date Approval',
+            'Target Date Rejected', 'Target Date Approved', 'MIS Assessed the Request',
+        ])) {
             return back()->withErrors(['message' => 'This request is not awaiting dispatch.']);
         }
 
         $validated = $request->validate([
             'assignedto' => 'required|exists:users,id',
+            'notes'      => $jobRequest->status === 'Pending Dispatch' ? 'required|string|max:2000' : 'nullable|string|max:2000',
         ]);
 
         $assignee = User::find($validated['assignedto']);
@@ -1120,12 +1319,19 @@ public function showOCDDeclineForm(ITJobRequest $jobRequest, $ocd)
             'queued_at'  => $jobRequest->queued_at ?? now(),
         ]);
 
+        // Triage/validation note (Helpdesk / KID Secretary step) — captured
+        // once, when the request first leaves "Pending Dispatch".
+        $remarks = $wasDispatched
+            ? "Reassigned from {$previousAssignee} to {$assignee->name} by {$user->name}."
+            : "Dispatched to {$assignee->name} by {$user->name}.";
+        if (! empty($validated['notes'])) {
+            $remarks .= "\nTriage notes: " . $validated['notes'];
+        }
+
         ITJRTrackingLog::create([
             'it_job_request_id' => $jobRequest->id,
             'status'            => $wasDispatched ? 'Dispatch Reassigned' : 'Dispatched to MIS',
-            'remarks'           => $wasDispatched
-                ? "Reassigned from {$previousAssignee} to {$assignee->name} by {$user->name}."
-                : "Dispatched to {$assignee->name} by {$user->name}.",
+            'remarks'           => $remarks,
             'updated_by'        => $user->id,
         ]);
 

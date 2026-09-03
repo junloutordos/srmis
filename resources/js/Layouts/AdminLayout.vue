@@ -517,6 +517,13 @@ const menuItems = [
         permissions: ["it.requests.dispatch"],
       },
       {
+        label: "Target Date Approval",
+        routeName: "job-requests.target-date-approval",
+        href: route("job-requests.target-date-approval"),
+        icon: ComputerDesktopIcon,
+        permissions: ["it.requests.ocd-approve", "it.requests.manage"],
+      },
+      {
         label: "Equipment Inventory",
         routeName: "ict-equipments.index",
         href: route("ict-equipments.index"),

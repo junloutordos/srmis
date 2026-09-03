@@ -9,7 +9,17 @@ class Role extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['name', 'description'];
+    protected $fillable = ['name', 'description', 'display_name'];
+
+    /**
+     * The tenant-facing label for this role — falls back to the internal
+     * `name` when no per-tenant override is set (e.g. OED's OCD role
+     * displays as "KID Chief"; every other tenant just sees "OCD").
+     */
+    public function getLabelAttribute(): string
+    {
+        return $this->display_name ?: $this->name;
+    }
 
     // ─── Relationships ────────────────────────────────────────────────────────
 

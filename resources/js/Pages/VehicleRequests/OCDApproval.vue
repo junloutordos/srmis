@@ -6,6 +6,7 @@ import { CheckCircleIcon, XCircleIcon, EyeIcon, XMarkIcon } from "@heroicons/vue
 import Swal from "sweetalert2"
 import { statusBadgeClass, badgeBase } from '@/Composables/useStatusBadge.js'
 import DigitalSignaturePin from '@/Components/DigitalSignaturePin.vue'
+import { roleLabel } from '@/Composables/useRoleLabel'
 
 const props = defineProps({
   requests:     Object,
@@ -79,7 +80,7 @@ function handleApproveConfirm(pin) {
   isSubmitting.value = true
   Swal.fire({ title: 'Approving…', allowOutsideClick: false, showConfirmButton: false, didOpen: () => Swal.showLoading() })
   router.post(route('vehicle-requests.ocd-action', pendingApproveId.value), { action: 'approve', pin: pin || null }, {
-    onSuccess: () => Swal.fire('Approved!', 'Vehicle request approved by OCD.', 'success'),
+    onSuccess: () => Swal.fire('Approved!', roleLabel('Vehicle request approved by OCD.'), 'success'),
     onError: (errors) => Swal.fire('Error', errors?.message ?? 'Could not approve this request. It may have already been acted upon.', 'error'),
     onFinish:  () => { isSubmitting.value = false },
   })
@@ -103,14 +104,14 @@ const rejectRequest = async (id) => {
 </script>
 
 <template>
-  <Head title="OCD Approval - Vehicle Requests" />
-  <AdminLayout title="OCD Approval - Vehicle Requests">
+  <Head :title="roleLabel('OCD Approval - Vehicle Requests')" />
+  <AdminLayout :title="roleLabel('OCD Approval - Vehicle Requests')">
     <div>
       <!-- Page header -->
       <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-6">
         <div>
-          <h1 class="text-xl font-semibold text-slate-800">OCD Approval — Vehicle Requests</h1>
-          <p class="text-sm text-slate-500 mt-0.5">Review and act on vehicle requests pending OCD approval</p>
+          <h1 class="text-xl font-semibold text-slate-800">{{ roleLabel('OCD Approval — Vehicle Requests') }}</h1>
+          <p class="text-sm text-slate-500 mt-0.5">{{ roleLabel('Review and act on vehicle requests pending OCD approval') }}</p>
         </div>
       </div>
 
@@ -151,7 +152,7 @@ const rejectRequest = async (id) => {
                 <td class="px-4 py-3 text-sm text-slate-700">{{ req.destination ?? '—' }}</td>
                 <td class="px-4 py-3 text-sm text-slate-700">{{ req.date_needed ?? '—' }}</td>
                 <td class="px-4 py-3 text-sm text-slate-700">
-                  <span :class="[badgeBase, statusBadgeClass(req.status)]">{{ req.status }}</span>
+                  <span :class="[badgeBase, statusBadgeClass(req.status)]">{{ roleLabel(req.status) }}</span>
                 </td>
                 <td class="px-4 py-3 text-center">
                   <div class="flex items-center gap-1.5 justify-center">
@@ -171,7 +172,7 @@ const rejectRequest = async (id) => {
                 </td>
               </tr>
               <tr v-if="filteredRequests.length === 0">
-                <td colspan="7" class="py-16 text-center text-slate-400 text-sm">No pending vehicle requests for OCD approval.</td>
+                <td colspan="7" class="py-16 text-center text-slate-400 text-sm">{{ roleLabel('No pending vehicle requests for OCD approval.') }}</td>
               </tr>
             </tbody>
           </table>
@@ -201,7 +202,7 @@ const rejectRequest = async (id) => {
           <div class="px-6 py-5 space-y-3 text-sm text-slate-700">
             <div class="grid grid-cols-2 gap-3">
               <div><span class="text-xs font-medium text-slate-500 uppercase tracking-wide">Requestor</span><p class="mt-0.5">{{ selectedRequest.requester?.name ?? '—' }}</p></div>
-              <div><span class="text-xs font-medium text-slate-500 uppercase tracking-wide">Status</span><p class="mt-0.5"><span :class="[badgeBase, statusBadgeClass(selectedRequest.status)]">{{ selectedRequest.status }}</span></p></div>
+              <div><span class="text-xs font-medium text-slate-500 uppercase tracking-wide">Status</span><p class="mt-0.5"><span :class="[badgeBase, statusBadgeClass(selectedRequest.status)]">{{ roleLabel(selectedRequest.status) }}</span></p></div>
               <div><span class="text-xs font-medium text-slate-500 uppercase tracking-wide">Purpose</span><p class="mt-0.5">{{ selectedRequest.purpose ?? '—' }}</p></div>
               <div><span class="text-xs font-medium text-slate-500 uppercase tracking-wide">Destination</span><p class="mt-0.5">{{ selectedRequest.destination ?? '—' }}</p></div>
               <div><span class="text-xs font-medium text-slate-500 uppercase tracking-wide">Date Needed</span><p class="mt-0.5">{{ selectedRequest.date_needed ?? '—' }}</p></div>

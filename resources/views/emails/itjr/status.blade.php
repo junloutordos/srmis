@@ -21,9 +21,9 @@
     <tr><td class="lbl">Title</td><td class="val">{{ $jobRequest->title }}</td></tr>
     <tr><td class="lbl">Category</td><td class="val">{{ $jobRequest->category }}</td></tr>
     <tr><td class="lbl">Priority</td><td class="val"><span class="badge priority-{{ strtolower($jobRequest->priority ?? 'normal') }}">{{ ucfirst($jobRequest->priority ?? 'Normal') }}</span></td></tr>
-    <tr><td class="lbl">New Status</td><td class="val"><span class="badge {{ $badgeClass }}">{{ $status }}</span></td></tr>
+    <tr><td class="lbl">New Status</td><td class="val"><span class="badge {{ $badgeClass }}">{{ \App\Services\RoleLabelService::apply($status) }}</span></td></tr>
     @if(!empty($approverRole))
-    <tr><td class="lbl">Actioned By</td><td class="val">{{ $approverRole }}</td></tr>
+    <tr><td class="lbl">Actioned By</td><td class="val">{{ \App\Services\RoleLabelService::apply($approverRole) }}</td></tr>
     @endif
     @if($jobRequest->expected_completion_date && $isInProgress)
     <tr><td class="lbl">Expected Completion</td><td class="val"><strong>{{ \Carbon\Carbon::parse($jobRequest->expected_completion_date)->format('F j, Y') }}</strong></td></tr>

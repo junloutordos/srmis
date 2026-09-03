@@ -4,6 +4,7 @@ import { Head, router } from '@inertiajs/vue3'
 import AdminLayout from '@/Layouts/AdminLayout.vue'
 import { PaperAirplaneIcon, ArrowPathIcon } from '@heroicons/vue/24/outline'
 import Swal from 'sweetalert2'
+import { roleLabel } from '@/Composables/useRoleLabel'
 
 const props = defineProps({
   items:        { type: Array,  default: () => [] },
@@ -40,13 +41,20 @@ watch(filterCategory, () => applyFilters(true))
 
 // ── Selected assignee per item (defaults to the suggested one) ───────────────
 const selectedAssignee = reactive({})
+// Triage/validation note — the Helpdesk (KID Secretary) step of the ITJR
+// flow. Required before an item can leave "Pending Dispatch".
+const triageNotes = reactive({})
 props.items.forEach(item => {
   selectedAssignee[item.id] = item.suggested_assignee_id ?? ''
+  triageNotes[item.id] = ''
 })
 watch(() => props.items, (items) => {
   items.forEach(item => {
     if (selectedAssignee[item.id] === undefined) {
       selectedAssignee[item.id] = item.suggested_assignee_id ?? ''
+    }
+    if (triageNotes[item.id] === undefined) {
+      triageNotes[item.id] = ''
     }
   })
 })
@@ -59,9 +67,14 @@ function dispatchRequest(item) {
     Swal.fire({ icon: 'warning', title: 'Select an MIS personnel first' })
     return
   }
+  const notes = (triageNotes[item.id] || '').trim()
+  if (!notes) {
+    Swal.fire({ icon: 'warning', title: 'Add a triage/validation note before dispatching' })
+    return
+  }
 
   dispatchingId.value = item.id
-  router.post(route('jobrequests.dispatch.action', item.id), { assignedto }, {
+  router.post(route('jobrequests.dispatch.action', item.id), { assignedto, notes }, {
     preserveScroll: true,
     onSuccess: () => {
       Swal.fire({ icon: 'success', title: 'Dispatched', timer: 1200, showConfirmButton: false })
@@ -119,7 +132,7 @@ const stats = computed(() => ({
       </div>
 
       <p class="text-sm text-slate-500 mb-5">
-        These requests have been approved by OCD and are awaiting assignment to an MIS personnel.
+        These requests have been approved by {{ roleLabel('OCD') }} and are awaiting assignment to an MIS personnel.
         A suggested assignee (load-balanced) is pre-selected — pick a different one if needed, then dispatch.
       </p>
 
@@ -217,6 +230,12 @@ const stats = computed(() => ({
                       {{ p.name }}{{ p.id === item.suggested_assignee_id ? ' (suggested)' : '' }}
                     </option>
                   </select>
+                  <textarea
+                    v-model="triageNotes[item.id]"
+                    rows="2"
+                    placeholder="Triage / validation notes…"
+                    class="mt-1.5 rounded-lg border border-slate-200 bg-white px-2 py-1.5 text-xs text-slate-700 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-primary-500 w-44"
+                  ></textarea>
                 </td>
                 <td class="px-4 py-3 text-center">
                   <button
@@ -266,20 +285,26 @@ const stats = computed(() => ({
               <div class="col-span-2"><span class="text-slate-400">Waiting:</span> {{ timeWaiting(item.queued_at) }}</div>
             </div>
 
-            <div class="mt-3 flex items-center gap-2">
+            <div class="mt-3 space-y-2">
               <select
                 v-model="selectedAssignee[item.id]"
-                class="flex-1 rounded-lg border border-slate-200 bg-white px-2 py-1.5 text-xs text-slate-700 focus:outline-none focus:ring-2 focus:ring-primary-500"
+                class="w-full rounded-lg border border-slate-200 bg-white px-2 py-1.5 text-xs text-slate-700 focus:outline-none focus:ring-2 focus:ring-primary-500"
               >
                 <option value="">Select MIS personnel…</option>
                 <option v-for="p in props.misPersonnel" :key="p.id" :value="p.id">
                   {{ p.name }}{{ p.id === item.suggested_assignee_id ? ' (suggested)' : '' }}
                 </option>
               </select>
+              <textarea
+                v-model="triageNotes[item.id]"
+                rows="2"
+                placeholder="Triage / validation notes…"
+                class="w-full rounded-lg border border-slate-200 bg-white px-2 py-1.5 text-xs text-slate-700 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-primary-500"
+              ></textarea>
               <button
                 @click="dispatchRequest(item)"
                 :disabled="dispatchingId === item.id"
-                class="inline-flex items-center gap-1.5 bg-primary-600 hover:bg-primary-700 text-white px-3 py-1.5 rounded-lg text-xs font-medium transition-colors shadow-sm disabled:opacity-50"
+                class="inline-flex items-center gap-1.5 bg-primary-600 hover:bg-primary-700 text-white px-3 py-1.5 rounded-lg text-xs font-medium transition-colors shadow-sm disabled:opacity-50 w-full justify-center"
               >
                 <PaperAirplaneIcon class="w-3.5 h-3.5" />
                 Dispatch

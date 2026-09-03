@@ -22,7 +22,7 @@ export function statusBadgeClass(status) {
   ].includes(s)) return 'bg-emerald-100 text-emerald-700'
 
   if ([
-    'acted by mis', 'mis assessed the request',
+    'acted by mis', 'mis assessed the request', 'target date approved',
     'submitted', 'submitted for rating', 'submitted to pmt',
     'evaluated', 'nominated', 'for review', 'under review',
     'scheduled', 'satisfactory', 'walk-in', 'in-transit', 'in progress',
@@ -30,7 +30,7 @@ export function statusBadgeClass(status) {
 
   if ([
     'pending', 'pending approval', 'pending division chief approval',
-    'pending ocd approval', 'pending fad approval',
+    'pending ocd approval', 'pending fad approval', 'pending target date approval',
     'draft', 'filed', 'needs improvement', 'unsatisfactory', 'under repair',
     'queued', 'for ocd review',
   ].includes(s)) return 'bg-amber-100 text-amber-700'
@@ -38,7 +38,7 @@ export function statusBadgeClass(status) {
   if ([
     'rejected', 'declined', 'cancelled', 'returned', 'returned for revision',
     'fail', 'failed', 'disqualified', 'lost', 'damaged', 'overdue', 'dropped',
-    'disposed', 'division declined', 'ocd declined',
+    'disposed', 'division declined', 'ocd declined', 'target date rejected',
   ].includes(s)) return 'bg-red-100 text-red-600'
 
   if (['for rating', 'rated'].includes(s)) return 'bg-purple-100 text-purple-700'

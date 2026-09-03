@@ -1,12 +1,12 @@
 @extends('emails.layouts.base')
 
 @section('header-gradient','linear-gradient(90deg,#6366f1,#3b82f6)')
-@section('header-title','Facility Request — OCD Action Required')
+@section('header-title', \App\Services\RoleLabelService::apply('Facility Request — OCD Action Required'))
 @section('header-subtitle','PSHS-CRC MIS — Facility Management')
 
 @section('content')
 <p class="greeting">Hello,</p>
-<p class="lead">A facility request approved by the Division Chief requires OCD action.</p>
+<p class="lead">{{ \App\Services\RoleLabelService::apply('A facility request approved by the Division Chief requires OCD action.') }}</p>
 
 <table class="details" role="presentation">
     <tr><td class="lbl">Request ID</td><td class="val"><strong>#{{ $request->id }}</strong></td></tr>

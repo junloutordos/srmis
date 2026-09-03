@@ -1,6 +1,7 @@
 <script setup>
 import { ref, computed, watch } from "vue"
 import { Head, usePage, router } from "@inertiajs/vue3"
+import axios from "axios"
 import Swal from 'sweetalert2'
 import AdminLayout from "@/Layouts/AdminLayout.vue"
 import { badgeBase, statusBadgeClass, priorityBadgeClass } from '@/Composables/useStatusBadge.js'
@@ -18,6 +19,7 @@ import CsmForm from '@/Components/CsmForm.vue'
 import DigitalSignaturePin from '@/Components/DigitalSignaturePin.vue'
 import MISAssessmentModal from '@/Components/MISAssessmentModal.vue'
 import { useJobRequests } from "@/Composables/useJobRequests.js"
+import { roleLabel } from "@/Composables/useRoleLabel"
 
 // Props from backend — requests is now a paginator object
 const props = defineProps({
@@ -117,10 +119,17 @@ const visibleRequests = computed(() => props.requests?.data ?? [])
 const currentPage = computed(() => props.requests?.current_page ?? 1)
 const totalPages = computed(() => props.requests?.last_page ?? 1)
 
-const hasPendingConfirmation = computed(() => {
+// Server-checked (not scoped to the current page/filters) — see
+// ITJobRequestController::checkPendingActedByMis().
+async function hasPendingConfirmation() {
   if (!currentUser || userRole === 'Administrator') return false
-  return visibleRequests.value.some(req => req.status === 'Acted by MIS')
-})
+  try {
+    const { data } = await axios.get(route('jobrequests.check-pending'))
+    return !!data.has_pending
+  } catch {
+    return false // network errors shouldn't block filing a request
+  }
+}
 
 // ── CSM Survey modal ──────────────────────────────────────────────────────────
 const showCsmModal    = ref(false)
@@ -203,7 +212,7 @@ const minEventDate = computed(() => {
 })
 
 const handleNewRequest = async () => {
-  if (hasPendingConfirmation.value) {
+  if (await hasPendingConfirmation()) {
     await Swal.fire({
       icon: 'warning',
       title: 'Action Required',
@@ -312,14 +321,17 @@ function handleSigCancel() {
             >
               <option value="">All Statuses</option>
               <option value="Pending Division Chief Approval">Pending DC Approval</option>
-              <option value="Pending OCD Approval">Pending OCD Approval</option>
+              <option value="Pending OCD Approval">{{ roleLabel('Pending OCD Approval') }}</option>
               <option value="Pending Dispatch">Pending Dispatch</option>
               <option value="In Progress">In Progress</option>
+              <option value="Pending Target Date Approval">{{ roleLabel('Pending Target Date Approval') }}</option>
+              <option value="Target Date Rejected">{{ roleLabel('Target Date Rejected') }}</option>
+              <option value="Target Date Approved">{{ roleLabel('Target Date Approved') }}</option>
               <option value="MIS Assessed the Request">MIS Assessed</option>
               <option value="Acted by MIS">Acted by MIS</option>
               <option value="Request Completed">Completed</option>
               <option value="Rejected by Division Chief">Rejected by DC</option>
-              <option value="Rejected by OCD">Rejected by OCD</option>
+              <option value="Rejected by OCD">{{ roleLabel('Rejected by OCD') }}</option>
             </select>
           </div>
           <div class="flex gap-2">
@@ -391,7 +403,7 @@ function handleSigCancel() {
                 </td>
 
                 <td class="px-4 py-3">
-                  <span :class="[badgeBase, statusBadgeClass(req.status)]">{{ req.status }}</span>
+                  <span :class="[badgeBase, statusBadgeClass(req.status)]">{{ roleLabel(req.status) }}</span>
                 </td>
 
                 <td class="px-4 py-3 text-center">
@@ -447,7 +459,7 @@ function handleSigCancel() {
                 <div class="text-sm text-slate-500">{{ req.category }}</div>
               </div>
 
-              <span :class="[badgeBase, statusBadgeClass(req.status)]">{{ req.status }}</span>
+              <span :class="[badgeBase, statusBadgeClass(req.status)]">{{ roleLabel(req.status) }}</span>
             </div>
 
             <div class="mt-2 text-sm text-slate-600 space-y-1">
@@ -607,7 +619,7 @@ function handleSigCancel() {
                     <div class="bg-slate-50 rounded-lg border border-slate-100 p-4 shadow-sm">
                       <div class="flex justify-between items-start">
                         <p class="text-sm font-semibold text-primary-600">
-                          {{ log.status }}
+                          {{ roleLabel(log.status) }}
                         </p>
                         <span class="text-xs text-slate-400">
                           {{ formatDate(log.created_at) }}
@@ -740,7 +752,7 @@ function handleSigCancel() {
                     <path stroke-linecap="round" stroke-linejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                   </svg>
                   <p class="text-xs text-slate-500 leading-relaxed">
-                    Your request will be automatically sent to your <strong>Division Chief</strong> for approval. Once approved by the Division Chief and OCD, it will be dispatched to an MIS personnel by the ITJR Dispatcher.
+                    Your request will be automatically sent to your <strong>Division Chief</strong> for approval. Once approved by the Division Chief and {{ roleLabel('OCD') }}, it will be dispatched to an MIS personnel by the ITJR Dispatcher.
                   </p>
                 </div>
 

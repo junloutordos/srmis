@@ -42,6 +42,7 @@ class ITJobRequest extends Model
         'declined_at',
         'priority',
         'queued_at',
+        'target_date_rejection_reason',
     ];
 
     protected $casts = [
@@ -55,7 +56,13 @@ class ITJobRequest extends Model
     public function scopeInQueue($query)
     {
         return $query
-            ->whereIn('status', ['In Progress', 'MIS Assessed the Request'])
+            ->whereIn('status', [
+                'In Progress',
+                'Pending Target Date Approval',
+                'Target Date Rejected',
+                'Target Date Approved',
+                'MIS Assessed the Request',
+            ])
             ->orderByRaw("FIELD(priority, 'urgent', 'high', 'normal', 'low')")
             ->orderBy('queued_at', 'asc');
     }

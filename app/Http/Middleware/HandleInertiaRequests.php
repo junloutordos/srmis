@@ -12,6 +12,7 @@ use App\Models\FacilityRequest;
 use App\Models\ServiceRequest;
 use App\Models\WorkRequest;
 use App\Services\ApprovalInboxService;
+use App\Services\RoleLabelService;
 
 class HandleInertiaRequests extends Middleware
 {
@@ -73,6 +74,9 @@ class HandleInertiaRequests extends Middleware
             'campus' => fn () => tenant()
                 ? ['id' => tenant('id'), 'name' => tenant('name'), 'code' => tenant('campus_code')]
                 : null,
+            // Per-tenant role display overrides (e.g. OED's "OCD" role → "KID Chief").
+            // Empty object for tenants with no override. See RoleLabelService.
+            'roleLabels' => fn () => RoleLabelService::overrides(),
             'auth' => [
                 'user' => $authUser
                     ? [

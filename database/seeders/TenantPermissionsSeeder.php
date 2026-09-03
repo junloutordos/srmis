@@ -24,6 +24,7 @@ class TenantPermissionsSeeder extends Seeder
             ['module' => 'MIS', 'name' => 'it.requests.view',    'description' => 'View own IT job requests'],
             ['module' => 'MIS', 'name' => 'it.requests.manage',  'description' => 'Manage all IT job requests, MIS dashboard, CSM feedback'],
             ['module' => 'MIS', 'name' => 'it.requests.dispatch','description' => 'Dispatch OCD-approved IT job requests to MIS personnel'],
+            ['module' => 'MIS', 'name' => 'it.requests.ocd-approve', 'description' => 'Approve IT job requests and target completion dates as OCD/KID Chief'],
             ['module' => 'MIS', 'name' => 'it.equipment.view',   'description' => 'View ICT equipment inventory and PMS'],
             ['module' => 'MIS', 'name' => 'it.equipment.manage', 'description' => 'Manage ICT equipment inventory and PMS'],
 

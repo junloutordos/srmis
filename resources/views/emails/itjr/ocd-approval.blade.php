@@ -1,7 +1,7 @@
 @extends('emails.layouts.base')
 
 @section('header-gradient','linear-gradient(90deg,#0ea5e9,#3b82f6)')
-@section('header-title','IT Job Request — OCD Approval Required')
+@section('header-title', \App\Services\RoleLabelService::apply('IT Job Request — OCD Approval Required'))
 @section('header-subtitle','STRIDE IT Services')
 
 @section('content')
@@ -15,7 +15,7 @@
     $isEventRelated = !empty($jobRequest->event_date) || strtolower($jobRequest->category ?? '') === 'technical assistance for events';
 @endphp
 
-<p class="greeting">Hello <strong>{{ $ocdApprover?->name ?? 'OCD Approver' }}</strong>,</p>
+<p class="greeting">Hello <strong>{{ $ocdApprover?->name ?? \App\Services\RoleLabelService::apply('OCD Approver') }}</strong>,</p>
 <p class="lead">IT Job Request <strong>{{ $jobRequest->itjr_no }}</strong> has been approved by the Division Chief and now requires your final approval before the MIS team begins processing.</p>
 
 <table class="details" role="presentation">

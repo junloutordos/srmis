@@ -15,7 +15,7 @@
 @endphp
 
 <p class="greeting">Hello MIS Team,</p>
-<p class="lead">A new IT Job Request has been submitted and is pending DC and OCD approval before it enters the queue.</p>
+<p class="lead">{{ \App\Services\RoleLabelService::apply('A new IT Job Request has been submitted and is pending DC and OCD approval before it enters the queue.') }}</p>
 
 <table class="details" role="presentation">
     <tr><td class="lbl">ITJR No.</td><td class="val"><strong style="font-family:monospace;">{{ $jobRequest->itjr_no }}</strong></td></tr>

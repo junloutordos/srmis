@@ -30,7 +30,7 @@
     <tr><td class="lbl">Title / Subject</td><td class="val">{{ $issuance->title }}</td></tr>
     <tr><td class="lbl">Addressed To</td><td class="val">{{ $recipientLabel }}</td></tr>
     <tr><td class="lbl">Signed By</td><td class="val">
-        <strong>{{ $signer?->name ?? 'OCD' }}</strong>
+        <strong>{{ $signer?->name ?? \App\Services\RoleLabelService::apply('OCD') }}</strong>
         @if($signer?->position)
         <br><span style="font-size:12px;color:#64748b;">{{ $signer->position }}</span>
         @endif

@@ -68,7 +68,18 @@ function positionBadgeClass(pos) {
 
 function statusChipClass(status) {
   if (status === 'In Progress') return 'bg-primary-100 text-primary-700 ring-1 ring-primary-200'
+  if (status === 'Target Date Rejected') return 'bg-red-100 text-red-700 ring-1 ring-red-200'
+  if (status === 'Target Date Approved') return 'bg-emerald-100 text-emerald-700 ring-1 ring-emerald-200'
   return 'bg-amber-100 text-amber-700 ring-1 ring-amber-200'
+}
+
+// What the MIS "Assess" button should say/do for a given item's status —
+// requests sit in "Pending Target Date Approval" while the KID Chief/OCD
+// decides, so there's nothing for MIS to act on until that resolves.
+function queueActionLabel(status) {
+  if (['In Progress', 'Target Date Rejected'].includes(status)) return 'Propose Date'
+  if (status === 'Pending Target Date Approval') return 'Pending Approval'
+  return 'Act'
 }
 
 function timeInQueue(queuedAt) {
@@ -299,11 +310,12 @@ const stats = computed(() => {
                 <td class="px-4 py-3 text-center">
                   <button
                     @click="openAssessment(item)"
-                    class="inline-flex items-center gap-1.5 bg-primary-600 hover:bg-primary-700 text-white px-3 py-1.5 rounded-lg text-xs font-medium transition-colors shadow-sm"
-                    title="Open MIS Assessment"
+                    :disabled="item.status === 'Pending Target Date Approval'"
+                    class="inline-flex items-center gap-1.5 bg-primary-600 hover:bg-primary-700 text-white px-3 py-1.5 rounded-lg text-xs font-medium transition-colors shadow-sm disabled:opacity-50 disabled:cursor-not-allowed"
+                    :title="item.status === 'Pending Target Date Approval' ? 'Awaiting OCD/KID Chief decision' : 'Open MIS Assessment'"
                   >
                     <PencilSquareIcon class="w-3.5 h-3.5" />
-                    Assess
+                    {{ queueActionLabel(item.status) }}
                   </button>
                 </td>
               </tr>
@@ -376,10 +388,11 @@ const stats = computed(() => {
               </select>
               <button
                 @click="openAssessment(item)"
-                class="inline-flex items-center gap-1.5 bg-primary-600 hover:bg-primary-700 text-white px-3 py-1.5 rounded-lg text-xs font-medium transition-colors shadow-sm"
+                :disabled="item.status === 'Pending Target Date Approval'"
+                class="inline-flex items-center gap-1.5 bg-primary-600 hover:bg-primary-700 text-white px-3 py-1.5 rounded-lg text-xs font-medium transition-colors shadow-sm disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 <PencilSquareIcon class="w-3.5 h-3.5" />
-                Assess
+                {{ queueActionLabel(item.status) }}
               </button>
             </div>
           </div>

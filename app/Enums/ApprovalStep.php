@@ -56,6 +56,9 @@ class ApprovalStep
     const REQ_FAD            = 'fad';              // seq 3
     const REQ_OCD            = 'ocd';              // seq 4
 
+    // ── ITJR — target completion date approval (KID Chief / OCD) ─────────────
+    const ITJR_TARGET_DATE = 'itjr_target_date';   // seq 5 — gates MIS from acting until the proposed date is approved
+
     // ── SALN ───────────────────────────────────────────────────────────────────
     const SALN_REVIEWED = 'reviewer';  // seq 1
     const SALN_APPROVED = 'approver';  // seq 2

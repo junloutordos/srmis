@@ -11,6 +11,7 @@ import {
   Filler,
 } from 'chart.js'
 import { Doughnut, Bar, Line } from 'vue-chartjs'
+import { roleLabel } from '@/Composables/useRoleLabel'
 import {
   ClipboardDocumentListIcon,
   CheckCircleIcon,
@@ -123,7 +124,7 @@ const statusColors = {
 const donutData = computed(() => {
   const labels = Object.keys(props.statusBreakdown)
   return {
-    labels,
+    labels: labels.map(roleLabel),
     datasets: [{
       data:            labels.map(l => props.statusBreakdown[l]),
       backgroundColor: labels.map(l => statusColors[l] ?? '#cbd5e1'),
@@ -258,7 +259,7 @@ function statusShort(status) {
     'Rejected by Division Chief':      'Rejected DC',
     'Rejected by OCD':                 'Rejected OCD',
   }
-  return map[status] ?? status
+  return roleLabel(map[status] ?? status)
 }
 </script>
 
