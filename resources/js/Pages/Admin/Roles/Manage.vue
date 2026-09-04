@@ -21,19 +21,10 @@ const tabs = [
   { key: 'permissions', label: 'Permissions' },
   { key: 'assign',      label: 'Assign to Users' },
 ]
-const loadedTabs = ref({ roles: false, permissions: false, assign: false })
 
 function switchTab(key) {
   activeTab.value = key
 }
-
-watch(activeTab, (key) => {
-  if (loadedTabs.value[key]) return
-  loadedTabs.value[key] = true
-  if (key === 'roles') loadRolesTab()
-  if (key === 'permissions') loadPermissionsTab()
-  if (key === 'assign') { loadUsers(); loadAssignRolesList() }
-}, { immediate: true })
 
 /* ══════════════════════════════════════════════════════════════════════════
  * TAB 1 — Roles (+ per-role permission assignment)
@@ -371,6 +362,20 @@ function groupedPerms(permissions) {
   }
   return Object.entries(map).sort((a, b) => a[0].localeCompare(b[0]))
 }
+
+/* ══════════════════════════════════════════════════════════════════════════
+ * Tab lazy-loading — declared last so it runs only after every loader above
+ * is initialized (an immediate watcher fires synchronously during setup).
+ * ════════════════════════════════════════════════════════════════════════ */
+const loadedTabs = ref({ roles: false, permissions: false, assign: false })
+
+watch(activeTab, (key) => {
+  if (loadedTabs.value[key]) return
+  loadedTabs.value[key] = true
+  if (key === 'roles') loadRolesTab()
+  if (key === 'permissions') loadPermissionsTab()
+  if (key === 'assign') { loadUsers(); loadAssignRolesList() }
+}, { immediate: true })
 </script>
 
 <template>
