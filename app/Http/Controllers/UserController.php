@@ -88,8 +88,40 @@ class UserController extends Controller
         return response()->json($users);
     }
 
+    /**
+     * "Deleting" a user only sets status = inactive and users.email is unique,
+     * so an inactive account still blocks its email. Say so (and hand the UI
+     * the id to reactivate) instead of a bare "email has already been taken".
+     * Returns back()->withErrors rather than abort() so Inertia's onError fires.
+     */
+    private function inactiveEmailConflict(Request $request, ?int $exceptId = null)
+    {
+        $email = $request->input('email');
+        if (! is_string($email) || $email === '') {
+            return null;
+        }
+
+        $inactive = User::where('email', $email)
+            ->where('status', 'inactive')
+            ->when($exceptId, fn ($q) => $q->where('id', '!=', $exceptId))
+            ->first();
+
+        if (! $inactive) {
+            return null;
+        }
+
+        return back()->withInput()->withErrors([
+            'email'            => "This email belongs to an inactive account ({$inactive->name}). Reactivate that account instead of creating a new one.",
+            'inactive_user_id' => (string) $inactive->id,
+        ]);
+    }
+
     public function store(Request $request)
     {
+        if ($conflict = $this->inactiveEmailConflict($request)) {
+            return $conflict;
+        }
+
         $data = $request->validate([
             'sex'            => 'nullable|in:Male,Female',
             'name'           => 'required|string|max:255',
@@ -116,6 +148,10 @@ class UserController extends Controller
     public function update(Request $request, $id)
     {
         $user = User::findOrFail($id);
+
+        if ($conflict = $this->inactiveEmailConflict($request, $user->id)) {
+            return $conflict;
+        }
 
         $data = $request->validate([
             'sex'            => 'nullable|in:Male,Female',

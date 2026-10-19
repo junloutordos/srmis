@@ -126,6 +126,33 @@ export function useUsers(props) {
     showModal.value = true
   }
 
+  // An email held by an inactive account offers reactivation instead of a dead end.
+  const handleSaveError = async (errors) => {
+    if (!errors.inactive_user_id) {
+      await Swal.fire("Error", Object.values(errors).flat().join(", "), "error")
+      return
+    }
+    const result = await Swal.fire({
+      title: "Email belongs to an inactive account",
+      text: errors.email,
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonText: "Reactivate it",
+      cancelButtonText: "Cancel",
+    })
+    if (!result.isConfirmed) return
+    router.post(`/users/${errors.inactive_user_id}/activate`, null, {
+      onSuccess: async () => {
+        closeModal()
+        await Swal.fire("Activated", "The account has been reactivated. Please review its role and division.", "success")
+        window.location.reload()
+      },
+      onError: async (e) => {
+        await Swal.fire("Error", Object.values(e).flat().join(", "), "error")
+      },
+    })
+  }
+
   // Submit
   const submitUser = async () => {
     if (modalMode.value === "create") {
@@ -157,9 +184,7 @@ export function useUsers(props) {
           await Swal.fire("Success", "The user has been added successfully", "success")
           window.location.reload()
         },
-        onError: async (errors) => {
-          await Swal.fire("Error", Object.values(errors).flat().join(", "), "error")
-        },
+        onError: (errors) => handleSaveError(errors),
       })
     } else if (modalMode.value === "edit") {
       const payload = { ...form.value }
@@ -171,9 +196,7 @@ export function useUsers(props) {
           await Swal.fire("Updated", "The user has been updated successfully", "success")
           window.location.reload()
         },
-        onError: async (errors) => {
-          await Swal.fire("Error", Object.values(errors).flat().join(", "), "error")
-        },
+        onError: (errors) => handleSaveError(errors),
       })
     }
   }
