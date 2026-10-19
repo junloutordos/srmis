@@ -26,7 +26,7 @@
 <div class="card">
     <div class="card-header">
         <h1>Decline IT Job Request</h1>
-        <p>{{ \App\Services\RoleLabelService::apply('PSHS-CRC MIS — OCD Action') }}</p>
+        <p>{{ \App\Services\RoleLabelService::apply('PSHSS Helpdesk — OCD Action') }}</p>
     </div>
     <div class="card-body">
         <p style="color:#475569;font-size:14px;margin:0 0 16px;">{{ \App\Services\RoleLabelService::apply('You are declining the following IT Job Request as OCD. Please provide a reason so the requestor and Division Chief are informed.') }}</p>
@@ -41,7 +41,7 @@
             <button type="submit">Submit Decline</button>
         </form>
     </div>
-    <div class="footer">PSHS-CRC MIS</div>
+    <div class="footer">PSHSS Helpdesk</div>
 </div>
 </body>
 </html>

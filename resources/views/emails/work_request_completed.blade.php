@@ -2,7 +2,7 @@
 
 @section('header-gradient','linear-gradient(90deg,#059669,#10b981)')
 @section('header-title','Work Request Completed ✓')
-@section('header-subtitle','PSHS-CRC MIS — GSU Work Requests')
+@section('header-subtitle','PSHSS Helpdesk — GSU Work Requests')
 
 @section('content')
 <p class="greeting">Hello <strong>{{ $request->requester?->name ?? 'Requester' }}</strong>,</p>

@@ -2,7 +2,7 @@
 
 @section('header-gradient', str_contains(strtolower($status ?? ''), 'approved') ? 'linear-gradient(90deg,#059669,#10b981)' : 'linear-gradient(90deg,#dc2626,#ef4444)')
 @section('header-title','Gate Pass — {{ $status }}')
-@section('header-subtitle','PSHS-CRC MIS — Gate Pass System')
+@section('header-subtitle','PSHSS Helpdesk — Gate Pass System')
 
 @section('content')
 <p class="greeting">Hello <strong>{{ $gatepass->name ?? 'Requestor' }}</strong>,</p>

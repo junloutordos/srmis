@@ -381,7 +381,7 @@ const modules = [
           STRIDE v{{ appVersion }} · Philippine Science High School System
         </p>
         <p class="mt-1 text-[11px] text-slate-400">
-          Developed by the <a href="/developer" class="font-medium text-primary-500 hover:text-primary-700">PSHS-CRC MIS Team</a>
+          Developed by the <a href="/developer" class="font-medium text-primary-500 hover:text-primary-700">PSHSS Helpdesk Team</a>
         </p>
       </div>
     </div>

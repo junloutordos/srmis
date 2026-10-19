@@ -18,7 +18,7 @@ function formatDate(iso) {
 </script>
 
 <template>
-    <Head title="Document Verification — PSHS-CRC MIS" />
+    <Head title="Document Verification — PSHSS Helpdesk" />
 
     <div class="min-h-screen bg-slate-50 flex flex-col items-center justify-center px-4 py-12">
 
@@ -99,11 +99,11 @@ function formatDate(iso) {
             </div>
             <div class="px-6 py-5">
                 <p class="text-slate-600 text-sm">
-                    If you believe this is an error, please contact the PSHS-CRC MIS administrator.
+                    If you believe this is an error, please contact the PSHSS Helpdesk administrator.
                 </p>
             </div>
         </div>
 
-        <p class="mt-6 text-xs text-slate-400">PSHS-CRC MIS &mdash; Document Integrity Verification System</p>
+        <p class="mt-6 text-xs text-slate-400">PSHSS Helpdesk &mdash; Document Integrity Verification System</p>
     </div>
 </template>

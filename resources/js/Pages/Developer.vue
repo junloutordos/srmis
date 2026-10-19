@@ -76,7 +76,7 @@ const stack = [
       <div class="hero-glow2" />
       <div class="hero-inner">
         <div class="hero-head">
-          <p class="hero-eyebrow">PSHS-CRC MIS Team · STRIDE</p>
+          <p class="hero-eyebrow">PSHSS Helpdesk Team · STRIDE</p>
           <h1 class="hero-title">Development Team</h1>
           <p class="hero-sub">The people behind the Service Ticketing and Request Information &amp; Dispatch Engine.</p>
         </div>
@@ -171,7 +171,7 @@ const stack = [
 
     <!-- ── Footer ─────────────────────────────────────── -->
     <footer class="dev-footer">
-      <p class="df-copy">© 2026 PSHS-CRC MIS Team</p>
+      <p class="df-copy">© 2026 PSHSS Helpdesk Team</p>
       <a href="/" class="df-back">← Back to STRIDE</a>
     </footer>
 

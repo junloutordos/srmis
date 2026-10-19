@@ -2,7 +2,7 @@
 
 @section('header-gradient','linear-gradient(90deg,#6366f1,#3b82f6)')
 @section('header-title', $actionType === 'new' ? 'New Document Routed to You' : 'Document Forwarded to You')
-@section('header-subtitle','PSHS-CRC MIS — Document Tracking System')
+@section('header-subtitle','PSHSS Helpdesk — Document Tracking System')
 
 @section('content')
 <p class="greeting">Hello <strong>{{ $routing->receiver->name }}</strong>,</p>

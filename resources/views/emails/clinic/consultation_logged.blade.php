@@ -2,7 +2,7 @@
 
 @section('header-gradient','linear-gradient(90deg,#0ea5e9,#3b82f6)')
 @section('header-title','Clinic Consultation — New Entry')
-@section('header-subtitle','PSHS-CRC MIS — School Clinic')
+@section('header-subtitle','PSHSS Helpdesk — School Clinic')
 
 @section('content')
 <p class="greeting">Hello Nurse,</p>

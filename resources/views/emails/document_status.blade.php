@@ -2,7 +2,7 @@
 
 @section('header-gradient'){{ $headerColor ?? '#6366f1' }}@endsection
 @section('header-title'){{ $headline }}@endsection
-@section('header-subtitle','PSHS-CRC MIS — Document Tracking System')
+@section('header-subtitle','PSHSS Helpdesk — Document Tracking System')
 
 @section('content')
 <p class="greeting">Hello <strong>{{ $recipientName }}</strong>,</p>
