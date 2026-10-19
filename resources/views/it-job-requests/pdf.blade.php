@@ -188,7 +188,7 @@
             </tr>
           </table>
           <div style="margin-top:2px;"><span class="sig-name">{{ strtoupper($director?->name ?? '') }}</span></div>
-          <div class="sig-pos">{{ $director?->position ?? 'Campus Director' }}</div>
+          <div class="sig-pos">{{ $director?->position ?? $directorTitle }}</div>
         </div>
       </td>
     </tr>

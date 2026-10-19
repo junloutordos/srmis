@@ -40,4 +40,14 @@ class ApprovalRoutingService
     {
         return self::finalApproverRole($tenantSlug) === 'FAD Chief';
     }
+
+    /**
+     * True when IT Job Requests go straight from Division Chief approval to
+     * the dispatcher, skipping the pre-dispatch OCD stage. OED only — its
+     * KID Chief still approves the MIS-proposed target date after dispatch.
+     */
+    public static function itjrSkipsOcdApproval(?string $tenantSlug = null): bool
+    {
+        return ($tenantSlug ?? tenant('id')) === 'oed';
+    }
 }

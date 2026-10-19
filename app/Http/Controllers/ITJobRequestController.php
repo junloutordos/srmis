@@ -6,6 +6,7 @@ use App\Models\ITJobRequest;
 use App\Models\ITJRTrackingLog;
 use App\Models\ITJobCategory;
 use App\Models\User;
+use App\Services\ApprovalRoutingService;
 use App\Services\NotificationService;
 use App\Models\ICTEquipment;
 use App\Models\ICTPMSHistory;
@@ -268,10 +269,11 @@ public function index(Request $request)
         if ((int)$jobRequest->divisionchief_id !== (int)$chief) abort(403);
         if ($jobRequest->status !== 'Pending Division Chief Approval') return view('emails.itjr.already_approved', compact('jobRequest'));
 
-        $jobRequest->update([
-            'dc_approval_date' => now(),
-            'status' => 'Pending OCD Approval',
-        ]);
+        $skipOcd = ApprovalRoutingService::itjrSkipsOcdApproval();
+
+        $jobRequest->update($skipOcd
+            ? ['dc_approval_date' => now(), 'status' => 'Pending Dispatch', 'queued_at' => now()]
+            : ['dc_approval_date' => now(), 'status' => 'Pending OCD Approval']);
 
         ITJRTrackingLog::create([
             'it_job_request_id' => $jobRequest->id,
@@ -295,13 +297,17 @@ public function index(Request $request)
             );
         }
 
-        // Notify OCD users
-        $ocdUsers = \App\Support\NotificationRecipients::forRole('OCD');
-        foreach ($ocdUsers as $ocd) {
-            if ($ocd->email) {
-                $approveUrl = URL::signedRoute('it-job-requests.ocd.approve', ['jobRequest'=>$jobRequest->id,'ocd'=>$ocd->id], now()->addDays(7));
-                $declineUrl = URL::signedRoute('it-job-requests.ocd.decline', ['jobRequest'=>$jobRequest->id,'ocd'=>$ocd->id], now()->addDays(7));
-                Mail::to($ocd->email)->send(new OCDITJRApprovalMail($jobRequest, $approveUrl, $declineUrl));
+        if ($skipOcd) {
+            $this->notifyDispatchers($jobRequest, 'Division Chief Approved', 'Approved by Division Chief — awaiting dispatch to MIS personnel.', 'Division Chief');
+        } else {
+            // Notify OCD users
+            $ocdUsers = \App\Support\NotificationRecipients::forRole('OCD');
+            foreach ($ocdUsers as $ocd) {
+                if ($ocd->email) {
+                    $approveUrl = URL::signedRoute('it-job-requests.ocd.approve', ['jobRequest'=>$jobRequest->id,'ocd'=>$ocd->id], now()->addDays(7));
+                    $declineUrl = URL::signedRoute('it-job-requests.ocd.decline', ['jobRequest'=>$jobRequest->id,'ocd'=>$ocd->id], now()->addDays(7));
+                    Mail::to($ocd->email)->send(new OCDITJRApprovalMail($jobRequest, $approveUrl, $declineUrl));
+                }
             }
         }
         // Notify Assigned Administrator
@@ -896,11 +902,11 @@ public function showOCDDeclineForm(ITJobRequest $jobRequest, $ocd)
         ]);
 
         if ($request->action === 'approve') {
-            $jobRequest->update([
-                'division_chief_approval' => true,
-                'dc_approval_date' => now(),
-                'status' => 'Pending OCD Approval',
-            ]);
+            $skipOcd = ApprovalRoutingService::itjrSkipsOcdApproval();
+
+            $jobRequest->update($skipOcd
+                ? ['division_chief_approval' => true, 'dc_approval_date' => now(), 'status' => 'Pending Dispatch', 'queued_at' => now()]
+                : ['division_chief_approval' => true, 'dc_approval_date' => now(), 'status' => 'Pending OCD Approval']);
 
             ITJRTrackingLog::create([
                 'it_job_request_id' => $jobRequest->id,
@@ -921,6 +927,10 @@ public function showOCDDeclineForm(ITJobRequest $jobRequest, $ocd)
                 "IT Job Request #{$jobRequest->itjr_no} — Division Chief Approval",
                 $jobRequest->itjr_no . 'dc_approval' . $request->user()->id
             );
+
+            if ($skipOcd) {
+                $this->notifyDispatchers($jobRequest, 'Division Chief Approved', 'Approved by Division Chief — awaiting dispatch to MIS personnel.', 'Division Chief');
+            }
         } else {
             $jobRequest->update([
                 'status' => 'Rejected by Division Chief',
@@ -943,6 +953,23 @@ public function showOCDDeclineForm(ITJobRequest $jobRequest, $ocd)
         }
 
         return back()->with('success', 'Division Chief action recorded!');
+    }
+
+    /**
+     * Tell the ITJR Dispatchers a request is waiting in the dispatch queue.
+     */
+    private function notifyDispatchers(ITJobRequest $jobRequest, string $status, string $message, string $approverRole): void
+    {
+        foreach (\App\Support\NotificationRecipients::forRole('ITJR Dispatcher') as $dispatcher) {
+            if ($dispatcher->email) {
+                try {
+                    Mail::to($dispatcher->email)->send(new ITJRStatusMail($jobRequest, $status, $message, $approverRole));
+                } catch (\Throwable $e) {
+                    logger()->error('Failed to send ITJR Dispatcher notification email', ['error' => $e->getMessage()]);
+                }
+            }
+            NotificationService::notifyUser($dispatcher, 'IT Job Request', $jobRequest->itjr_no, 'Awaiting dispatch to MIS personnel', route('jobrequests.dispatch'));
+        }
     }
 
     public function ocdApproval(Request $request)
@@ -984,6 +1011,12 @@ public function showOCDDeclineForm(ITJobRequest $jobRequest, $ocd)
         $request->validate([
             'action' => 'required|in:approve,reject',
         ]);
+
+        // OED has no pre-dispatch OCD stage; a stale link/tab must not push a
+        // request through it.
+        if (ApprovalRoutingService::itjrSkipsOcdApproval() && $jobRequest->status !== 'Pending OCD Approval') {
+            return back()->withErrors(['message' => 'This request is not awaiting OCD approval.']);
+        }
 
         if ($request->action === 'approve') {
             $jobRequest->update([

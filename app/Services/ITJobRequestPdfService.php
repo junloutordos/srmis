@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Models\ITJobRequest;
+use App\Models\ITJRTrackingLog;
 use App\Models\User;
 use Illuminate\Support\Facades\Storage;
 use Mpdf\Mpdf;
@@ -160,6 +161,20 @@ class ITJobRequestPdfService
         $jobRequest->loadMissing(['user.division', 'divisionChief', 'assignedTo']);
 
         $director = User::havingRole('OCD')->first();
+        $directorTitle = 'Campus Director';
+        $directorApproved = (bool) $jobRequest->ocd_approval_date;
+
+        // OED has no pre-dispatch OCD stage: the block belongs to the KID
+        // Division Chief, who signs off by approving the target date.
+        if (ApprovalRoutingService::itjrSkipsOcdApproval()) {
+            $directorTitle = 'KID Division Chief';
+            $targetDateLog = ITJRTrackingLog::where('it_job_request_id', $jobRequest->id)
+                ->where('status', 'Target Date Approved')
+                ->latest('id')
+                ->first();
+            $directorApproved = $targetDateLog !== null;
+            $director = ($targetDateLog ? User::find($targetDateLog->updated_by) : null) ?? $director;
+        }
 
         $recommendation = $jobRequest->recommendation
             ?: ($jobRequest->category
@@ -192,16 +207,21 @@ class ITJobRequestPdfService
         $requesterSig  = $this->sigDataUri($jobRequest->user?->electronic_signature);
         $dcSig         = $jobRequest->dc_approval_date
                             ? $this->sigDataUri($jobRequest->divisionChief?->electronic_signature) : null;
-        $directorSig   = $jobRequest->ocd_approval_date
+        $directorSig   = $directorApproved
                             ? $this->sigDataUri($director?->electronic_signature) : null;
         $assignedSig   = $jobRequest->action_taken
                             ? $this->sigDataUri($jobRequest->assignedTo?->electronic_signature) : null;
         $completionSig = $jobRequest->completed_at
                             ? $this->sigDataUri($jobRequest->user?->electronic_signature) : null;
 
+        if (ApprovalRoutingService::itjrSkipsOcdApproval() && isset($sigBadges['target_date_approval'])) {
+            $sigBadges['ocd_approval'] = $sigBadges['target_date_approval'];
+        }
+
         $html = view('it-job-requests.pdf', compact(
             'jobRequest',
             'director',
+            'directorTitle',
             'recommendation',
             'directorSig',
             'dcSig',
