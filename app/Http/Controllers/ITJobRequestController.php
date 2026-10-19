@@ -540,9 +540,11 @@ public function showOCDDeclineForm(ITJobRequest $jobRequest, $ocd)
         }
 
         $validated = $request->validate([
-            'mis_assessment'           => 'nullable|string',
+            'mis_assessment'           => 'required|string',
             'recommendation'           => 'nullable|string|max:2000',
             'expected_completion_date' => 'required|date',
+        ], [
+            'mis_assessment.required' => 'Please enter your initial assessment before proposing a target date.',
         ]);
 
         DB::transaction(function () use ($jobRequest, $validated, $request) {
@@ -796,9 +798,19 @@ public function showOCDDeclineForm(ITJobRequest $jobRequest, $ocd)
 
     public function confirmCompletion(Request $request, ITJobRequest $jobRequest)
     {
+        // Only the requestor can confirm their own request (superadmin exempt,
+        // as with the new-request feedback gate in store()).
+        if ((int) $jobRequest->user_id !== (int) $request->user()->id && ! $request->user()->isSuperAdmin()) {
+            abort(403, 'Only the requestor can confirm this request.');
+        }
+
         // Idempotency: already completed — return early without duplicate entry
         if ($jobRequest->status === 'Request Completed') {
             return back()->with('success', 'Request already confirmed.');
+        }
+
+        if ($jobRequest->status !== 'Acted by MIS') {
+            return back()->withErrors(['message' => 'This request can only be confirmed after MIS has acted on it.']);
         }
 
         $validated = $request->validate([
@@ -810,7 +822,7 @@ public function showOCDDeclineForm(ITJobRequest $jobRequest, $ocd)
             $jobRequest->update([
                 'status' => 'Request Completed',
                 'rating' => $validated['rating'],
-                'rating_remarks' => $validated['remarks'],
+                'rating_remarks' => $validated['remarks'] ?? null,
                 'rated_at' => now(),
             ]);
 

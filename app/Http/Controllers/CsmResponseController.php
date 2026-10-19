@@ -90,6 +90,12 @@ class CsmResponseController extends Controller
             ->where('respondable_id', $model->id)
             ->exists();
 
+        // An IT Job Request can only be closed through the survey once MIS has
+        // acted on it — otherwise the requestor could skip approval/dispatch.
+        if (! $exists && $type === 'it-job-request' && $model->status !== 'Acted by MIS') {
+            return back()->withErrors(['message' => 'This request can only be rated after MIS has acted on it.']);
+        }
+
         if ($exists) {
             // Heal: CSM exists but status may not have been updated (transient DB issue on first submit)
             if ($model->status !== $module['post_status']) {

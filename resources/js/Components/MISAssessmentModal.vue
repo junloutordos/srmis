@@ -189,7 +189,7 @@ const isHardware = computed(() =>
           <template v-if="stage === 'propose'">
             <!-- Initial Assessment -->
             <div>
-              <label class="block text-xs font-medium text-slate-600 mb-1">Initial Assessment</label>
+              <label class="block text-xs font-medium text-slate-600 mb-1">Initial Assessment <span class="text-red-500">*</span></label>
               <textarea
                 v-model="form.mis_assessment"
                 rows="3"
