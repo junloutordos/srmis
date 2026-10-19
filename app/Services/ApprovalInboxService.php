@@ -38,7 +38,7 @@ class ApprovalInboxService
         $tabs = [];
 
         $isDivisionChief = $user->hasRole('DivisionChief');
-        $isFADChief      = str_contains($user->position ?? '', 'FAD') || $user->hasRole('FAD Chief');
+        $isFADChief      = $user->isFadChief();
         $isGSUHead       = $user->hasRole('GSU Head') || $user->hasRole('GSU Dispatcher');
         $isOCD           = $user->hasRole('OCD');
         // Final approver for Vehicle/Facility Requests: OCD normally, FAD

@@ -33,7 +33,7 @@ class FacilityRequestController extends Controller
     {
         $user = $request->user();
         $canViewAll = $user->hasAnyRole(['Administrator', 'GSU Head', 'DivisionChief', 'OCD'])
-            || str_contains($user->position ?? '', 'FAD');
+            || $user->isFadChief();
 
         $requestsQuery = FacilityRequest::latest();
 
@@ -365,9 +365,7 @@ class FacilityRequestController extends Controller
 
         // Notify FAD Chief users with signed approve/decline links
         try {
-            $fadUsers = \App\Models\User::select('id','email','position')
-                        ->where('position', 'like', '%FAD%')
-                        ->get();
+            $fadUsers = \App\Support\NotificationRecipients::forRole('FAD Chief');
             foreach ($fadUsers as $fad) {
                 if (! $fad->email) continue;
                 try {
@@ -427,9 +425,7 @@ class FacilityRequestController extends Controller
 
         // Notify FAD Chief users for next-level approval/decline
         try {
-            $fadUsers = \App\Models\User::select('id','email','position')
-                        ->where('position', 'like', '%FAD%')
-                        ->get();
+            $fadUsers = \App\Support\NotificationRecipients::forRole('FAD Chief');
             foreach ($fadUsers as $fad) {
                 if (! $fad->email) continue;
                 try {
@@ -909,7 +905,7 @@ class FacilityRequestController extends Controller
     public function fadApproval(Request $request)
     {
         $user = $request->user();
-        $isFAD = str_contains($user->position ?? '', 'FAD') || $user->hasRole('Administrator');
+        $isFAD = $user->isFadChief() || $user->hasRole('Administrator');
         if (! $isFAD) abort(403);
 
         $search  = trim($request->query('search', ''));
@@ -937,7 +933,7 @@ class FacilityRequestController extends Controller
     public function fadAction(Request $request, FacilityRequest $facilityRequest)
     {
         $user = $request->user();
-        $isFAD = str_contains($user->position ?? '', 'FAD') || $user->hasRole('Administrator');
+        $isFAD = $user->isFadChief() || $user->hasRole('Administrator');
         if (! $isFAD) abort(403);
 
         $request->validate(['action' => 'required|in:approve,reject']);

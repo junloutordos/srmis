@@ -33,7 +33,7 @@ class ServiceRequestController extends Controller
         $query = ServiceRequest::with('requester')->latest();
 
         $canViewAll = $user->hasAnyRole(['Administrator', 'GSU Head', 'DivisionChief'])
-            || str_contains($user->position ?? '', 'FAD');
+            || $user->isFadChief();
 
         if (! $canViewAll) {
             $query->where('requestor_id', $user->id);
@@ -190,7 +190,7 @@ class ServiceRequestController extends Controller
 
         // Notify GSU Head users with signed approve/decline links
         try {
-            $gsuUsers = User::havingRole('GSU Head')->get();
+            $gsuUsers = \App\Support\NotificationRecipients::forRole('GSU Head');
             foreach ($gsuUsers as $gsuUser) {
                 if ($gsuUser->email) {
                     try {
@@ -212,9 +212,7 @@ class ServiceRequestController extends Controller
 
         // Notify FAD Chief users for next-level approval/decline
         try {
-            $fadUsers = User::select('id','email','position')
-                        ->where('position', 'like', '%FAD%')
-                        ->get();
+            $fadUsers = \App\Support\NotificationRecipients::forRole('FAD Chief');
             foreach ($fadUsers as $fad) {
                 if (! $fad->email) continue;
                 try {
@@ -272,9 +270,7 @@ class ServiceRequestController extends Controller
 
         // Notify FAD Chief users for next-level approval/decline
         try {
-            $fadUsers = User::select('id','email','position')
-                        ->where('position', 'like', '%FAD%')
-                        ->get();
+            $fadUsers = \App\Support\NotificationRecipients::forRole('FAD Chief');
             foreach ($fadUsers as $fad) {
                 if (! $fad->email) continue;
                 try {
@@ -556,7 +552,7 @@ class ServiceRequestController extends Controller
     public function fadApproval(Request $request)
     {
         $user = $request->user();
-        $isFAD = str_contains($user->position ?? '', 'FAD') || $user->hasRole('Administrator');
+        $isFAD = $user->isFadChief() || $user->hasRole('Administrator');
         if (! $isFAD) abort(403);
 
         $search  = trim($request->query('search', ''));
@@ -582,7 +578,7 @@ class ServiceRequestController extends Controller
     public function fadAction(Request $request, ServiceRequest $serviceRequest)
     {
         $user = $request->user();
-        $isFAD = str_contains($user->position ?? '', 'FAD') || $user->hasRole('Administrator');
+        $isFAD = $user->isFadChief() || $user->hasRole('Administrator');
         if (! $isFAD) abort(403);
 
         $request->validate(['action' => 'required|in:approve,reject']);

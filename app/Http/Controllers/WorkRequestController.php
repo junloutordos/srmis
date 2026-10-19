@@ -47,7 +47,7 @@ class WorkRequestController extends Controller
         $query = WorkRequest::with(['division', 'office', 'assignedUser', 'requester', 'actedBy'])->orderByDesc('created_at');
 
         $canViewAll = $user->hasAnyRole(['Administrator', 'GSU Head', 'DivisionChief'])
-            || str_contains($user->position ?? '', 'FAD');
+            || $user->isFadChief();
 
         if (! $canViewAll) {
             $query->where('requester_id', $user->id);
@@ -107,10 +107,7 @@ class WorkRequestController extends Controller
         // Instead of sending initial notification to FAD/Division Chief,
         // send the first approval request to GSU Head(s).
         try {
-            $gsuHeadRole = \App\Models\Role::where('name', 'GSU Head')->first();
-            $gsuHeads = $gsuHeadRole
-                ? User::whereRaw('FIND_IN_SET(?, role_id)', [$gsuHeadRole->id])->get()
-                : collect();
+            $gsuHeads = \App\Support\NotificationRecipients::forRole('GSU Head');
 
             if ($gsuHeads->isEmpty()) {
                 logger()->warning('No GSU Head users found to notify for new work request', ['work_request_id' => $wr->id]);
@@ -152,10 +149,7 @@ class WorkRequestController extends Controller
 
         // Notify all GSU Head users to assign staff
         try {
-            $gsuHeadRole2 = \App\Models\Role::where('name', 'GSU Head')->first();
-            $gsuHeads = $gsuHeadRole2
-                ? User::whereRaw('FIND_IN_SET(?, role_id)', [$gsuHeadRole2->id])->get()
-                : collect();
+            $gsuHeads = \App\Support\NotificationRecipients::forRole('GSU Head');
             foreach ($gsuHeads as $gsu) {
                 if ($gsu->email) {
                     Mail::to($gsu->email)->send(new WorkRequestForAssignmentMail($workRequest, $chief));
@@ -190,10 +184,7 @@ class WorkRequestController extends Controller
         );
 
         try {
-            $gsuHeadRole3 = \App\Models\Role::where('name', 'GSU Head')->first();
-            $gsuHeads = $gsuHeadRole3
-                ? User::whereRaw('FIND_IN_SET(?, role_id)', [$gsuHeadRole3->id])->get()
-                : collect();
+            $gsuHeads = \App\Support\NotificationRecipients::forRole('GSU Head');
             foreach ($gsuHeads as $gsu) {
                 if ($gsu->email) {
                     Mail::to($gsu->email)->send(new WorkRequestForAssignmentMail($workRequest, $user->id));
@@ -283,9 +274,7 @@ class WorkRequestController extends Controller
 
         // Notify FAD Chiefs for next-level approval
         try {
-            $fadChiefs = User::select('id','email','position')
-                        ->where('position', 'like', '%FAD%')
-                        ->get();
+            $fadChiefs = \App\Support\NotificationRecipients::forRole('FAD Chief');
             foreach ($fadChiefs as $fad) {
                 if (! $fad->email) continue;
                 $approveUrl = URL::signedRoute('work-requests.fad.approve', ['workRequest' => $workRequest->id, 'chief' => $fad->id], now()->addDays(7));
@@ -554,7 +543,7 @@ class WorkRequestController extends Controller
     public function fadApproval(Request $request)
     {
         $user = $request->user();
-        $isFAD = str_contains($user->position ?? '', 'FAD') || $user->hasRole('Administrator');
+        $isFAD = $user->isFadChief() || $user->hasRole('Administrator');
         if (! $isFAD) abort(403);
 
         $search  = trim($request->query('search', ''));
@@ -580,7 +569,7 @@ class WorkRequestController extends Controller
     public function fadAction(Request $request, WorkRequest $workRequest)
     {
         $user = $request->user();
-        $isFAD = str_contains($user->position ?? '', 'FAD') || $user->hasRole('FAD Chief') || $user->hasRole('Administrator');
+        $isFAD = $user->isFadChief() || $user->hasRole('Administrator');
         if (! $isFAD) abort(403);
 
         $request->validate(['action' => 'required|in:approve,reject']);
@@ -655,9 +644,7 @@ class WorkRequestController extends Controller
                 $workRequest->save();
 
                 // notify FAD Chiefs (match by position) with signed approve/decline links
-                $fadChiefs = User::select('id','email','position')
-                            ->where('position', 'like', '%FAD%')
-                            ->get();
+                $fadChiefs = \App\Support\NotificationRecipients::forRole('FAD Chief');
                 foreach ($fadChiefs as $fad) {
                     if (! $fad->email) continue;
                     $approveUrl = URL::signedRoute('work-requests.fad.approve', ['workRequest' => $workRequest->id, 'chief' => $fad->id], now()->addDays(7));

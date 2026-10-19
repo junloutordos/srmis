@@ -183,6 +183,12 @@ class User extends Authenticatable
         return $this->roles->contains('name', $roleName);
     }
 
+    /** FAD authority comes from the FAD Chief role only — never the free-text position. */
+    public function isFadChief(): bool
+    {
+        return $this->hasRole('FAD Chief');
+    }
+
     public function hasAnyRole(array $roleNames): bool
     {
         return $this->roles->contains(fn($r) => in_array($r->name, $roleNames));

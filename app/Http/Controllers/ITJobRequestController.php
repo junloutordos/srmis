@@ -296,7 +296,7 @@ public function index(Request $request)
         }
 
         // Notify OCD users
-        $ocdUsers = User::havingRole('OCD')->get();
+        $ocdUsers = \App\Support\NotificationRecipients::forRole('OCD');
         foreach ($ocdUsers as $ocd) {
             if ($ocd->email) {
                 $approveUrl = URL::signedRoute('it-job-requests.ocd.approve', ['jobRequest'=>$jobRequest->id,'ocd'=>$ocd->id], now()->addDays(7));
@@ -431,7 +431,7 @@ public function index(Request $request)
         );
     }
     // Notify ITJR Dispatchers so they can dispatch this request to MIS personnel
-    $dispatchers = User::havingRole('ITJR Dispatcher')->get();
+    $dispatchers = \App\Support\NotificationRecipients::forRole('ITJR Dispatcher');
     foreach ($dispatchers as $dispatcher) {
         if ($dispatcher->email) {
             try {
@@ -554,7 +554,7 @@ public function showOCDDeclineForm(ITJobRequest $jobRequest, $ocd)
             ]);
         });
 
-        $chiefs = User::havingRole('OCD')->get();
+        $chiefs = \App\Support\NotificationRecipients::forRole('OCD');
         foreach ($chiefs as $chief) {
             if ($chief->email) {
                 try {
@@ -1014,7 +1014,7 @@ public function showOCDDeclineForm(ITJobRequest $jobRequest, $ocd)
             );
 
             // Notify ITJR Dispatchers so they can dispatch this request to MIS personnel
-            $dispatchers = User::havingRole('ITJR Dispatcher')->get();
+            $dispatchers = \App\Support\NotificationRecipients::forRole('ITJR Dispatcher');
             foreach ($dispatchers as $dispatcher) {
                 if ($dispatcher->email) {
                     try {

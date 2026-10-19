@@ -126,8 +126,7 @@ class ApprovalInboxController extends Controller
 
     private function isApprover($user): bool
     {
-        return $user->hasAnyRole(['Administrator', 'DivisionChief', 'GSU Head', 'GSU Dispatcher', 'OCD', 'FAD Chief'])
-            || str_contains($user->position ?? '', 'FAD');
+        return $user->hasAnyRole(['Administrator', 'DivisionChief', 'GSU Head', 'GSU Dispatcher', 'OCD', 'FAD Chief']);
     }
 
     /**
@@ -175,7 +174,7 @@ class ApprovalInboxController extends Controller
     private function authoriseApprove($user, string $type, $record): void
     {
         $isDC    = $user->hasRole('DivisionChief') || $user->hasRole('Administrator');
-        $isFAD   = str_contains($user->position ?? '', 'FAD') || $user->hasRole('FAD Chief') || $user->hasRole('Administrator');
+        $isFAD   = $user->isFadChief() || $user->hasRole('Administrator');
         $isGSU   = $user->hasRole('GSU Head') || $user->hasRole('GSU Dispatcher') || $user->hasRole('Administrator');
         $isOCD   = $user->hasRole('OCD') || $user->hasRole('Administrator');
 
@@ -268,7 +267,7 @@ class ApprovalInboxController extends Controller
     {
         $user   = $request->user();
         $status = $record->status ?? '';
-        $isFAD  = str_contains($user->position ?? '', 'FAD');
+        $isFAD  = $user->isFadChief();
 
         switch ($type) {
             case 'it_job_requests':

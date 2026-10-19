@@ -145,7 +145,7 @@ class VehicleRequestController extends Controller
         ]);
 
         // Notify GSU Head / GSU Dispatcher users so they can assign a driver and vehicle
-        $gsuUsers = User::havingAnyRole(['GSU Head', 'GSU Dispatcher'])->get();
+        $gsuUsers = \App\Support\NotificationRecipients::forAnyRole(['GSU Head', 'GSU Dispatcher']);
         foreach ($gsuUsers as $gsuUser) {
             if ($gsuUser->email) {
                 try {
@@ -216,7 +216,7 @@ class VehicleRequestController extends Controller
             // Driver + vehicle were already assigned by GSU before this DC approval,
             // so notify the final approver directly for sign-off instead of routing
             // back to GSU — OCD normally, FAD Chief in OED (no campus director).
-            $ocdUsers = \App\Models\User::havingRole(ApprovalRoutingService::finalApproverRole())->get();
+            $ocdUsers = \App\Support\NotificationRecipients::forRole(ApprovalRoutingService::finalApproverRole());
             foreach ($ocdUsers as $ocdUser) {
                 if ($ocdUser->email) {
                     try {
@@ -325,7 +325,7 @@ class VehicleRequestController extends Controller
         // Driver + vehicle were already assigned by GSU before this Division Chief
         // approval, so notify the final approver directly for sign-off — OCD
         // normally, FAD Chief in OED (no campus director).
-        $ocdUsers = \App\Models\User::havingRole(ApprovalRoutingService::finalApproverRole())->get();
+        $ocdUsers = \App\Support\NotificationRecipients::forRole(ApprovalRoutingService::finalApproverRole());
         foreach ($ocdUsers as $ocdUser) {
             if ($ocdUser->email) {
                 try {

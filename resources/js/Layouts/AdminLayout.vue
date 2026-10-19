@@ -7,6 +7,7 @@ const title = props.title;
 import { Head, usePage, router, useForm } from "@inertiajs/vue3";
 import SidebarLink from "@/Components/SidebarLink.vue";
 import NotificationBell from '@/Components/NotificationBell.vue';
+import { userChannel } from '@/Utils/channels';
 import ProfileEditModal from '@/Components/ProfileEditModal.vue';
 import {
   HomeIcon,
@@ -107,7 +108,7 @@ function setupChatNotifications() {
   const userId = user?.id;
   if (!userId) return;
 
-  chatEchoChannel = window.Echo.private(`user.${userId}`)
+  chatEchoChannel = window.Echo.private(userChannel(userId))
     .listen('.new.message', (e) => {
       // Increment badge if not currently on the Chat page
       if (!route().current('chat.index')) {
@@ -161,7 +162,7 @@ onUnmounted(() => {
   if (removeNavListener) removeNavListener();
   window.removeEventListener('pageshow', handlePageShow);
   if (chatEchoChannel) {
-    window.Echo?.leave(`user.${user?.id}`);
+    window.Echo?.leave(userChannel(user?.id));
     chatEchoChannel = null;
   }
 });

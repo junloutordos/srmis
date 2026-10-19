@@ -145,7 +145,7 @@ class ApprovalInboxServiceTest extends TestCase
 
     public function test_fad_chief_only_receives_fad_stage_items(): void
     {
-        $fadChief = $this->userWithRole(null, ['position' => 'FAD Chief']);
+        $fadChief = $this->userWithRole('FAD Chief');
         $requester = User::factory()->create();
 
         $pendingFr = FacilityRequest::create([

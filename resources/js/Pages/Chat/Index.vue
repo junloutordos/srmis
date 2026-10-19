@@ -3,6 +3,7 @@ import { onMounted, onUnmounted, ref, computed, watch } from 'vue'
 import { Head } from '@inertiajs/vue3'
 import AdminLayout from '@/Layouts/AdminLayout.vue'
 import { useChat } from '@/Composables/useChat.js'
+import { userChannel, conversationChannel } from '@/Utils/channels'
 import {
   PaperAirplaneIcon,
   PaperClipIcon,
@@ -43,7 +44,7 @@ const subscribedIds = new Set()
 function subscribeToConversation(convId) {
   if (subscribedIds.has(convId) || !window.Echo) return
   subscribedIds.add(convId)
-  window.Echo.private(`conversation.${convId}`)
+  window.Echo.private(conversationChannel(convId))
     .listen('.message.sent', ({ message }) => {
       if (message.sender_id !== props.authUser.id) injectIncomingMessage(message)
     })
@@ -57,16 +58,16 @@ function subscribeToConversation(convId) {
 
 function subscribeToPersonalChannel() {
   if (!window.Echo) return
-  window.Echo.private(`user.${props.authUser.id}`)
+  window.Echo.private(userChannel(props.authUser.id))
     .listen('.new.message', ({ message }) => {
       if (message.sender_id !== props.authUser.id) injectIncomingMessage(message)
     })
 }
 
 function unsubscribeAll() {
-  subscribedIds.forEach(id => { try { window.Echo?.leave(`conversation.${id}`) } catch (_) {} })
+  subscribedIds.forEach(id => { try { window.Echo?.leave(conversationChannel(id)) } catch (_) {} })
   subscribedIds.clear()
-  try { window.Echo?.leave(`user.${props.authUser.id}`) } catch (_) {}
+  try { window.Echo?.leave(userChannel(props.authUser.id)) } catch (_) {}
 }
 
 watch(conversations, list => list.forEach(c => subscribeToConversation(c.id)), { deep: false, immediate: true })

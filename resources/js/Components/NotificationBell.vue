@@ -3,6 +3,7 @@ import { ref, onMounted, onUnmounted } from 'vue'
 import { BellIcon, XMarkIcon } from '@heroicons/vue/24/outline'
 import { BellAlertIcon } from '@heroicons/vue/24/solid'
 import axios from 'axios'
+import { userChannel } from '@/Utils/channels'
 
 const props = defineProps({
   userId: { type: Number, required: true },
@@ -57,7 +58,7 @@ function timeAgo(iso) {
 // ── Real-time via Soketi ─────────────────────────────────────────────────────
 function subscribe() {
   if (!window.Echo) return
-  window.Echo.private(`user.${props.userId}`)
+  window.Echo.private(userChannel(props.userId))
     .listen('.request.status.updated', (payload) => {
       notifications.value.unshift({
         id:           crypto.randomUUID(),
