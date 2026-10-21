@@ -28,4 +28,21 @@ class CampusLabelTest extends TestCase
         $this->assertNull(CampusLabel::fromTenant(null, null));
         $this->assertNull(CampusLabel::fromTenant('crc', '   '));
     }
+
+    public function test_title_keeps_the_known_caraga_location_and_names_other_campuses_plainly(): void
+    {
+        $this->assertSame('CARAGA REGION CAMPUS IN BUTUAN CITY', CampusLabel::titleFor('crc', 'Caraga Region Campus'));
+        $this->assertSame('Caraga Region Campus in Butuan City', CampusLabel::titleFor('crc', 'Caraga Region Campus', false));
+        $this->assertSame('BICOL REGION CAMPUS', CampusLabel::titleFor('brc', 'Bicol Region Campus'));
+        $this->assertSame('OFFICE OF THE EXECUTIVE DIRECTOR', CampusLabel::titleFor('oed', 'Office of the Executive Director'));
+        $this->assertNull(CampusLabel::titleFor(null, null));
+    }
+
+    public function test_address_prefers_the_campus_row_then_known_data_then_nothing(): void
+    {
+        $this->assertSame('1 Main St, Naga City', CampusLabel::addressFor('brc', '1 Main St, Naga City'));
+        $this->assertSame('Ampayon, Butuan City, Agusan del Norte', CampusLabel::addressFor('crc', null));
+        $this->assertSame('Ampayon, Butuan City, Agusan del Norte', CampusLabel::addressFor('crc', '  '));
+        $this->assertNull(CampusLabel::addressFor('brc', null));
+    }
 }

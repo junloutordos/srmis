@@ -32,7 +32,7 @@
   <div class="container">
     <div class="header">
       <h2>PHILIPPINE SCIENCE HIGH SCHOOL SYSTEM</h2>
-      <div style="margin-top:6px;">Campus: CARAGA REGION CAMPUS IN BUTUAN CITY</div>
+      <div style="margin-top:6px;">Campus: {{ \App\Support\CampusLabel::title() }}</div>
       <h3 style="margin-top:10px;">PERMIT TO USE SCHOOL VEHICLE</h3>
       <div class="no-print" style="margin-top:8px; text-align:center">
         <button onclick="window.print()">Print</button>
@@ -263,7 +263,7 @@
 
     <div class="header">
       <h2>PHILIPPINE SCIENCE HIGH SCHOOL SYSTEM</h2>
-      <div style="margin-top:6px;">Campus: CARAGA REGION CAMPUS IN BUTUAN CITY</div>
+      <div style="margin-top:6px;">Campus: {{ \App\Support\CampusLabel::title() }}</div>
       <h3 style="margin-top:10px;">PERMIT TO USE SCHOOL VEHICLE</h3>
     </div>
 
@@ -436,7 +436,7 @@
         <thead>
           <tr>
             <th class="tg-pmdb" style="padding:4px 8px"><img src="{{ asset('images/pshslogo.png') }}" style="width:55px;height:auto;display:block;margin:0 auto;" alt="logo"/></th>
-            <th class="tg-pmdb" colspan="4">Republic of the Philippines<br>Department of Science and Technology<br><span style="font-weight:bold">PHILIPPINE SCIENCE HIGH SCHOOL</span><br>CARAGA REGION SCHOOL IN BUTUAN CITY</th>
+            <th class="tg-pmdb" colspan="4">Republic of the Philippines<br>Department of Science and Technology<br><span style="font-weight:bold">PHILIPPINE SCIENCE HIGH SCHOOL</span><br>{{ \App\Support\CampusLabel::title() }}</th>
           </tr></thead>
         <tbody>
           <tr>

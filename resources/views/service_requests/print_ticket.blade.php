@@ -93,7 +93,7 @@
     </div>
 
     <div class="center mt-10">
-        Campus: <span class="line">CARAGA REGION CAMPUS IN BUTUAN CITY</span>
+        Campus: <span class="line">{{ \App\Support\CampusLabel::title() }}</span>
     </div>
 
     <div class="center bold mt-20">

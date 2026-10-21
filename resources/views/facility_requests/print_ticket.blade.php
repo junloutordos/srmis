@@ -81,7 +81,7 @@
 
     <div class="header">
         <h3>PHILIPPINE SCIENCE HIGH SCHOOL SYSTEM</h3>
-        <h3>CAMPUS/OFFICE: CARAGA REGION CAMPUS IN BUTUAN CITY</h3>
+        <h3>CAMPUS/OFFICE: {{ \App\Support\CampusLabel::title() }}</h3>
         <br>
         <h2>PERMIT TO USE SCHOOL FACILITIES</h2>
     </div>

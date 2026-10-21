@@ -209,8 +209,10 @@
                 <div class="agency-dept">Republic of the Philippines</div>
                 <div class="system-label">Department of Science and Technology</div>
                 <div class="agency-name">PHILIPPINE SCIENCE HIGH SCHOOL</div>
-                <div class="agency-name-pisay">Caraga Region Campus in Butuan City</div>
-                <div class="agency-dept">Ampayon, Butuan City, Agusan del Norte</div>
+                <div class="agency-name-pisay">{{ \App\Support\CampusLabel::title(false) }}</div>
+                @if($campusAddress = \App\Support\CampusLabel::address())
+                <div class="agency-dept">{{ $campusAddress }}</div>
+                @endif
                 
             </td>
         </tr>
