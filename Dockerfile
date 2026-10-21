@@ -5,8 +5,11 @@ RUN apt-get update && apt-get install -y \
     cron default-mysql-client supervisor nginx awscli \
     && rm -rf /var/lib/apt/lists/*
 
+# PIE replaces pecl here: pecl.php.net's REST endpoint was failing CI builds.
+COPY --from=ghcr.io/php/pie:bin /pie /usr/bin/pie
+
 RUN docker-php-ext-install pdo_mysql mbstring exif pcntl bcmath gd zip \
-    && pecl install redis \
+    && pie install phpredis/phpredis:6.3.0 \
     && docker-php-ext-enable redis
 
 # Install Node.js 20 for Vite frontend build
