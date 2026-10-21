@@ -13,6 +13,7 @@ use App\Models\ICTPMSHistory;
 use App\Mail\DivisionChiefITJRApprovalMail;
 use App\Mail\OCDITJRApprovalMail;
 use App\Mail\ITJRDispatchMail;
+use App\Mail\ITJRTargetDateApprovalMail;
 use App\Mail\ITJRStatusMail;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
@@ -30,6 +31,8 @@ use App\Jobs\GenerateITJobRequestPdfJob;
 
 class ITJobRequestController extends Controller
 {
+    use \App\Http\Controllers\Concerns\RequiresSignatureSetup;
+
     public function __construct(
         private SnapshotService $snapshots,
         private ITJobRequestPdfService $pdfService,
@@ -158,6 +161,10 @@ public function index(Request $request)
      |=====================================================*/
     public function store(Request $request)
     {
+        if ($blocked = $this->signatureSetupRedirect($request->user())) {
+            return $blocked;
+        }
+
         // Diagram gate: staff must confirm & rate an already-acted-on request
         // (via the CSM survey, CsmResponseController::store) before filing
         // another one. Same condition as checkPendingActedByMis() below.
@@ -166,6 +173,10 @@ public function index(Request $request)
         if (! $request->user()->isSuperAdmin()
             && ITJobRequest::where('user_id', $request->user()->id)->where('status', 'Acted by MIS')->exists()) {
             return back()->withErrors(['message' => 'You have an IT Job Request awaiting your confirmation and Client Satisfaction Survey. Please complete it before filing a new request.']);
+        }
+
+        if ($error = $this->signingError($request->user(), $request->input('pin'), true)) {
+            return back()->withErrors(['message' => $error]);
         }
 
         $isTechEvent   = $request->input('category') === 'Technical Assistance on Events';
@@ -265,10 +276,25 @@ public function index(Request $request)
     /* =====================================================
      | DIVISION CHIEF APPROVE / DECLINE
      |=====================================================*/
+    /** Email link landing page: the approver confirms with their PIN before anything changes. */
     public function approveByDivisionChiefSigned(Request $request, ITJobRequest $jobRequest, $chief)
     {
         if ((int)$jobRequest->divisionchief_id !== (int)$chief) abort(403);
         if ($jobRequest->status !== 'Pending Division Chief Approval') return view('emails.itjr.already_approved', compact('jobRequest'));
+
+        return $this->emailSignForm($request, $jobRequest, 'it-job-requests.dc.approve.submit', ['jobRequest' => $jobRequest->id, 'chief' => $chief], 'Division Chief Approval', 'Approve & Sign', $chief);
+    }
+
+    public function submitDivisionChiefApproveSigned(Request $request, ITJobRequest $jobRequest, $chief)
+    {
+        if ((int)$jobRequest->divisionchief_id !== (int)$chief) abort(403);
+        if ($jobRequest->status !== 'Pending Division Chief Approval') return view('emails.itjr.already_approved', compact('jobRequest'));
+
+        $chiefUser = User::find($chief);
+        if (! $chiefUser || $chiefUser->status === 'inactive') abort(403);
+        if ($error = $this->signingError($chiefUser, $request->input('pin'))) {
+            return back()->withErrors(['pin' => $error]);
+        }
 
         $skipOcd = ApprovalRoutingService::itjrSkipsOcdApproval();
 
@@ -279,9 +305,14 @@ public function index(Request $request)
         ITJRTrackingLog::create([
             'it_job_request_id' => $jobRequest->id,
             'status' => 'Division Chief Approved',
-            'remarks' => 'Approved via email link',
+            'remarks' => 'Approved via email link (PIN-signed)',
             'updated_by' => $chief,
         ]);
+
+        $this->signStage($chiefUser, $jobRequest, 'dc_approval',
+            "IT Job Request #{$jobRequest->itjr_no} — Division Chief Approval",
+            $jobRequest->itjr_no . 'dc_approval' . $chiefUser->id
+        );
 
         // Notify requester
         if ($jobRequest->user && $jobRequest->user->email) {
@@ -390,15 +421,33 @@ public function index(Request $request)
      |=====================================================*/
     public function approveByOCDSigned(Request $request, ITJobRequest $jobRequest, $ocd)
 {
-    // 1️⃣ Validate OCD user exists and has the OCD role
     $ocdUser = User::find($ocd);
     if (!$ocdUser || ! $ocdUser->hasRole('OCD')) {
+        abort(403, 'Unauthorized OCD user.');
+    }
+
+    if ($jobRequest->status !== 'Pending OCD Approval') {
+        return view('emails.itjr.already_approved', compact('jobRequest'));
+    }
+
+    return $this->emailSignForm($request, $jobRequest, 'it-job-requests.ocd.approve.submit', ['jobRequest' => $jobRequest->id, 'ocd' => $ocd], 'OCD Approval', 'Approve & Sign', $ocd);
+}
+
+public function submitOCDApproveSigned(Request $request, ITJobRequest $jobRequest, $ocd)
+{
+    // 1️⃣ Validate OCD user exists and has the OCD role
+    $ocdUser = User::find($ocd);
+    if (!$ocdUser || ! $ocdUser->hasRole('OCD') || $ocdUser->status === 'inactive') {
         abort(403, 'Unauthorized OCD user.');
     }
 
     // 2️⃣ Check if the job request is waiting for OCD approval
     if ($jobRequest->status !== 'Pending OCD Approval') {
         return view('emails.itjr.already_approved', compact('jobRequest'));
+    }
+
+    if ($error = $this->signingError($ocdUser, $request->input('pin'))) {
+        return back()->withErrors(['pin' => $error]);
     }
 
     // 3️⃣ Update the request status and log the approval date
@@ -412,9 +461,14 @@ public function index(Request $request)
     ITJRTrackingLog::create([
         'it_job_request_id' => $jobRequest->id,
         'status' => 'OCD Approved',
-        'remarks' => 'Approved via email link',
+        'remarks' => 'Approved via email link (PIN-signed)',
         'updated_by' => $ocdUser->id,
     ]);
+
+    $this->signStage($ocdUser, $jobRequest, 'ocd_approval',
+        "IT Job Request #{$jobRequest->itjr_no} — OCD Approval",
+        $jobRequest->itjr_no . 'ocd_approval' . $ocdUser->id
+    );
 
     // 5️⃣ Notify the requester
     if ($jobRequest->user && $jobRequest->user->email) {
@@ -555,12 +609,12 @@ public function showOCDDeclineForm(ITJobRequest $jobRequest, $ocd)
         $chiefs = \App\Support\NotificationRecipients::forRole('OCD');
         foreach ($chiefs as $chief) {
             if ($chief->email) {
+                $params = ['jobRequest' => $jobRequest->id, 'approver' => $chief->id];
                 try {
-                    Mail::to($chief->email)->send(new ITJRStatusMail(
+                    Mail::to($chief->email)->send(new ITJRTargetDateApprovalMail(
                         $jobRequest,
-                        'Target Date Proposed',
-                        'A target completion date has been proposed and needs your approval.',
-                        'MIS'
+                        URL::signedRoute('it-job-requests.target-date.approve', $params, now()->addDays(7)),
+                        URL::signedRoute('it-job-requests.target-date.reject', $params, now()->addDays(7)),
                     ));
                 } catch (\Throwable $e) {
                     logger()->error('Failed to send target date proposal email', ['error' => $e->getMessage()]);
@@ -624,7 +678,19 @@ public function showOCDDeclineForm(ITJobRequest $jobRequest, $ocd)
             return back()->withErrors(['message' => 'This request is not awaiting a target date decision.']);
         }
 
-        if ($validated['action'] === 'approve') {
+        if ($validated['action'] === 'approve' && ($error = $this->signingError($request->user(), $request->input('pin')))) {
+            return back()->withErrors(['message' => $error]);
+        }
+
+        $this->applyTargetDateDecision($jobRequest, $request->user(), $validated['action'], $validated['reason'] ?? null);
+
+        return back()->with('success', 'Target date decision recorded!');
+    }
+
+    /** Shared by the in-app decision and the emailed links; the caller has already verified PIN/permission. */
+    private function applyTargetDateDecision(ITJobRequest $jobRequest, User $actor, string $action, ?string $reason, string $via = ''): void
+    {
+        if ($action === 'approve') {
             $jobRequest->update([
                 'status'                       => 'Target Date Approved',
                 'target_date_rejection_reason' => null,
@@ -633,8 +699,8 @@ public function showOCDDeclineForm(ITJobRequest $jobRequest, $ocd)
             ITJRTrackingLog::create([
                 'it_job_request_id' => $jobRequest->id,
                 'status'            => 'Target Date Approved',
-                'remarks'           => 'Target completion date approved by OCD/KID Chief.',
-                'updated_by'        => $request->user()->id,
+                'remarks'           => 'Target completion date approved by OCD/KID Chief.' . $via,
+                'updated_by'        => $actor->id,
             ]);
 
             $this->snapshots->recordApproval(
@@ -642,26 +708,26 @@ public function showOCDDeclineForm(ITJobRequest $jobRequest, $ocd)
                 step:       ApprovalStep::ITJR_TARGET_DATE,
                 sequence:   5,
                 action:     'approved',
-                approver:   $request->user(),
+                approver:   $actor,
             );
 
-            $this->trySign($request, $jobRequest, 'target_date_approval',
+            $this->signStage($actor, $jobRequest, 'target_date_approval',
                 "IT Job Request #{$jobRequest->itjr_no} — Target Date Approval",
-                $jobRequest->itjr_no . 'target_date_approval' . $request->user()->id
+                $jobRequest->itjr_no . 'target_date_approval' . $actor->id
             );
 
             $this->notifyAssigneeOfTargetDateDecision($jobRequest, 'Target Date Approved', 'Your proposed target completion date has been approved. You may now proceed with the request.');
         } else {
             $jobRequest->update([
                 'status'                       => 'Target Date Rejected',
-                'target_date_rejection_reason' => $validated['reason'],
+                'target_date_rejection_reason' => $reason,
             ]);
 
             ITJRTrackingLog::create([
                 'it_job_request_id' => $jobRequest->id,
                 'status'            => 'Target Date Rejected',
-                'remarks'           => 'Target completion date rejected by OCD/KID Chief: ' . $validated['reason'],
-                'updated_by'        => $request->user()->id,
+                'remarks'           => 'Target completion date rejected by OCD/KID Chief: ' . $reason . $via,
+                'updated_by'        => $actor->id,
             ]);
 
             $this->snapshots->recordApproval(
@@ -669,13 +735,80 @@ public function showOCDDeclineForm(ITJobRequest $jobRequest, $ocd)
                 step:       ApprovalStep::ITJR_TARGET_DATE,
                 sequence:   5,
                 action:     'rejected',
-                approver:   $request->user(),
+                approver:   $actor,
             );
 
-            $this->notifyAssigneeOfTargetDateDecision($jobRequest, 'Target Date Rejected', 'Your proposed target completion date was rejected: ' . $validated['reason']);
+            $this->notifyAssigneeOfTargetDateDecision($jobRequest, 'Target Date Rejected', 'Your proposed target completion date was rejected: ' . $reason);
+        }
+    }
+
+    /* ── Target date decision from the emailed signed links ── */
+
+    private function targetDateApprover($approver): User
+    {
+        $user = User::find($approver);
+        if (! $user || $user->status === 'inactive' || ! $user->hasRole('OCD')) {
+            abort(403, 'Unauthorized approver.');
+        }
+        return $user;
+    }
+
+    public function showTargetDateApproveForm(Request $request, ITJobRequest $jobRequest, $approver)
+    {
+        $this->targetDateApprover($approver);
+        if ($jobRequest->status !== 'Pending Target Date Approval') {
+            return view('emails.itjr.already_approved', compact('jobRequest'));
         }
 
-        return back()->with('success', 'Target date decision recorded!');
+        return $this->emailSignForm($request, $jobRequest, 'it-job-requests.target-date.approve.submit', ['jobRequest' => $jobRequest->id, 'approver' => $approver], 'Target Date Approval', 'Approve & Sign', $approver);
+    }
+
+    public function submitTargetDateApprove(Request $request, ITJobRequest $jobRequest, $approver)
+    {
+        $user = $this->targetDateApprover($approver);
+        if ($jobRequest->status !== 'Pending Target Date Approval') {
+            return view('emails.itjr.already_approved', compact('jobRequest'));
+        }
+        if ($error = $this->signingError($user, $request->input('pin'))) {
+            return back()->withErrors(['pin' => $error]);
+        }
+
+        $this->applyTargetDateDecision($jobRequest, $user, 'approve', null, ' (via email, PIN-signed)');
+
+        return view('emails.itjr.approved', compact('jobRequest'));
+    }
+
+    public function showTargetDateRejectForm(Request $request, ITJobRequest $jobRequest, $approver)
+    {
+        $this->targetDateApprover($approver);
+        if ($jobRequest->status !== 'Pending Target Date Approval') {
+            return view('emails.itjr.already_approved', compact('jobRequest'));
+        }
+
+        return view('emails.itjr.decline_form', [
+            'jobRequest' => $jobRequest,
+            'heading'    => 'Reject Target Date',
+            'subheading' => 'PSHSS Helpdesk — Target Date Decision',
+            'intro'      => 'You are rejecting the proposed target completion date. Please give a reason so the assigned MIS personnel can propose a new one.',
+            'postAction' => URL::temporarySignedRoute(
+                'it-job-requests.target-date.reject.submit',
+                Carbon::createFromTimestamp((int) $request->query('expires')),
+                ['jobRequest' => $jobRequest->id, 'approver' => $approver]
+            ),
+        ]);
+    }
+
+    public function submitTargetDateReject(Request $request, ITJobRequest $jobRequest, $approver)
+    {
+        $user = $this->targetDateApprover($approver);
+        if ($jobRequest->status !== 'Pending Target Date Approval') {
+            return view('emails.itjr.already_approved', compact('jobRequest'));
+        }
+        $validated = $request->validate(['reason' => 'required|string|max:1000']);
+
+        $this->applyTargetDateDecision($jobRequest, $user, 'reject', $validated['reason'], ' (via email)');
+
+        return view('emails.itjr.declined', compact('jobRequest'));
     }
 
     private function notifyAssigneeOfTargetDateDecision(ITJobRequest $jobRequest, string $subject, string $body): void
@@ -903,6 +1036,10 @@ public function showOCDDeclineForm(ITJobRequest $jobRequest, $ocd)
             'action' => 'required|in:approve,reject',
         ]);
 
+        if ($request->action === 'approve' && ($error = $this->signingError($request->user(), $request->input('pin')))) {
+            return back()->withErrors(['message' => $error]);
+        }
+
         if ($request->action === 'approve') {
             $skipOcd = ApprovalRoutingService::itjrSkipsOcdApproval();
 
@@ -1028,6 +1165,10 @@ public function showOCDDeclineForm(ITJobRequest $jobRequest, $ocd)
         // request through it.
         if (ApprovalRoutingService::itjrSkipsOcdApproval() && $jobRequest->status !== 'Pending OCD Approval') {
             return back()->withErrors(['message' => 'This request is not awaiting OCD approval.']);
+        }
+
+        if ($request->action === 'approve' && ($error = $this->signingError($request->user(), $request->input('pin')))) {
+            return back()->withErrors(['message' => $error]);
         }
 
         if ($request->action === 'approve') {
@@ -1470,6 +1611,37 @@ public function showOCDDeclineForm(ITJobRequest $jobRequest, $ocd)
 
     // ── Private ───────────────────────────────────────────────────────────────
 
+    /**
+     * Null when $signer may sign, else the message to show. $onlyIfSetUp lets
+     * the filing form pass for users the setup gate already handled (superadmins).
+     */
+    private function signingError(User $signer, ?string $pin, bool $onlyIfSetUp = false): ?string
+    {
+        if (! $signer->hasSignatureSetup()) {
+            return $onlyIfSetUp ? null : 'Set up your digital signature and PIN (Profile → Signature) before signing.';
+        }
+
+        if (! $pin || ! $this->sigService->verifyPin($signer, $pin)) {
+            return 'Incorrect or missing PIN. Nothing was signed or submitted.';
+        }
+
+        return null;
+    }
+
+    /** Create the signature record now (not queued) so the PDF badge can never lag or get lost. */
+    private function signStage(User $signer, ITJobRequest $jobRequest, string $stage, string $title, string $contentHash): void
+    {
+        try {
+            $this->sigService->sign($signer, ITJobRequest::class, $jobRequest->id, $title, $contentHash, [
+                'stage'   => $stage,
+                'itjr_no' => $jobRequest->itjr_no,
+                'title'   => $jobRequest->title,
+            ]);
+        } catch (\Throwable $e) {
+            logger()->error('ITJR digital sign failed', ['job_request_id' => $jobRequest->id, 'stage' => $stage, 'error' => $e->getMessage()]);
+        }
+    }
+
     private function trySign(
         Request      $request,
         ITJobRequest $jobRequest,
@@ -1479,15 +1651,24 @@ public function showOCDDeclineForm(ITJobRequest $jobRequest, $ocd)
     ): void {
         $signer = $request->user();
 
-        // Users who have set a PIN must provide the correct one to sign.
-        // Users without a PIN are signed automatically (signature image in PDF).
-        if (! empty($signer->signature_pin)) {
-            $pin = $request->input('pin');
-            if (! $pin || ! $this->sigService->verifyPin($signer, $pin)) {
-                return;
-            }
+        if ($this->signingError($signer, $request->input('pin'))) {
+            return;
         }
 
-        SignITJobRequestJob::dispatch($signer, $jobRequest, $stage, $title, $contentHash);
+        $this->signStage($signer, $jobRequest, $stage, $title, $contentHash);
+    }
+
+    /** PIN confirmation page for an emailed approve link; the POST URL is signed to the same expiry. */
+    private function emailSignForm(Request $request, ITJobRequest $jobRequest, string $routeName, array $params, string $heading, string $button, $approverId)
+    {
+        $approver = User::find($approverId);
+
+        return view('emails.itjr.sign_form', [
+            'jobRequest'  => $jobRequest,
+            'heading'     => $heading,
+            'button'      => $button,
+            'canSign'     => $approver && $approver->hasSignatureSetup(),
+            'postAction'  => URL::temporarySignedRoute($routeName, Carbon::createFromTimestamp((int) $request->query('expires')), $params),
+        ]);
     }
 }

@@ -74,7 +74,7 @@ class ITJobRequestOedSkipsOcdTest extends TestCase
         $request = $this->pendingRequest($chief);
 
         $this->actingAs($chief)
-            ->post(route('job-requests.division-chief-action', $request), ['action' => 'approve'])
+            ->post(route('job-requests.division-chief-action', $request), ['action' => 'approve', 'pin' => '123456'])
             ->assertSessionHasNoErrors();
 
         $request->refresh();
@@ -91,7 +91,7 @@ class ITJobRequestOedSkipsOcdTest extends TestCase
         $request = $this->pendingRequest($chief);
 
         $this->actingAs($chief)
-            ->post(route('job-requests.division-chief-action', $request), ['action' => 'approve'])
+            ->post(route('job-requests.division-chief-action', $request), ['action' => 'approve', 'pin' => '123456'])
             ->assertSessionHasNoErrors();
 
         $this->assertSame('Pending OCD Approval', $request->fresh()->status);
@@ -113,7 +113,7 @@ class ITJobRequestOedSkipsOcdTest extends TestCase
         Role::where('name', 'OCD')->first()->permissions()->syncWithoutDetaching([$perm->id]);
 
         $this->actingAs($ocd)
-            ->post(route('job-requests.ocd-action', $request), ['action' => 'approve'])
+            ->post(route('job-requests.ocd-action', $request), ['action' => 'approve', 'pin' => '123456'])
             ->assertSessionHasErrors('message');
 
         $this->assertSame('Pending Dispatch', $request->fresh()->status);

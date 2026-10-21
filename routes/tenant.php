@@ -75,6 +75,22 @@ Route::prefix('it-job-requests')->group(function () {
     Route::post('dc/decline/{jobRequest}/{chief}', [ITJobRequestController::class, 'submitDivisionChiefDecline'])
         ->name('it-job-requests.dc.decline.submit')->middleware('signed');
 
+    Route::post('dc/approve/{jobRequest}/{chief}', [ITJobRequestController::class, 'submitDivisionChiefApproveSigned'])
+        ->name('it-job-requests.dc.approve.submit')->middleware(['signed', 'throttle:10,1']);
+
+    Route::post('ocd/approve/{jobRequest}/{ocd}', [ITJobRequestController::class, 'submitOCDApproveSigned'])
+        ->name('it-job-requests.ocd.approve.submit')->middleware(['signed', 'throttle:10,1']);
+
+    // KID Chief / OCD: decide the proposed target date from the email.
+    Route::get('target-date/approve/{jobRequest}/{approver}', [ITJobRequestController::class, 'showTargetDateApproveForm'])
+        ->name('it-job-requests.target-date.approve')->middleware('signed');
+    Route::post('target-date/approve/{jobRequest}/{approver}', [ITJobRequestController::class, 'submitTargetDateApprove'])
+        ->name('it-job-requests.target-date.approve.submit')->middleware(['signed', 'throttle:10,1']);
+    Route::get('target-date/reject/{jobRequest}/{approver}', [ITJobRequestController::class, 'showTargetDateRejectForm'])
+        ->name('it-job-requests.target-date.reject')->middleware('signed');
+    Route::post('target-date/reject/{jobRequest}/{approver}', [ITJobRequestController::class, 'submitTargetDateReject'])
+        ->name('it-job-requests.target-date.reject.submit')->middleware('signed');
+
     Route::get('ocd/approve/{jobRequest}/{ocd}', [ITJobRequestController::class, 'approveByOCDSigned'])
         ->name('it-job-requests.ocd.approve')->middleware('signed');
     Route::get('ocd/decline/{jobRequest}/{ocd}', [ITJobRequestController::class, 'showOCDDeclineForm'])

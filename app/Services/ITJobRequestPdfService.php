@@ -202,21 +202,23 @@ class ITJobRequestPdfService
             $documentQr = base64_encode(QrCode::format('svg')->size(120)->margin(1)->generate($verifyUrl));
         }
 
-        // Signature images are gated on approval stage completion (business logic).
-        // The ✓ Digitally Signed badge is separate — gated on DigitalSignature records above.
-        $requesterSig  = $this->sigDataUri($jobRequest->user?->electronic_signature);
-        $dcSig         = $jobRequest->dc_approval_date
-                            ? $this->sigDataUri($jobRequest->divisionChief?->electronic_signature) : null;
-        $directorSig   = $directorApproved
-                            ? $this->sigDataUri($director?->electronic_signature) : null;
-        $assignedSig   = $jobRequest->action_taken
-                            ? $this->sigDataUri($jobRequest->assignedTo?->electronic_signature) : null;
-        $completionSig = $jobRequest->completed_at
-                            ? $this->sigDataUri($jobRequest->user?->electronic_signature) : null;
-
+        // OED's KID Chief signs once, at target-date approval, in place of the OCD stage.
         if (ApprovalRoutingService::itjrSkipsOcdApproval() && isset($sigBadges['target_date_approval'])) {
             $sigBadges['ocd_approval'] = $sigBadges['target_date_approval'];
         }
+
+        // A signature image prints only for a stage that has a DigitalSignature
+        // record (the "Digitally Signed" badge), so the two can never disagree.
+        $requesterSig  = isset($sigBadges['submission'])
+                            ? $this->sigDataUri($jobRequest->user?->electronic_signature) : null;
+        $dcSig         = $jobRequest->dc_approval_date && isset($sigBadges['dc_approval'])
+                            ? $this->sigDataUri($jobRequest->divisionChief?->electronic_signature) : null;
+        $directorSig   = $directorApproved && isset($sigBadges['ocd_approval'])
+                            ? $this->sigDataUri($director?->electronic_signature) : null;
+        $assignedSig   = $jobRequest->action_taken && isset($sigBadges['mis_acted'])
+                            ? $this->sigDataUri($jobRequest->assignedTo?->electronic_signature) : null;
+        $completionSig = $jobRequest->completed_at && isset($sigBadges['completion'])
+                            ? $this->sigDataUri($jobRequest->user?->electronic_signature) : null;
 
         $html = view('it-job-requests.pdf', compact(
             'jobRequest',

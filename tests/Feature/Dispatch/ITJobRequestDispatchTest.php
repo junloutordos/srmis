@@ -286,6 +286,7 @@ class ITJobRequestDispatchTest extends TestCase
 
         $this->actingAs($ocd)->post(route('job-requests.ocd-action', $jobRequest->id), [
             'action' => 'approve',
+            'pin' => '123456',
         ]);
 
         $this->assertSame('Pending Dispatch', $jobRequest->refresh()->status);
@@ -342,7 +343,7 @@ class ITJobRequestDispatchTest extends TestCase
         $jobRequest = $this->inProgressRequest($mis); // still 'In Progress', not proposed yet
 
         $response = $this->actingAs($ocd)
-            ->post(route('job-requests.target-date-decision', $jobRequest->id), ['action' => 'approve']);
+            ->post(route('job-requests.target-date-decision', $jobRequest->id), ['action' => 'approve', 'pin' => '123456']);
 
         $response->assertSessionHasErrors('message');
     }
@@ -358,7 +359,7 @@ class ITJobRequestDispatchTest extends TestCase
         ]);
 
         $this->actingAs($ocd)
-            ->post(route('job-requests.target-date-decision', $jobRequest->id), ['action' => 'approve'])
+            ->post(route('job-requests.target-date-decision', $jobRequest->id), ['action' => 'approve', 'pin' => '123456'])
             ->assertSessionHasNoErrors();
 
         $this->assertSame('Target Date Approved', $jobRequest->refresh()->status);

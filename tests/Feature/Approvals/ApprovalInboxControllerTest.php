@@ -142,7 +142,7 @@ class ApprovalInboxControllerTest extends TestCase
         ]);
 
         $response = $this->actingAs($chief)
-            ->post(route('approvals.approve', ['type' => 'it_job_requests', 'id' => $jobRequest->id]));
+            ->post(route('approvals.approve', ['type' => 'it_job_requests', 'id' => $jobRequest->id]), ['pin' => '123456']);
 
         $response->assertRedirect();
         $response->assertSessionHasNoErrors();

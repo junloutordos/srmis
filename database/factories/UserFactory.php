@@ -31,9 +31,18 @@ class UserFactory extends Factory
             'password' => bcrypt('password'), // or Hash::make()
             'remember_token' => Str::random(10),
             'role_id' => null, // roles managed via role_user pivot
+            // Signature + PIN are mandatory to file or sign; PIN is "123456" in tests.
+            'electronic_signature' => 'signatures/test.png',
+            'signature_pin' => '123456',
         ];
     }
 
+
+    /** A user who has not done the signature + PIN setup yet. */
+    public function withoutSignature(): static
+    {
+        return $this->state(fn () => ['electronic_signature' => null, 'signature_pin' => null]);
+    }
 
     /**
      * Indicate that the model's email address should be unverified.

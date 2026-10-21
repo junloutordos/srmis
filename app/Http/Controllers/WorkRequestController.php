@@ -25,6 +25,8 @@ use App\Http\Traits\SignsDocuments;
 
 class WorkRequestController extends Controller
 {
+    use \App\Http\Controllers\Concerns\RequiresSignatureSetup;
+
     use SignsDocuments;
 
     public function __construct(
@@ -77,6 +79,10 @@ class WorkRequestController extends Controller
 
     public function store(Request $request)
     {
+        if ($blocked = $this->signatureSetupRedirect($request->user())) {
+            return $blocked;
+        }
+
         // Only accept fields intended at creation time. Assignment and completion
         // details are handled later by GSU Head, so they are not accepted here.
         $data = $request->validate([

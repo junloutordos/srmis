@@ -25,11 +25,11 @@
 <body>
 <div class="card">
     <div class="card-header">
-        <h1>Decline IT Job Request</h1>
-        <p>PSHSS Helpdesk — Division Chief Action</p>
+        <h1>{{ $heading ?? 'Decline IT Job Request' }}</h1>
+        <p>{{ $subheading ?? 'PSHSS Helpdesk — Division Chief Action' }}</p>
     </div>
     <div class="card-body">
-        <p style="color:#475569;font-size:14px;margin:0 0 16px;">You are declining the following IT Job Request. Please provide a reason so the requestor is informed.</p>
+        <p style="color:#475569;font-size:14px;margin:0 0 16px;">{{ $intro ?? 'You are declining the following IT Job Request. Please provide a reason so the requestor is informed.' }}</p>
         <div class="detail"><span class="lbl">ITJR No.</span><span class="val" style="font-family:monospace;">{{ $jobRequest->itjr_no }}</span></div>
         <div class="detail"><span class="lbl">Title</span><span class="val">{{ $jobRequest->title }}</span></div>
         <div class="detail"><span class="lbl">Submitted By</span><span class="val">{{ $jobRequest->user?->name ?? '—' }}</span></div>
@@ -37,7 +37,7 @@
             @csrf
             <label for="reason">Reason for Decline <span style="color:#ef4444">*</span></label>
             <textarea name="reason" id="reason" rows="4" required placeholder="Explain why this request is being declined…"></textarea>
-            <button type="submit">Submit Decline</button>
+            <button type="submit">{{ isset($heading) ? 'Submit Rejection' : 'Submit Decline' }}</button>
         </form>
     </div>
     <div class="footer">PSHSS Helpdesk</div>

@@ -225,7 +225,7 @@ class ITJobRequestEmailDispatchTest extends TestCase
 
         $req = $this->pendingRequest(['status' => 'Pending OCD Approval', 'divisionchief_id' => $ocd->id]);
 
-        $this->actingAs($ocd)->post(route('job-requests.ocd-action', $req->id), ['action' => 'approve']);
+        $this->actingAs($ocd)->post(route('job-requests.ocd-action', $req->id), ['action' => 'approve', 'pin' => '123456']);
 
         Mail::assertSent(ITJRDispatchMail::class, function (ITJRDispatchMail $mail) use ($dispatcher, $req) {
             return $mail->hasTo($dispatcher->email)
@@ -246,7 +246,7 @@ class ITJobRequestEmailDispatchTest extends TestCase
         Role::where('name', 'OCD')->first()->permissions()->syncWithoutDetaching([$perm->id]);
         $req = $this->pendingRequest(['status' => 'Pending OCD Approval', 'divisionchief_id' => $ocd->id]);
 
-        $this->actingAs($ocd)->post(route('job-requests.ocd-action', $req->id), ['action' => 'approve']);
+        $this->actingAs($ocd)->post(route('job-requests.ocd-action', $req->id), ['action' => 'approve', 'pin' => '123456']);
 
         Mail::assertSent(ITJRDispatchMail::class, function (ITJRDispatchMail $mail) {
             parse_str(parse_url($mail->dispatchUrl, PHP_URL_QUERY), $q);

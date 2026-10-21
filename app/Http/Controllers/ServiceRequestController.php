@@ -20,6 +20,8 @@ use App\Http\Traits\SignsDocuments;
 
 class ServiceRequestController extends Controller
 {
+    use \App\Http\Controllers\Concerns\RequiresSignatureSetup;
+
     use SignsDocuments;
 
     public function __construct(
@@ -54,6 +56,10 @@ class ServiceRequestController extends Controller
 
     public function store(Request $request)
     {
+        if ($blocked = $this->signatureSetupRedirect($request->user())) {
+            return $blocked;
+        }
+
         $data = $request->validate([
             'service_type' => 'required|string',
             'copies' => 'nullable|integer|min:1',

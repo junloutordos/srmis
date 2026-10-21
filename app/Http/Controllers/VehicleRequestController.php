@@ -21,6 +21,8 @@ use App\Http\Traits\SignsDocuments;
 
 class VehicleRequestController extends Controller
 {
+    use \App\Http\Controllers\Concerns\RequiresSignatureSetup;
+
     use SignsDocuments;
 
     public function __construct(
@@ -88,6 +90,10 @@ class VehicleRequestController extends Controller
      */
     public function store(Request $request)
     {
+        if ($blocked = $this->signatureSetupRedirect($request->user())) {
+            return $blocked;
+        }
+
         $request->validate([
             'purpose' => 'required|string|max:255',
                 'destination' => 'required|string|max:255',

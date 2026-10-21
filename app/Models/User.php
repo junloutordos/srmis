@@ -178,6 +178,12 @@ class User extends Authenticatable
         return $this->roles->contains('name', 'Administrator');
     }
 
+    /** Both a signature image and a PIN are required before a user can file or sign. */
+    public function hasSignatureSetup(): bool
+    {
+        return ! empty($this->electronic_signature) && $this->electronic_signature !== '0' && ! empty($this->signature_pin);
+    }
+
     public function hasRole(string $roleName): bool
     {
         return $this->roles->contains('name', $roleName);

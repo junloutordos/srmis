@@ -55,7 +55,7 @@ class ITJobRequestSubmissionTest extends TestCase
         ]);
 
         $response = $this->actingAs($requester)
-            ->post(route('jobrequests.store'), $this->validPayload());
+            ->post(route('jobrequests.store'), $this->validPayload() + ['pin' => '123456']);
 
         $response->assertSessionHasErrors('message');
         $this->assertDatabaseMissing('it_job_requests', ['title' => 'New request']);
@@ -75,7 +75,7 @@ class ITJobRequestSubmissionTest extends TestCase
         ]);
 
         $response = $this->actingAs($requester)
-            ->post(route('jobrequests.store'), $this->validPayload());
+            ->post(route('jobrequests.store'), $this->validPayload() + ['pin' => '123456']);
 
         $response->assertSessionHasNoErrors();
         $this->assertDatabaseHas('it_job_requests', ['title' => 'New request', 'user_id' => $requester->id]);
@@ -116,7 +116,7 @@ class ITJobRequestSubmissionTest extends TestCase
         ]);
 
         $response = $this->actingAs($admin)
-            ->post(route('jobrequests.store'), $this->validPayload());
+            ->post(route('jobrequests.store'), $this->validPayload() + ['pin' => '123456']);
 
         $response->assertSessionHasNoErrors();
     }
