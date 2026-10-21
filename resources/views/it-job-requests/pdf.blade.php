@@ -32,7 +32,10 @@
 
   <div class="header">
     <div class="org">PHILIPPINE SCIENCE HIGH SCHOOL SYSTEM</div>
-    <div class="org">CAMPUS: <span style="text-decoration:underline;">CARAGA REGION</span></div>
+    @php($campusLine = \App\Support\CampusLabel::formLine())
+    @if($campusLine)
+    <div class="org">{{ $campusLine['label'] }}: <span style="text-decoration:underline;">{{ $campusLine['value'] }}</span></div>
+    @endif
     <div class="title">IT  JOB  REQUEST  FORM</div>
   </div>
 
