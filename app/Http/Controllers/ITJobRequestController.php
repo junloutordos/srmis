@@ -12,6 +12,7 @@ use App\Models\ICTEquipment;
 use App\Models\ICTPMSHistory;
 use App\Mail\DivisionChiefITJRApprovalMail;
 use App\Mail\OCDITJRApprovalMail;
+use App\Mail\ITJRDispatchMail;
 use App\Mail\ITJRStatusMail;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
@@ -437,18 +438,7 @@ public function index(Request $request)
         );
     }
     // Notify ITJR Dispatchers so they can dispatch this request to MIS personnel
-    $dispatchers = \App\Support\NotificationRecipients::forRole('ITJR Dispatcher');
-    foreach ($dispatchers as $dispatcher) {
-        if ($dispatcher->email) {
-            try {
-                Mail::to($dispatcher->email)
-                    ->send(new ITJRStatusMail($jobRequest, 'OCD Approved', 'Approved by OCD — awaiting dispatch to MIS personnel.', 'OCD'));
-            } catch (\Throwable $e) {
-                logger()->error('Failed to send ITJR Dispatcher notification email', ['error' => $e->getMessage()]);
-            }
-        }
-        NotificationService::notifyUser($dispatcher, 'IT Job Request', $jobRequest->itjr_no, 'Awaiting dispatch to MIS personnel', route('jobrequests.dispatch'));
-    }
+    $this->notifyDispatchers($jobRequest, 'OCD Approved', 'Approved by OCD — awaiting dispatch to MIS personnel.', 'OCD');
 
     // 6️⃣ Return a confirmation view
     return view('emails.itjr.approved', compact('jobRequest'));
@@ -968,14 +958,24 @@ public function showOCDDeclineForm(ITJobRequest $jobRequest, $ocd)
     }
 
     /**
-     * Tell the ITJR Dispatchers a request is waiting in the dispatch queue.
+     * Tell the ITJR Dispatchers a request is waiting in the dispatch queue. The
+     * email carries a signed link to a one-page dispatch form (see
+     * showEmailDispatchForm()); it stays valid for 3 weekdays so a request that
+     * arrives on a Friday is still dispatchable on Monday or Tuesday.
      */
     private function notifyDispatchers(ITJobRequest $jobRequest, string $status, string $message, string $approverRole): void
     {
+        $expires = now()->addWeekdays(3);
+
         foreach (\App\Support\NotificationRecipients::forRole('ITJR Dispatcher') as $dispatcher) {
             if ($dispatcher->email) {
                 try {
-                    Mail::to($dispatcher->email)->send(new ITJRStatusMail($jobRequest, $status, $message, $approverRole));
+                    $dispatchUrl = URL::temporarySignedRoute(
+                        'it-job-requests.dispatch.form',
+                        $expires,
+                        ['jobRequest' => $jobRequest->id, 'dispatcher' => $dispatcher->id]
+                    );
+                    Mail::to($dispatcher->email)->send(new ITJRDispatchMail($jobRequest, $dispatcher, $dispatchUrl, $message, $approverRole));
                 } catch (\Throwable $e) {
                     logger()->error('Failed to send ITJR Dispatcher notification email', ['error' => $e->getMessage()]);
                 }
@@ -1059,18 +1059,7 @@ public function showOCDDeclineForm(ITJobRequest $jobRequest, $ocd)
             );
 
             // Notify ITJR Dispatchers so they can dispatch this request to MIS personnel
-            $dispatchers = \App\Support\NotificationRecipients::forRole('ITJR Dispatcher');
-            foreach ($dispatchers as $dispatcher) {
-                if ($dispatcher->email) {
-                    try {
-                        Mail::to($dispatcher->email)
-                            ->send(new ITJRStatusMail($jobRequest, 'OCD Approved', 'Approved by OCD — awaiting dispatch to MIS personnel.', 'OCD'));
-                    } catch (\Throwable $e) {
-                        logger()->error('Failed to send ITJR Dispatcher notification email', ['error' => $e->getMessage()]);
-                    }
-                }
-                NotificationService::notifyUser($dispatcher, 'IT Job Request', $jobRequest->itjr_no, 'Awaiting dispatch to MIS personnel', route('jobrequests.dispatch'));
-            }
+            $this->notifyDispatchers($jobRequest, 'OCD Approved', 'Approved by OCD — awaiting dispatch to MIS personnel.', 'OCD');
         } else {
             $jobRequest->update([
                 'status' => 'Rejected by OCD',
@@ -1355,6 +1344,19 @@ public function showOCDDeclineForm(ITJobRequest $jobRequest, $ocd)
             return back()->withErrors(['assignedto' => 'Selected user is not an MIS personnel.']);
         }
 
+        $wasDispatched = $this->performDispatch($jobRequest, $user, $assignee, $validated['notes'] ?? null);
+
+        return back()->with('success', $wasDispatched ? 'Request reassigned.' : 'Request dispatched to MIS.');
+    }
+
+    /**
+     * Assign (or reassign) the request to an MIS personnel, log it and notify
+     * everyone involved. Shared by the in-app dispatch queue and the signed
+     * email-link dispatch form so both behave identically. Returns true when
+     * this was a reassignment rather than the first dispatch.
+     */
+    private function performDispatch(ITJobRequest $jobRequest, User $user, User $assignee, ?string $notes): bool
+    {
         $wasDispatched = $jobRequest->status !== 'Pending Dispatch';
         $previousAssignee = $jobRequest->assignedTo?->name;
 
@@ -1369,8 +1371,8 @@ public function showOCDDeclineForm(ITJobRequest $jobRequest, $ocd)
         $remarks = $wasDispatched
             ? "Reassigned from {$previousAssignee} to {$assignee->name} by {$user->name}."
             : "Dispatched to {$assignee->name} by {$user->name}.";
-        if (! empty($validated['notes'])) {
-            $remarks .= "\nTriage notes: " . $validated['notes'];
+        if (! empty($notes)) {
+            $remarks .= "\nTriage notes: " . $notes;
         }
 
         ITJRTrackingLog::create([
@@ -1401,7 +1403,69 @@ public function showOCDDeclineForm(ITJobRequest $jobRequest, $ocd)
             );
         }
 
-        return back()->with('success', $wasDispatched ? 'Request reassigned.' : 'Request dispatched to MIS.');
+        return $wasDispatched;
+    }
+
+    /* =====================================================
+     | DISPATCH FROM EMAIL (signed link, no session)
+     |=====================================================*/
+
+    /** The {dispatcher} in the link must be an active user who may dispatch. */
+    private function emailDispatcher($dispatcherId): User
+    {
+        $dispatcher = User::find($dispatcherId);
+
+        if (! $dispatcher || $dispatcher->status === 'inactive' || ! $dispatcher->hasPermission('it.requests.dispatch')) {
+            abort(403, 'Unauthorized dispatcher.');
+        }
+
+        return $dispatcher;
+    }
+
+    public function showEmailDispatchForm(Request $request, ITJobRequest $jobRequest, $dispatcher)
+    {
+        $this->emailDispatcher($dispatcher);
+
+        if ($jobRequest->status !== 'Pending Dispatch') {
+            return view('emails.itjr.already_approved', compact('jobRequest'));
+        }
+
+        // The POST link is signed separately and can never outlive this one.
+        $postAction = URL::temporarySignedRoute(
+            'it-job-requests.dispatch.submit',
+            Carbon::createFromTimestamp((int) $request->query('expires')),
+            ['jobRequest' => $jobRequest->id, 'dispatcher' => $dispatcher]
+        );
+
+        return view('emails.itjr.dispatch_form', [
+            'jobRequest'   => $jobRequest,
+            'postAction'   => $postAction,
+            'misPersonnel' => User::havingRole('MIS')->orderBy('name')->get(['id', 'name']),
+            'suggestedId'  => $this->autoAssignMIS($jobRequest->category),
+        ]);
+    }
+
+    public function submitEmailDispatchForm(Request $request, ITJobRequest $jobRequest, $dispatcher)
+    {
+        $dispatcherUser = $this->emailDispatcher($dispatcher);
+
+        if ($jobRequest->status !== 'Pending Dispatch') {
+            return view('emails.itjr.already_approved', compact('jobRequest'));
+        }
+
+        $validated = $request->validate([
+            'assignedto' => 'required|exists:users,id',
+            'notes'      => 'required|string|max:2000',
+        ]);
+
+        $assignee = User::find($validated['assignedto']);
+        if (! $assignee || ! $assignee->hasRole('MIS')) {
+            return back()->withErrors(['assignedto' => 'Selected user is not an MIS personnel.'])->withInput();
+        }
+
+        $this->performDispatch($jobRequest, $dispatcherUser, $assignee, $validated['notes']);
+
+        return view('emails.itjr.dispatched', ['jobRequest' => $jobRequest->refresh(), 'assignee' => $assignee]);
     }
 
     // ── Private ───────────────────────────────────────────────────────────────

@@ -81,6 +81,12 @@ Route::prefix('it-job-requests')->group(function () {
         ->name('it-job-requests.ocd.decline')->middleware('signed');
     Route::post('ocd/decline/{jobRequest}/{ocd}', [ITJobRequestController::class, 'submitOCDDecline'])
         ->name('it-job-requests.ocd.decline.submit')->middleware('signed');
+
+    // Dispatcher: choose the MIS assignee straight from the "awaiting dispatch" email.
+    Route::get('dispatch/{jobRequest}/{dispatcher}', [ITJobRequestController::class, 'showEmailDispatchForm'])
+        ->name('it-job-requests.dispatch.form')->middleware('signed');
+    Route::post('dispatch/{jobRequest}/{dispatcher}', [ITJobRequestController::class, 'submitEmailDispatchForm'])
+        ->name('it-job-requests.dispatch.submit')->middleware('signed');
 });
 
 // ── Web Push subscriptions ────────────────────────────────────────────────────
