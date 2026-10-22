@@ -114,7 +114,7 @@ public function index(Request $request)
         $postingCategories = ['Posting to Website', 'Posting to Social Media'];
 
         if (in_array($category, $postingCategories) && $postingType === 'general') {
-            $io = User::havingRole('InformationOfficer')->first();
+            $io = \App\Support\NotificationRecipients::forRole('InformationOfficer')->first();
             if (! $io) {
                 throw new \RuntimeException('No Information Officer is currently configured. Please contact your administrator.');
             }
@@ -126,7 +126,8 @@ public function index(Request $request)
             ? \App\Models\Division::where('id', $user->division_id)->value('division_chief_id')
             : null;
 
-        if (! $chiefId) {
+        // A deactivated chief must never be routed approvals — treat as unconfigured.
+        if (! $chiefId || User::where('id', $chiefId)->where('status', 'inactive')->exists()) {
             throw new \RuntimeException('You are not assigned to a division with a Division Chief. Please contact HR.');
         }
 
@@ -134,18 +135,17 @@ public function index(Request $request)
     }
 
     /**
-     * Auto-assign MIS personnel based on category.
-     * "Technical Assistance on Events" → Alexis Dave San Miguel (id=5).
-     * All other categories → load-balance between Junlou (id=1) and Michael (id=2).
+     * Suggest the active MIS user with the fewest open requests. This only
+     * pre-selects the dispatch form; the dispatcher still confirms.
      */
     private function autoAssignMIS(string $category): ?int
     {
-        if ($category === 'Technical Assistance on Events') {
-            return 5;
+        $poolIds = \App\Support\NotificationRecipients::forRole('MIS')->pluck('id');
+        if ($poolIds->isEmpty()) {
+            return null;
         }
 
         $terminalStatuses = ['Request Completed', 'Rejected by Division Chief', 'Rejected by OCD'];
-        $poolIds = collect([1, 2]);
 
         $activeCounts = ITJobRequest::whereIn('assignedto', $poolIds)
             ->whereNotIn('status', $terminalStatuses)
@@ -251,7 +251,7 @@ public function index(Request $request)
         if ($jobRequest->divisionchief_id) {
             $chief = User::find($jobRequest->divisionchief_id);
             if ($chief) {
-                if ($chief->email) {
+                if (\App\Support\NotificationRecipients::canEmail($chief)) {
                     $approveUrl = URL::signedRoute('it-job-requests.dc.approve', ['jobRequest' => $jobRequest->id, 'chief' => $chief->id], now()->addDays(7));
                     $declineUrl = URL::signedRoute('it-job-requests.dc.decline', ['jobRequest' => $jobRequest->id, 'chief' => $chief->id], now()->addDays(7));
                     try {
@@ -315,7 +315,7 @@ public function index(Request $request)
         );
 
         // Notify requester
-        if ($jobRequest->user && $jobRequest->user->email) {
+        if (\App\Support\NotificationRecipients::canEmail($jobRequest->user)) {
             Mail::to($jobRequest->user->email)
                 ->send(new ITJRStatusMail($jobRequest, 'Division Chief Approved', null, 'Division Chief'));
         }
@@ -345,7 +345,7 @@ public function index(Request $request)
         // Notify Assigned Administrator
         if ($jobRequest->assignedto) {
             $admin = User::find($jobRequest->assignedto);
-            if ($admin && $admin->email) {
+            if (\App\Support\NotificationRecipients::canEmail($admin)) {
                 Mail::to($admin->email)
                     ->send(new ITJRStatusMail($jobRequest, 'Division Chief Approved', 'The request you are assigned to has been approved by Division Chief.', 'Administrator'));
             }
@@ -398,7 +398,7 @@ public function index(Request $request)
         ]);
 
         // Notify the requester
-        if ($jobRequest->user && $jobRequest->user->email) {
+        if (\App\Support\NotificationRecipients::canEmail($jobRequest->user)) {
             Mail::to($jobRequest->user->email)
                 ->send(new ITJRStatusMail(
                     $jobRequest,
@@ -471,7 +471,7 @@ public function submitOCDApproveSigned(Request $request, ITJobRequest $jobReques
     );
 
     // 5️⃣ Notify the requester
-    if ($jobRequest->user && $jobRequest->user->email) {
+    if (\App\Support\NotificationRecipients::canEmail($jobRequest->user)) {
         try {
             Mail::to($jobRequest->user->email)
                 ->send(new ITJRStatusMail($jobRequest, 'OCD Approved', null, 'OCD'));
@@ -544,7 +544,7 @@ public function showOCDDeclineForm(ITJobRequest $jobRequest, $ocd)
         ]);
 
         // Notify requester
-        if ($jobRequest->user && $jobRequest->user->email) {
+        if (\App\Support\NotificationRecipients::canEmail($jobRequest->user)) {
             Mail::to($jobRequest->user->email)
                 ->send(new ITJRStatusMail(
                     $jobRequest,
@@ -818,7 +818,7 @@ public function showOCDDeclineForm(ITJobRequest $jobRequest, $ocd)
             return;
         }
 
-        if ($assignee->email) {
+        if (\App\Support\NotificationRecipients::canEmail($assignee)) {
             try {
                 Mail::to($assignee->email)->send(new ITJRStatusMail($jobRequest, $subject, $body, 'OCD'));
             } catch (\Throwable $e) {
@@ -881,7 +881,7 @@ public function showOCDDeclineForm(ITJobRequest $jobRequest, $ocd)
         });
 
         // 📧 NOTIFY REQUESTER (outside transaction — email failures must not roll back DB changes)
-        if ($jobRequest->user && $jobRequest->user->email) {
+        if (\App\Support\NotificationRecipients::canEmail($jobRequest->user)) {
             try {
                 Mail::to($jobRequest->user->email)->send(
                     new ITJRStatusMail(
@@ -1389,7 +1389,7 @@ public function showOCDDeclineForm(ITJobRequest $jobRequest, $ocd)
         $rankMap = ITJobRequest::PRIORITY_RANK;
         $wasEscalated = ($rankMap[$newPriority] ?? 3) < ($rankMap[$oldPriority] ?? 3);
 
-        if ($wasEscalated && $jobRequest->user && $jobRequest->user->email) {
+        if ($wasEscalated && \App\Support\NotificationRecipients::canEmail($jobRequest->user)) {
             try {
                 Mail::to($jobRequest->user->email)->send(
                     new ITJRStatusMail(
@@ -1451,7 +1451,7 @@ public function showOCDDeclineForm(ITJobRequest $jobRequest, $ocd)
             'items'          => $items,
             'filters'        => ['search' => $search, 'category' => $category],
             'categories'     => ITJobCategory::orderBy('name')->get(['id', 'name']),
-            'misPersonnel'   => User::havingRole('MIS')->orderBy('name')->get(['id', 'name']),
+            'misPersonnel'   => User::whereIn('id', \App\Support\NotificationRecipients::forRole('MIS')->pluck('id'))->orderBy('name')->get(['id', 'name']),
         ]);
     }
 
@@ -1524,7 +1524,7 @@ public function showOCDDeclineForm(ITJobRequest $jobRequest, $ocd)
         ]);
 
         // Notify the assignee
-        if ($assignee->email) {
+        if (\App\Support\NotificationRecipients::canEmail($assignee)) {
             try {
                 Mail::to($assignee->email)->send(new ITJRStatusMail($jobRequest, 'New Request Assigned', 'You have been assigned to this request by the ITJR Dispatcher.', 'Administrator'));
             } catch (\Throwable $e) {
@@ -1581,7 +1581,7 @@ public function showOCDDeclineForm(ITJobRequest $jobRequest, $ocd)
         return view('emails.itjr.dispatch_form', [
             'jobRequest'   => $jobRequest,
             'postAction'   => $postAction,
-            'misPersonnel' => User::havingRole('MIS')->orderBy('name')->get(['id', 'name']),
+            'misPersonnel' => User::whereIn('id', \App\Support\NotificationRecipients::forRole('MIS')->pluck('id'))->orderBy('name')->get(['id', 'name']),
             'suggestedId'  => $this->autoAssignMIS($jobRequest->category),
         ]);
     }

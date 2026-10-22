@@ -282,7 +282,7 @@ class FacilityRequestController extends Controller
                     // Send notification to division chief if available
                     if ($divisionChiefId) {
                         $chief = \App\Models\User::find($divisionChiefId);
-                        if ($chief && $chief->email) {
+                        if (\App\Support\NotificationRecipients::canEmail($chief)) {
                             try {
                                 $approveUrl = \Illuminate\Support\Facades\URL::signedRoute('it-job-requests.dc.approve', ['jobRequest' => $jobRequest->id, 'chief' => $chief->id], now()->addDays(7));
                                 $declineUrl = \Illuminate\Support\Facades\URL::signedRoute('it-job-requests.dc.decline', ['jobRequest' => $jobRequest->id, 'chief' => $chief->id], now()->addDays(7));

@@ -32,4 +32,16 @@ class NotificationRecipients
             ->where('email', '!=', '')
             ->get();
     }
+
+    /**
+     * Whether a user resolved by id (request owner, division chief, assignee)
+     * may be emailed. forRole()/forAnyRole() already filter this way; direct
+     * lookups must go through here so deactivated accounts are never contacted.
+     */
+    public static function canEmail(?User $user): bool
+    {
+        return $user !== null
+            && $user->status !== 'inactive'
+            && filled($user->email);
+    }
 }
